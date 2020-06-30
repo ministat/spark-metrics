@@ -24,3 +24,5 @@ function get_all_stages_active() {
   local baseUrl=$(get_base_url $appId)
   curl -iLk -X GET ${baseUrl}/stages?anonymous=true&status=active
 }
+
+

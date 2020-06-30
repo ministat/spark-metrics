@@ -2,6 +2,8 @@
 WORKDIR=`dirname $0`
 . ${WORKDIR}/utils.sh
 
+list_all_apps
+
 a=$(find_queue_app hdmi-default)
 echo $a
 

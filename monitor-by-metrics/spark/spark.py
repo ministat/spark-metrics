@@ -5,35 +5,142 @@ import sys
 
 RESOUCE_MGR_URL="https://hermes-rno-rm-2.vip.hadoop.ebay.com:50030/proxy"
 
-def get_base_url(appId):
+TASK_STAT_MAP={
+    'active':'numActiveTasks',
+    'skipped':'numSkippedTasks',
+    'failed':'numFailedTasks',
+    'completed':'numCompletedTasks',
+    'all':'numTasks'
+}
+JOB_TASK_STAT_MAP={
+    'spark_job_numActiveTasks':'numActiveTasks',
+    'spark_job_numSkippedTasks':'numSkippedTasks',
+    'spark_job_numFailedTasks':'numFailedTasks',
+    'spark_job_numCompletedTasks':'numCompletedTasks',
+    'spark_job_numTasks':'numTasks'
+}
+
+STAGE_STAT_MAP={
+    'active':'numActiveStages',
+    'skipped':'numSkippedStages',
+    'failed':'numFailedStages',
+    'completed':'numCompletedStages'
+}
+
+JOB_STAGE_STAT_MAP={
+    'spark_job_numActiveStages':'numActiveStages',
+    'spark_job_numSkippedStages':'numSkippedStages',
+    'spark_job_numFailedStages':'numFailedStages',
+    'spark_job_numCompletedStages':'numCompletedStages'
+}
+
+STAGE_STAT_DETAIL_MAP={
+    'spark_stage_executorRunTime':'executorRunTime',
+    'spark_stage_executorCpuTime':'executorCpuTime',
+    'spark_stage_inputBytes':'inputBytes',
+    'spark_stage_outputBytes':'outputBytes',
+    'spark_stage_inputRecords':'inputRecords',
+    'spark_stage_outputRecords':'outputRecords',
+    'spark_stage_shuffleReadBytes':'shuffleReadBytes',
+    'spark_stage_shuffleReadRecords':'shuffleReadRecords',
+    'spark_stage_shuffleWriteBytes':'shuffleWriteBytes',
+    'spark_stage_shuffleWriteRecords':'shuffleWriteRecords',
+    'spark_stage_memoryBytesSpilled':'memoryBytesSpilled',
+    'spark_stage_diskBytesSpilled':'diskBytesSpilled'
+}
+
+def getBaseUrl(appId):
    return "{res_url}/{app}/api/v1/applications/{app}".format(res_url=RESOUCE_MGR_URL, app=appId)
 
-def activeTaskFromJob(jobJson):
-   actTask = 0
-   for j in jobJson:
-       actTask += j['numActiveStages']
-   return actTask
+def getAllMetrics(jData, statMap):
+   m={}
+   for k,v in statMap.items():
+       for t in jData:
+          if k in m:
+            m[k]+=t[v] if v in t else 0
+          else:
+            m[k]=t[v] if v in t else 0
+   return m
 
-def failedTaskFromJob(jobJson):
-   failedTask = 0
-   for j in jobJson:
-       failedTask += j['numFailedTasks']
-   return failedTask
+def getEmptyAllMetrics(statMap):
+   m={}
+   for k,v in statMap.items():
+       m[k]=0
+   return m
 
-def jobMetrics(args):
-   url = get_base_url(args.appId)
-   jobUrl = url + "/jobs"
-   queryParam = {'anonymous': 'true', 'status': args.status}
-   response = requests.get(jobUrl, verify=False, params=queryParam)
+def getMetrics(jobJson, statArgs, statMap):
+   metricsStat = TASK_STAT_MAP[statArgs]
+   task = 0
+   for t in jobJson:
+       task += t[metricsStat]
+   return task
+
+def metricsInternal(appId, status, jobsOrStages):
+   data = ""
+   url = getBaseUrl(appId)
+   fullUrl = url + "/" + jobsOrStages
+   queryParam = {'anonymous': 'true', 'status': status}
+   response = requests.get(fullUrl, verify=False, params=queryParam)
    if response != None and response.status_code == 200:
       data = response.json()
+   else:
+      print("Fail to get REST response from {u}".format(u=fullUrl), file=sys.stderr)
+   return data
+
+def printMetricsMap(m):
+   res=""
+   for k,v in m.items():
+       if not res:
+          res+="{k1}={v1}".format(k1=k,v1=v)
+       else:
+          res+=",{k1}={v1}".format(k1=k,v1=v)
+   print(res)
+
+def jobTaskMetrics(args):
+   result = 0
+   data = metricsInternal(args.appId, 'running', "jobs")
+   if data:
+      if args.debug:
+         print(data)
+      if args.allStatus:
+         m = getAllMetrics(data, JOB_TASK_STAT_MAP)
+         printMetricsMap(m)
+      else:
+         result = getMetrics(data, args.taskStatus, TASK_STAT_MAP)
+         print(result)
+   else:
+      if args.allStatus:
+         m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
+         printMetricsMap(m)
+
+def jobStageMetrics(args):
+   result = 0
+   data = metricsInternal(args.appId, 'running', "jobs")
+   if data:
+      if args.debug:
+         print(data)
+      if args.allStatus:
+         m = getAllMetrics(data, JOB_STAGE_STAT_MAP)
+         printMetricsMap(m)
+      else:
+         result = getMetrics(data, args.stageStatus, STAGE_STAT_MAP)
+         print(result)
+   else:
+      if args.allStatus:
+         m = getEmptyAllMetrics(JOB_STAGE_STAT_MAP)
+         printMetricsMap(m)
+
+def jobMetrics(args):
+    data = metricsInternal(args.appId, args.status, "jobs")
+    if data:
       for d in data:
-          print("submissionTime: {st}, stages: {stages}, activeStages: {acts}, failedStages: {fs}, completedStages: {cs}, task: {t}, activeTask: {at}, completedTask: {ct}, failedTask: {ft}, skippedTask: {skt}"
+          print("submissionTime: {st}, stages: {stages}, activeStages: {acts}, failedStages: {fs}, completedStages: {cs}, skippedStages: {sks}, task: {t}, activeTask: {at}, completedTask: {ct}, failedTask: {ft}, skippedTask: {skt}"
                 .format(st=d['submissionTime'],
                         stages=d['stageIds'],
                         acts=d['numActiveStages'],
                         fs=d['numFailedStages'],
                         cs=d['numCompletedStages'],
+                        sks=d['numSkippedStages'],
                         t=d['numTasks'],
                         at=d['numActiveTasks'],
                         ct=d['numCompletedTasks'],
@@ -43,15 +150,12 @@ def jobMetrics(args):
          print(data)
 
 def stageMetrics(args):
-   url = get_base_url(args.appId)
-   jobUrl = url + "/stages"
-   queryParam = {'anonymous': 'true', 'status': args.status}
-   response = requests.get(jobUrl, verify=False, params=queryParam)
-   if response != None and response.status_code == 200:
-      data = response.json()
-      for d in data:
-          print("submissionTime: {st}, firstTaskLaunchedTime: {flt}, tasks: {task}, activeTask: {at}, inputBytes: {ib}, outputBytes: {ob}, shuffleReadBytes: {srb}, shuffleWriteBytes: {swb}, executorRuntime: {ert}, executorCpuTime: {ect}"
-                .format(st=d['submissionTime'] if 'submissiontTime' in d else '',
+   data = metricsInternal(args.appId, args.status, "stages")
+   if data:
+      if args.simplePrint:
+          for d in data:
+              print("submissionTime: {st}, firstTaskLaunchedTime: {flt}, tasks: {task}, activeTask: {at}, inputBytes: {ib}, outputBytes: {ob}, shuffleReadBytes: {srb}, shuffleWriteBytes: {swb}, executorRuntime: {ert}, executorCpuTime: {ect}"
+                   .format(st=d['submissionTime'] if 'submissiontTime' in d else '',
                         flt=d['firstTaskLaunchedTime'] if 'firstTaskLaunchedTime' in d else '',
                         task=d['numTasks'],
                         at=d['numActiveTasks'],
@@ -61,8 +165,15 @@ def stageMetrics(args):
                         swb=d['shuffleWriteBytes'],
                         ert=d['executorRuntime'] if 'executorRuntime' in d else '',
                         ect=d['executorCpuTime']))
+      if args.allStatus:
+         m = getAllMetrics(data, STAGE_STAT_DETAIL_MAP)
+         printMetricsMap(m)
       if args.debug:
          print(data)
+   else:
+      if args.allStatus:
+         m = getEmptyAllMetrics(STAGE_STAT_DETAIL_MAP)
+         printMetricsMap(m)
 
 def commonArgs(parser):
    parser.add_argument("--appId", help="Specify the application Id", required=True)
@@ -80,8 +191,22 @@ if __name__=="__main__":
 
    stageParser = subparser.add_parser('stage', help='List stage releated metrics')
    stageParser.add_argument('--status', choices=['active','complete','pending','failed'])
+   stageParser.add_argument('--allStatus', action="store_true", help="Collect all status information, default is false", default=False)
+   stageParser.add_argument('--simplePrint', action="store_true", help="Collect all status information, default is false", default=False)
    commonArgs(stageParser)
    stageParser.set_defaults(func=stageMetrics)
+
+   jobTaskParser = subparser.add_parser('jobTask', help='Get statistic information for job tasks')
+   jobTaskParser.add_argument('--taskStatus', choices=['active','skipped','failed','completed','all'], help='Specify the running jobs tasks status you want to query, default is active', default='active')
+   jobTaskParser.add_argument('--allStatus', action="store_true", help="Collect all status information", default=False)
+   commonArgs(jobTaskParser)
+   jobTaskParser.set_defaults(func=jobTaskMetrics)
+
+   jobStageParser = subparser.add_parser('jobStage', help='Get statistic information for job stages')
+   jobStageParser.add_argument('--stageStatus', choices=['active','skipped','failed','completed'], help='Specify the running jobs stage status you want to query, default is active', default='active')
+   jobStageParser.add_argument('--allStatus', action="store_true", help="Collect all status information", default=False)
+   jobStageParser.set_defaults(func=jobStageMetrics)
+   commonArgs(jobStageParser)
 
    if len(sys.argv) <= 1:
       sys.argv.append('--help')
