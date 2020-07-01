@@ -1,7 +1,10 @@
 import argparse
 import json
+import logging
 import requests
 import sys
+import time
+from logging import handlers
 from six import iteritems
 
 RESOUCE_MGR_URL="https://hermes-rno-rm-2.vip.hadoop.ebay.com:50030/proxy"
@@ -50,6 +53,14 @@ STAGE_STAT_DETAIL_MAP={
     'spark_stage_diskBytesSpilled':'diskBytesSpilled'
 }
 
+def logSetup():
+   handler = handlers.RotatingFileHandler('spark-metrics.log', maxBytes=10**6, backupCount=5)
+   log_format = logging.Formatter('%(asctime)s program [%(process)d]: %(message)s', '%b %d %H:%M:%S')
+   log_format.converter = time.gmtime
+   handler.setFormatter(log_format)
+   logger = logging.getLogger()
+   logger.addHandler(handler)
+   logger.setLevel(logging.DEBUG)
 
 def getBaseUrl(appId):
    return "{res_url}/{app}/api/v1/applications/{app}".format(res_url=RESOUCE_MGR_URL, app=appId)
@@ -118,7 +129,6 @@ def jobTaskMetrics(args):
          m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
          printMetricsMap(m)
 
-
 def jobStageMetrics(args):
    result = 0
    data = metricsInternal(args.appId, "jobs", status='running')
@@ -161,6 +171,8 @@ def getAllExecutorMetrics(data):
     m['spark_executor_usedOnHeap_gt50percent'] = usedOnHeapGt50
     m['spark_executor_usedOffHeap_gt50percent'] = usedOffHeapGt50
     m['spark_executor_usage_percent'] = int(float(totalActTask)/float(totalMaxTask)*100)
+    if m['spark_executor_usage_percent'] > 100:
+        logging.error(data)
     return m
 
 def executorMetrics(args):
@@ -227,6 +239,7 @@ def commonArgs(parser):
    parser.add_argument("--debug", action="store_true", help="Enable debug, default is false")
 
 if __name__=="__main__":
+   logSetup()
    parser = argparse.ArgumentParser('Spark status monitor')
 
    subparser = parser.add_subparsers(dest="command")
