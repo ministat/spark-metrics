@@ -2,6 +2,7 @@ import argparse
 import json
 import requests
 import sys
+from six import iteritems
 
 RESOUCE_MGR_URL="https://hermes-rno-rm-2.vip.hadoop.ebay.com:50030/proxy"
 
@@ -49,6 +50,7 @@ STAGE_STAT_DETAIL_MAP={
     'spark_stage_diskBytesSpilled':'diskBytesSpilled'
 }
 
+
 def getBaseUrl(appId):
    return "{res_url}/{app}/api/v1/applications/{app}".format(res_url=RESOUCE_MGR_URL, app=appId)
 
@@ -75,12 +77,15 @@ def getMetrics(jobJson, statArgs, statMap):
        task += t[metricsStat]
    return task
 
-def metricsInternal(appId, status, jobsOrStages):
+def metricsInternal(appId, jobsOrStages, **kwargs):
    data = ""
    url = getBaseUrl(appId)
    fullUrl = url + "/" + jobsOrStages
-   queryParam = {'anonymous': 'true', 'status': status}
-   response = requests.get(fullUrl, verify=False, params=queryParam)
+   queryParam = {'anonymous': 'true'}
+   if kwargs:
+      for k,v in iteritems(kwargs):
+          queryParam[k] = v
+   response = requests.get(fullUrl, verify=False, params=queryParam, timeout=5)
    if response != None and response.status_code == 200:
       data = response.json()
    else:
@@ -98,7 +103,7 @@ def printMetricsMap(m):
 
 def jobTaskMetrics(args):
    result = 0
-   data = metricsInternal(args.appId, 'running', "jobs")
+   data = metricsInternal(args.appId, "jobs", status='running')
    if data:
       if args.debug:
          print(data)
@@ -113,9 +118,10 @@ def jobTaskMetrics(args):
          m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
          printMetricsMap(m)
 
+
 def jobStageMetrics(args):
    result = 0
-   data = metricsInternal(args.appId, 'running', "jobs")
+   data = metricsInternal(args.appId, "jobs", status='running')
    if data:
       if args.debug:
          print(data)
@@ -123,15 +129,56 @@ def jobStageMetrics(args):
          m = getAllMetrics(data, JOB_STAGE_STAT_MAP)
          printMetricsMap(m)
       else:
-         result = getMetrics(data, args.stageStatus, STAGE_STAT_MAP)
+         result = getMetrics(data, args.stageStatus, STAGE_STAT_MAP) 
          print(result)
    else:
       if args.allStatus:
          m = getEmptyAllMetrics(JOB_STAGE_STAT_MAP)
          printMetricsMap(m)
 
+def getAllExecutorMetrics(data):
+    m={}
+    exeCnt=len(data)
+    m['spark_executor_count'] = exeCnt
+    usedOnHeapGt50 = 0
+    usedOffHeapGt50 = 0
+    totalActTask = 0
+    totalMaxTask = 0
+    for d in data:
+        if d['id'] != "driver":
+           totalActTask += d['activeTasks']
+           totalMaxTask += d['maxTasks']
+           usedOnHeap = float(d['memoryMetrics']["usedOnHeapStorageMemory"])
+           usedOffHeap = float(d['memoryMetrics']["usedOffHeapStorageMemory"])
+           totalOnHeap = float(d['memoryMetrics']["totalOnHeapStorageMemory"])
+           totalOffHeap = float(d['memoryMetrics']["totalOffHeapStorageMemory"])
+           if usedOnHeap / totalOnHeap > 0.5:
+              usedOnHeapGt50 += 1
+           if usedOffHeap / totalOffHeap > 0.5:
+              usedOffHeapGt50 += 1
+        else:
+           m['spark_driver_memusage_percent'] = int(float(d['memoryUsed'])/float(d['maxMemory'])*100)
+    m['spark_executor_usedOnHeap_gt50percent'] = usedOnHeapGt50
+    m['spark_executor_usedOffHeap_gt50percent'] = usedOffHeapGt50
+    m['spark_executor_usage_percent'] = int(float(totalActTask)/float(totalMaxTask)*100)
+    return m
+
+def executorMetrics(args):
+    result = 0
+    data = metricsInternal(args.appId, "executors")
+    if data:
+       if args.allStatus:
+          m = getAllExecutorMetrics(data)
+          printMetricsMap(m)
+       if args.debug:
+          print(data)
+    else:
+       if args.allStatus:
+          m = getAllExecutorMetrics([])
+          printMetricsMap(m)
+
 def jobMetrics(args):
-    data = metricsInternal(args.appId, args.status, "jobs")
+    data = metricsInternal(args.appId, "jobs", status=args.status)
     if data:
       for d in data:
           print("submissionTime: {st}, stages: {stages}, activeStages: {acts}, failedStages: {fs}, completedStages: {cs}, skippedStages: {sks}, task: {t}, activeTask: {at}, completedTask: {ct}, failedTask: {ft}, skippedTask: {skt}"
@@ -150,7 +197,7 @@ def jobMetrics(args):
          print(data)
 
 def stageMetrics(args):
-   data = metricsInternal(args.appId, args.status, "stages")
+   data = metricsInternal(args.appId, "stages", status=args.status)
    if data:
       if args.simplePrint:
           for d in data:
@@ -208,6 +255,10 @@ if __name__=="__main__":
    jobStageParser.set_defaults(func=jobStageMetrics)
    commonArgs(jobStageParser)
 
+   executorParser = subparser.add_parser('executor', help='Get statistic information for executors')
+   executorParser.add_argument('--allStatus', action="store_true", help="Collect all status related to executors", default=False)
+   executorParser.set_defaults(func=executorMetrics)
+   commonArgs(executorParser)
    if len(sys.argv) <= 1:
       sys.argv.append('--help')
 

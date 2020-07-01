@@ -25,4 +25,8 @@ function get_all_stages_active() {
   curl -iLk -X GET ${baseUrl}/stages?anonymous=true&status=active
 }
 
-
+function get_executors() {
+  local appId=$1
+  local baseUrl=$(get_base_url $appId)
+  curl -iLk -X GET ${baseUrl}/executors?anonymous=true
+}

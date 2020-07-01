@@ -23,8 +23,10 @@ do
    stageMetrics=$(python3.5 spark/spark.py jobStage --appId $appId --allStatus 2>/dev/null)
    taskMetrics=$(python3.5 spark/spark.py jobTask --appId $appId --allStatus 2>/dev/null)
    stageDetailsMetrics=$(python3.5 spark/spark.py stage --appId $appId --allStatus 2>/dev/null)
+   executorMetrics=$(python3.5 spark/spark.py executor --appId $appId --allStatus 2>/dev/null)
    generate_prometheus_metrics $stageMetrics $queue
    generate_prometheus_metrics $taskMetrics $queue
    generate_prometheus_metrics $stageDetailsMetrics $queue
+   generate_prometheus_metrics $executorMetrics $queue
 done
 
