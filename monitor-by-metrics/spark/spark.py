@@ -54,8 +54,8 @@ STAGE_STAT_DETAIL_MAP={
 }
 
 def logSetup():
-   handler = handlers.RotatingFileHandler('spark-metrics.log', maxBytes=10**6, backupCount=5)
-   log_format = logging.Formatter('%(asctime)s program [%(process)d]: %(message)s', '%b %d %H:%M:%S')
+   handler = handlers.RotatingFileHandler('spark-metrics.log', maxBytes=10**7, backupCount=10)
+   log_format = logging.Formatter('%(asctime)s %(levelname)s [%(process)d]: %(message)s', '%b %d %H:%M:%S')
    log_format.converter = time.gmtime
    handler.setFormatter(log_format)
    logger = logging.getLogger()
@@ -129,6 +129,7 @@ def jobTaskMetrics(args):
          m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
          printMetricsMap(m)
 
+
 def jobStageMetrics(args):
    result = 0
    data = metricsInternal(args.appId, "jobs", status='running')
@@ -154,6 +155,7 @@ def getAllExecutorMetrics(data):
     usedOffHeapGt50 = 0
     totalActTask = 0
     totalMaxTask = 0
+    totalGCTime = 0
     for d in data:
         if d['id'] != "driver":
            totalActTask += d['activeTasks']
@@ -166,11 +168,14 @@ def getAllExecutorMetrics(data):
               usedOnHeapGt50 += 1
            if usedOffHeap / totalOffHeap > 0.5:
               usedOffHeapGt50 += 1
+           totalGCTime += d['totalGCTime']
         else:
            m['spark_driver_memusage_percent'] = int(float(d['memoryUsed'])/float(d['maxMemory'])*100)
+           m['spark_driver_totalGCTime'] = d['totalGCTime']
     m['spark_executor_usedOnHeap_gt50percent'] = usedOnHeapGt50
     m['spark_executor_usedOffHeap_gt50percent'] = usedOffHeapGt50
     m['spark_executor_usage_percent'] = int(float(totalActTask)/float(totalMaxTask)*100)
+    m['spark_executor_totalGCTime'] = totalGCTime
     if m['spark_executor_usage_percent'] > 100:
         logging.error(data)
     return m
