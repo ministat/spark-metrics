@@ -60,7 +60,7 @@ def logSetup():
    handler.setFormatter(log_format)
    logger = logging.getLogger()
    logger.addHandler(handler)
-   logger.setLevel(logging.DEBUG)
+   logger.setLevel(logging.INFO)
 
 def getBaseUrl(appId):
    return "{res_url}/{app}/api/v1/applications/{app}".format(res_url=RESOUCE_MGR_URL, app=appId)
@@ -129,7 +129,6 @@ def jobTaskMetrics(args):
          m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
          printMetricsMap(m)
 
-
 def jobStageMetrics(args):
    result = 0
    data = metricsInternal(args.appId, "jobs", status='running')
@@ -149,14 +148,24 @@ def jobStageMetrics(args):
 
 def getAllExecutorMetrics(data):
     m={}
-    exeCnt=len(data)
-    m['spark_executor_count'] = exeCnt
+    exeCnt = 0
     usedOnHeapGt50 = 0
     usedOffHeapGt50 = 0
     totalActTask = 0
     totalMaxTask = 0
     totalGCTime = 0
+    dead = 0
+    removeReasons = 0
+    explicitTerm = 0
     for d in data:
+        if not d['isActive']:
+           dead+=1
+           removeReasons+=1
+           removeReason = d['removeReason']
+           if removeReason.endswith("exited from explicit termination request."):
+               explicitTerm += 1
+        else:
+           exeCnt += 1
         if d['id'] != "driver":
            totalActTask += d['activeTasks']
            totalMaxTask += d['maxTasks']
@@ -172,6 +181,9 @@ def getAllExecutorMetrics(data):
         else:
            m['spark_driver_memusage_percent'] = int(float(d['memoryUsed'])/float(d['maxMemory'])*100)
            m['spark_driver_totalGCTime'] = d['totalGCTime']
+    m['spark_executor_deadCnt'] = dead
+    m['spark_executor_count'] = exeCnt
+    m['spark_executor_explicitTerminationCnt'] = explicitTerm
     m['spark_executor_usedOnHeap_gt50percent'] = usedOnHeapGt50
     m['spark_executor_usedOffHeap_gt50percent'] = usedOffHeapGt50
     m['spark_executor_usage_percent'] = int(float(totalActTask)/float(totalMaxTask)*100)
@@ -180,9 +192,16 @@ def getAllExecutorMetrics(data):
         logging.error(data)
     return m
 
-def executorMetrics(args):
-    result = 0
+def lostExecutors(args):
     data = metricsInternal(args.appId, "executors")
+    if data:
+       if args.debug:
+          print(data)
+    m = getDeadExecutorMetrics(data)
+    printMetricsMap(m)
+
+def executorMetrics(args):
+    data = metricsInternal(args.appId, "allexecutors")
     if data:
        if args.allStatus:
           m = getAllExecutorMetrics(data)
@@ -277,6 +296,8 @@ if __name__=="__main__":
    executorParser.add_argument('--allStatus', action="store_true", help="Collect all status related to executors", default=False)
    executorParser.set_defaults(func=executorMetrics)
    commonArgs(executorParser)
+
+   
    if len(sys.argv) <= 1:
       sys.argv.append('--help')
 
