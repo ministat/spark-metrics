@@ -12,7 +12,11 @@ function generate_prometheus_metrics() {
    do
       k=$(echo $m|awk -F = '{print $1}')
       v=$(echo $m|awk -F = '{print $2}')
-      echo $k{queue=\"$queue\"} $v
+      if [ "$v" != "" ]; then
+         echo $k{queue=\"$queue\"} $v
+      else
+         logger -t SPARK-METRICS "Fail to get valid metrics for queue $queue"
+      fi
    done
 }
 

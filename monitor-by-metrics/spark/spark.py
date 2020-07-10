@@ -169,14 +169,17 @@ def getAllExecutorMetrics(data):
         if d['id'] != "driver":
            totalActTask += d['activeTasks']
            totalMaxTask += d['maxTasks']
-           usedOnHeap = float(d['memoryMetrics']["usedOnHeapStorageMemory"])
-           usedOffHeap = float(d['memoryMetrics']["usedOffHeapStorageMemory"])
-           totalOnHeap = float(d['memoryMetrics']["totalOnHeapStorageMemory"])
-           totalOffHeap = float(d['memoryMetrics']["totalOffHeapStorageMemory"])
-           if usedOnHeap / totalOnHeap > 0.5:
-              usedOnHeapGt50 += 1
-           if usedOffHeap / totalOffHeap > 0.5:
-              usedOffHeapGt50 += 1
+           if 'memoryMetrics' not in d:
+              logging.error("No memory metrics: {d}".format(d=d))
+           else:
+              usedOnHeap = float(d['memoryMetrics']['usedOnHeapStorageMemory'])
+              usedOffHeap = float(d['memoryMetrics']["usedOffHeapStorageMemory"])
+              totalOnHeap = float(d['memoryMetrics']["totalOnHeapStorageMemory"])
+              totalOffHeap = float(d['memoryMetrics']["totalOffHeapStorageMemory"])
+              if usedOnHeap / totalOnHeap > 0.5:
+                 usedOnHeapGt50 += 1
+              if usedOffHeap / totalOffHeap > 0.5:
+                 usedOffHeapGt50 += 1
            totalGCTime += d['totalGCTime']
         else:
            m['spark_driver_memusage_percent'] = int(float(d['memoryUsed'])/float(d['maxMemory'])*100)
