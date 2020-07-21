@@ -57,7 +57,7 @@ def logSetup():
    handler = handlers.RotatingFileHandler('spark-metrics.log', maxBytes=10**7, backupCount=10)
    log_format = logging.Formatter('%(asctime)s %(levelname)s [%(process)d]: %(message)s', '%b %d %H:%M:%S')
    log_format.converter = time.gmtime
-   handler.setFormatter(log_format)
+   handler.setFormatter(log_format) 
    logger = logging.getLogger()
    logger.addHandler(handler)
    logger.setLevel(logging.INFO)
@@ -80,7 +80,7 @@ def getEmptyAllMetrics(statMap):
    for k,v in statMap.items():
        m[k]=0
    return m
-
+   
 def getMetrics(jobJson, statArgs, statMap):
    metricsStat = TASK_STAT_MAP[statArgs]
    task = 0
@@ -128,6 +128,7 @@ def jobTaskMetrics(args):
       if args.allStatus:
          m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
          printMetricsMap(m)
+      
 
 def jobStageMetrics(args):
    result = 0

@@ -64,6 +64,12 @@ function get_allexecutors() {
   curl -iLk -X GET ${baseUrl}/allexecutors?anonymous=true
 }
 
+function get_jobs() {
+  local appId=$1
+  local baseUrl=$(get_base_url $appId)
+  curl -iLk -X GET ${baseUrl}/jobs?anonymous=true
+}
+
 function get_stage_task_summary() {
   local appId=$1
   local stageId=$2

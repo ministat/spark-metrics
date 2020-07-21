@@ -9,4 +9,7 @@ echo $a
 
 baseUrl=$(get_base_url $a)
 echo $baseUrl
+
+get_jobs $a
+#get_executors $a
 #get_all_stages_active $a
