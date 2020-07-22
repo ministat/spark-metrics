@@ -9,7 +9,7 @@ hermes = hermes.Hermes("https://hermes-rno-rm-2.vip.hadoop.ebay.com:50030/proxy"
 apollo = apollo.Apollo("https://apollo-rno-shs-1.vip.hadoop.ebay.com:8080/api/v1/applications", 1)
 
 def command(args):
-   command = args.command.capitalize()
+   command = args.command[:1].upper() + args.command[1:]
    cluster = args.cluster
    parameter = param.Param(args)
    callfunc = "{c}.get{cmd}(parameter)".format(c=cluster,cmd=command)
@@ -53,6 +53,11 @@ if __name__=="__main__":
    taskParser.set_defaults(func=command)
    commonArgs(taskParser)
 
+   stageAnalysisParser = subparser.add_parser('stageAnalysis', help='Analyze the stages')
+   stageAnalysisParser.add_argument('--status', type=str, choices=['active','complete','pending','failed', 'all'], help="Specify the status, default is all", default='all')
+   stageAnalysisParser.add_argument('--saveTo', type=str, help='Specify where the csv data is saved to, default is stageAnalysis', default='stageAnalysis')
+   commonArgs(stageAnalysisParser)
+   stageAnalysisParser.set_defaults(func=command)
    if len(sys.argv) <= 1:
       sys.argv.append('--help')
 
