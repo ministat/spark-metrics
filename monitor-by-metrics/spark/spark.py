@@ -236,6 +236,14 @@ def jobMetrics(args):
       if args.debug:
          print(data)
 
+def countBroadcastExchange(data, dic):
+   beCount = 0
+   for d in data:
+      if d['status'] == 'ACTIVE' and 'description' in d and d['description'].startswith("broadcast exchange"):
+         beCount = beCount + 1
+   dic['spark_stage_broadcastExchange'] = beCount
+
+
 def stageMetrics(args):
    data = metricsInternal(args.appId, "stages", status=args.status)
    if data:
@@ -254,12 +262,14 @@ def stageMetrics(args):
                         ect=d['executorCpuTime']))
       if args.allStatus:
          m = getAllMetrics(data, STAGE_STAT_DETAIL_MAP)
+         countBroadcastExchange(data, m)
          printMetricsMap(m)
       if args.debug:
          print(data)
    else:
       if args.allStatus:
          m = getEmptyAllMetrics(STAGE_STAT_DETAIL_MAP)
+         countBroadcastExchange(data, m)
          printMetricsMap(m)
 
 def commonArgs(parser):
