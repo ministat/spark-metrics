@@ -4,6 +4,7 @@ import logging
 import math
 import numpy as np
 import operator
+import os
 import pandas as pd
 import requests
 import sys
@@ -33,6 +34,19 @@ class Base:
       self.STAGE_NUMTASKS_THRESHOLD = 200
       self.HERMES = 0
       self.APOLLO = 1
+      self.CPU_BOUND = 0
+      self.IO_BOUND = 1
+      self.MEM_BOUND = 2
+      self.LONG_DELAY = 3
+      self.MIX_BOUND = 10
+      self.STAGES_INFO_FILE = "stages.csv"
+      self.STAGES_GENERAL_INFO_FILE = "stages_info.csv"
+      self.STAGES_SKEW_FILE = "stages_skew.csv"
+      self.STAGES_CPU_RATE_FILE = "task_cpurate.csv"
+      self.STAGES_IO_RATE_FILE = "task_iorate.csv"
+      self.STAGES_TOTAL_CPUTIME_FILE = "total_cpu_time.csv"
+      self.STAGES_TOTAL_NONE_CPUTIME_FILE = "total_none_cpu_time.csv"
+      self.STAGES_DATA_SKEW_FILE_POSTFIX = "data_skew.csv"
       self.TASK_SUMMARY_KEYS =  ['diskBytesSpilled', 'executorBlockTime', 'executorCpuTime',
        'executorDeserializeCpuTime', 'executorDeserializeTime',
        'executorRunTime', 'executorWaitTime', 'gettingResultTime',
@@ -59,7 +73,11 @@ class Base:
        "jvmGcTime":"taskMetrics.jvmGcTime",
        "resultSerializationTime":"taskMetrics.resultSerializationTime",
        "shuffleReadMetrics.fetchWaitTime":"taskMetrics.shuffleReadMetrics.fetchWaitTime",
-       "shuffleWriteMetrics.writeTime":"taskMetrics.shuffleWriteMetrics.writeTime"
+       "shuffleWriteMetrics.writeTime":"taskMetrics.shuffleWriteMetrics.writeTime",
+       "shuffleWriteMetrics.writeBytes":"taskMetrics.shuffleWriteMetrics.bytesWritten",
+       #"shuffleReadMetrics.readBytes":"taskMetrics.shuffleReadMetrics.readBytes", // no matching item
+       "shuffleReadMetrics.remoteBytesRead":"taskMetrics.shuffleReadMetrics.remoteBytesRead",
+       "shuffleReadMetrics.remoteBytesReadToDisk":"taskMetrics.shuffleReadMetrics.remoteBytesReadToDisk",
      }
 
    def _get_utcnow_datatime(self):
@@ -152,7 +170,7 @@ class Base:
          return False
       maxExecutorRuntime = taskSumDf['executorRunTime'].values[0][4]
       tgtMetrics = taskSumDf[targetMetrics].values[0][4]
-      if maxExecutorRuntime > 0 and (tgtMetrics / maxExecutorRuntime > self.TIME_ISSUE_PERCENT_THRESHOLD):
+      if maxExecutorRuntime > 0 and ((tgtMetrics / maxExecutorRuntime) > self.TIME_ISSUE_PERCENT_THRESHOLD):
          return True
       return False
 
@@ -192,9 +210,12 @@ class Base:
              k.endswith('bytesWritten') or
              k.endswith('readBytes') or
              k.endswith('writeBytes') or
-             k.endswith('remoteBytesRead')):
-             if math.isclose(taskSumDf[k].values[0][4], 0) is False:
+             k.endswith('remoteBytesRead') or
+             k.endswith('remoteBytesReadToDisk')):
+             if taskSumDf[k].values[0][4] > 0:
                 ioMetric.append(k)
+      #for k in ioMetric:
+      #   print("== io metrics: {k}:{v}".format(k=k,v=taskSumDf[k].values[0][4]))
       return ioMetric
 
    def _displayImpactedMetric(self, dataSkew, timeSkew, timeIssue):
@@ -212,26 +233,63 @@ class Base:
       ioMetric = self._getIOMetrics(taskSumDf)
       return dataSkew,timeSkew,timeIssue,ioMetric
 
+   def _mkdirIfNotExist(self, dirname):
+      if not os.path.exists(dirname):
+         os.mkdir(dirname)
+
+   def _save_file(self, args, df, **fileInfo):
+      tgtDir = "."
+      if len(args.saveTo) > 0:
+         self._mkdirIfNotExist(args.saveTo)
+         tgtDir = args.saveTo
+         if len(args.queue) > 0:
+            tgtDir = os.path.join(args.saveTo, args.queue)
+            self._mkdirIfNotExist(tgtDir)
+      filename = fileInfo['filename']
+      s = ','
+      if 'sep' in fileInfo:
+         s = fileInfo['sep']
+      df.to_csv(os.path.join(tgtDir, filename), sep=s, index=False)
+
    def _getStageAnalysis(self, relativeUrl, args):
       ## get the stages metrics
       data = self._getStagesInternal(relativeUrl, args)
       if len(data) == 0:
          return
-      logging.info(data)
+      # logging.info(data)
+      if len(args.saveTo) > 0:
+         self._mkdirIfNotExist(args.saveTo)
       df = json_normalize(data=data)
       if args.debug:
          print(df)
-      filteredDf = df.loc[(df['executorRunTime'] > 0) & (df['executorCpuTime'] > 0)]
+      #notFinishedDf = df.loc[(df['executorRunTime'] == 0)]
+      #if notFinishedDf.empty == False:
+      #   print("== not finished stages ==")
+      #   print(notFinishedDf[['stageId','status','executorRunTime']])
+      #filteredDf = df.loc[(df['executorRunTime'] > 0) & (df['executorCpuTime'] > 0)]
+      filteredDf = df
       ## save the stages metrics
-      if len(args.saveTo) > 0:
-         now = self._get_utcnow_datatime()
-         filteredDf.to_csv("{p}_{s}".format(p=now,s=args.saveTo), sep='|')
+      #if len(args.saveTo) > 0:
+      now = self._get_utcnow_datatime()
+      stagesFile = "{p}_{s}".format(p=now, s=self.STAGES_INFO_FILE)
+      self._save_file(args, filteredDf, filename=stagesFile, sep='|')
+         #filteredDf.to_csv(os.path.join(args.saveTo, stagesFile), sep='|')
+      stageInfoDf = pd.DataFrame()
       finalDf = pd.DataFrame()
+      cpuNodes = {}
+      ioNodes = {}
+      memNodes = {}
       ## iterate every stage and check the task summary metrics
       for index, row in filteredDf.iterrows():
          stageId = row['stageId']
          attemptId = row['attemptId']
          numTasks = row['numTasks']
+         stageInfoDic = {}
+         stageInfoDic['stageId'] = stageId
+         stageInfoDic['numTasks'] = numTasks
+         stageInfoDic['status'] = row['status']
+         stageInfoDic['submissionTime'] = row['submissionTime']
+
          if attemptId > 0:
             logging.warn("== stage {s} has {a} retry".format(s=stageId, a=attemptId))
          if numTasks <= self.STAGE_NUMTASKS_THRESHOLD:
@@ -251,57 +309,171 @@ class Base:
          if args.debug:
             print(taskDf)
          taskAnalysisRes = dict(self.findTaskSkew(taskDf))
-         self._getTaskAnalysis(baseRelativeUrl, parameter, taskAnalysisRes, taskDf)
+         self._analyzeTask(baseRelativeUrl, parameter, stageInfoDic, taskAnalysisRes, taskDf, cpuNodes, ioNodes, memNodes)
          analysisDf = pd.DataFrame([taskAnalysisRes])
          analysisDf['stageId'] = stageId
          finalDf = finalDf.append(analysisDf, ignore_index=True)
+         stageInfoDf = stageInfoDf.append(pd.DataFrame([stageInfoDic]), ignore_index=True)
       print(finalDf)
-      if len(args.saveTo) > 0:
-         finalDf.to_csv(args.saveTo)
+      self._save_file(args, finalDf, filename=self.STAGES_SKEW_FILE)
+      self._save_file(args, stageInfoDf, filename=self.STAGES_GENERAL_INFO_FILE)
+      self._hotHostsAggr(args, cpuNodes, ioNodes, memNodes)
 
-   def _getTaskAnalysis(self, baseRelativeUrl, parameter, taskSumDic, taskSumDf):
+   def _analyzeTask(self, baseRelativeUrl, parameter, stageInfoDic, taskSumDic, taskSumDf, cpuNodes, ioNodes, memNodes):
       dataSkew, timeSkew, timeIssue, ioMetric = self._pickupImpactedMetric(taskSumDic, taskSumDf)
+      stageInfoDic['dataSkew'] = 0 if len(dataSkew) == 0 else 1
+      self._initIntensiveType(stageInfoDic)
       if parameter.debug:
          self._displayImpactedMetric(dataSkew, timeSkew, timeIssue)
+      parameter.display = 'list'
+      data = self._getTasksInternal(baseRelativeUrl, parameter)
+      if len(data) == 0:
+         return
+      df = json_normalize(data=data)
       ## check slow node if there is no data skew
       if len(dataSkew) == 0:
-         parameter.display = 'list'
-         data = self._getTasksInternal(baseRelativeUrl, parameter)
-         if len(data) == 0:
-            return
-         df = json_normalize(data=data)
-         #simpleDf = self._renameTaskColumns(df)
-         self._listTaskLongTimeNodes(df, timeIssue)
-         self._findIntensiveType(parameter.stageId, df, timeIssue)
-         self._sortCPURate(df)
-         self._sortIORate(df, ioMetric)
+         self._listTaskLongTimeNodes(df, parameter, timeIssue)
+         intensiveType = self._findIntensiveType(parameter.stageId, df, timeIssue, stageInfoDic)
+         self._sortCPURate(df, parameter, intensiveType, cpuNodes, ioNodes, memNodes)
+         self._sortIORate(df, parameter, ioMetric)
+      else:
+         self._save_file(parameter, df, filename="{stage}_{p}".format(stage=parameter.stageId, p=self.STAGES_DATA_SKEW_FILE_POSTFIX))
+         logging.warn("== data skew occurs: {d}".format(d=dataSkew))
+         print(df)
 
-   def _listTaskLongTimeNodes(self, df, timeIssueMetrics):
-      taskMetrics = ['host', 'duration', 'status', 'taskMetrics.executorRunTime']
+
+   def _listTaskLongTimeNodes(self, df, param, timeIssueMetrics):
+      taskMetrics = ['host', 'duration', 'status',
+                     #'taskMetrics.executorRunTime'
+                    ]
       for m in timeIssueMetrics:
           if m in self.TASK_SUMMARY_TO_LIST_MAP:
              taskMetrics.append(self.TASK_SUMMARY_TO_LIST_MAP[m])
       durMean = df['duration'].mean()
       filterDf = df[df['duration'] > durMean]
+      printDf = filterDf.sort_values('duration',ascending=False)[taskMetrics]
+      stageId = param.stageId
+      self._save_file(param, printDf, filename="{s}_duration.csv".format(s=stageId))
+      #printDf.to_csv(os.path.join(param.saveTo, "{s}_duration.csv".format(s=stageId)))
       print("   ****** sort tasks by duration (descending) ******   ")
-      print(filterDf.sort_values('duration',ascending=False)[taskMetrics])
+      print(printDf)
 
-   def _findIntensiveType(self, stageId, df, timeIssueMetrics):
-      taskMetrics = ['host', 'duration', 'status']
+
+   def _initIntensiveType(self, stageInfoDf):
+      stageInfoDf['CPUBound'] = 0
+      stageInfoDf['MemBound'] = 0
+      stageInfoDf['IOBound'] = 0
+      stageInfoDf['ResourceLimit'] = 0
+      stageInfoDf['MixBound'] = 0
+
+   def _findIntensiveType(self, stageId, df, timeIssueMetrics, stageInfoDf):
       if 'executorCpuTime' in timeIssueMetrics:
          print("== stage {s} is CPU intensive".format(s=stageId))
-      else:
-         print("== stage {s} is IO intensive".format(s=stageId))
+         stageInfoDf['CPUBound'] = 1
+         return self.CPU_BOUND
+      elif 'jvmGcTime' in timeIssueMetrics:
+         print("== stage {s} is Mem intensive".format(s=stageId))
+         stageInfoDf['MemBound'] = 1
+         return self.MEM_BOUND
+      elif ('launchDelay' in timeIssueMetrics) or ('schedulerDelay' in timeIssueMetrics):
+         print("== stage {s} has long time delay to run".format(s=stageId))
+         stageInfoDf['ResourceLimit'] = 1
+         return self.LONG_DELAY
+      elif len(timeIssueMetrics) > 0:
+         print("== stage {s} is IO intensive: {m}".format(s=stageId,m=timeIssueMetrics))
+         stageInfoDf['IOBound'] = 1
+         return self.IO_BOUND
+      stageInfoDf['MixBound'] = 1
+      return self.MIX_BOUND
 
-   def _sortCPURate(self, df):
+   def _isExecutorTimeNaN(self, df):
+      nanRunTime = df['taskMetrics.executorRunTime'].isnull().sum()
+      nanCpuTime = df['taskMetrics.executorCpuTime'].isnull().sum()
+      if nanRunTime > 0 or nanCpuTime > 0:
+         return True
+      else:
+         return False
+
+   def _sortCPURate(self, df, parameter, intensiveType, cpuNodesDic, ioNodesDic, memNodesDic):
+      ## record the hot nodes for specific resource bound
+      if self._isExecutorTimeNaN(df):
+         logging.warn("Task executor RunTime/CpuTime is NaN")
+         df = df.dropna(axis=0,how='any')
+      if intensiveType == self.MEM_BOUND:
+         df['taskJvmGcRate'] = df['taskMetrics.jvmGcTime'] / df['taskMetrics.executorRunTime']
+         gcSortedDf = df.sort_values('taskJvmGcRate',ascending=False).dropna()
+         for i, r in gcSortedDf.iterrows():
+            host = r['host']
+            jvmGcTime = r['taskMetrics.jvmGcTime']
+            if host in memNodesDic:
+               memNodesDic[host] += jvmGcTime
+            else:
+               memNodesDic[host] = jvmGcTime
+      elif intensiveType == self.IO_BOUND:
+         df['taskNoneCPUTimeRate'] = (df['taskMetrics.executorRunTime'] - df['taskMetrics.executorCpuTime']) / df['taskMetrics.executorRunTime']
+         noneCpuDf = df.sort_values('taskNoneCPUTimeRate',ascending=False).dropna()
+         for i, r in noneCpuDf.iterrows():
+           host = r['host']
+           noneCpuTime = r['taskMetrics.executorRunTime'] - r['taskMetrics.executorCpuTime']
+           if host in ioNodesDic:
+              ioNodesDic[host] += noneCpuTime
+           else:
+              ioNodesDic[host] = noneCpuTime
       if self.cluster == self.APOLLO:
-         df['taskCpuRate'] = df['taskMetrics.executorCpuTime'] / 100000 / df['taskMetrics.executorRunTime']
+         df['taskCpuRate'] = df['taskMetrics.executorCpuTime'] / 1000000 / df['taskMetrics.executorRunTime']
       elif self.cluster == self.HERMES:
          df['taskCpuRate'] = df['taskMetrics.executorCpuTime'] / df['taskMetrics.executorRunTime']
-      print("   ****** sort tasks by CPU rate ******   ")
-      print(df.sort_values('taskCpuRate',ascending=False)[['host','duration','status','taskCpuRate','taskMetrics.executorRunTime','taskMetrics.executorCpuTime']])
+      cpuSortedDf = df.sort_values('taskCpuRate',ascending=False)
+      for i, r in cpuSortedDf.iterrows():
+         host = r['host']
+         cputime = int(r['taskMetrics.executorCpuTime'])
+         if cputime == 0:
+            continue
+         if self.cluster == self.APOLLO:
+            cputime = cputime / 1000000
+         if host in cpuNodesDic:
+            cpuNodesDic[host] += cputime
+         else:
+            cpuNodesDic[host] = cputime
 
-   def _sortIORate(self, df, ioMetric):
+      bound = "Mix bound"
+      if intensiveType == self.CPU_BOUND:
+         bound = "CPU bound"
+      elif intensiveType == self.MEM_BOUND:
+         bound = "Mem bound (JvmGC)"
+      elif intensiveType == self.IO_BOUND:
+         bound = "IO bound"
+      printedDf = cpuSortedDf[['host','duration','status','taskCpuRate','taskMetrics.executorRunTime','taskMetrics.executorCpuTime']] 
+      print("   ****** {s}: sort tasks by CPU rate ******   ".format(s=bound))
+      print(printedDf)
+      self._save_file(parameter, printedDf, filename="{s}_{p}".format(s=parameter.stageId, p=self.STAGES_CPU_RATE_FILE))
+
+   def _sortAndPrintDict(self, dic):
+      #print(dic)
+      sortedDic = sorted(dic.items(), key=lambda x: int(x[1]), reverse=True)
+      for k,v in sortedDic:
+         print("{k}: {v}".format(k=k,v=v))
+      return sortedDic
+
+   def _hotHostsAggr(self, args, cpuNodes, ioNodes, memNodes):
+      if len(cpuNodes) > 0:
+         print("=======================")
+         print("==== CPU hot nodes ====")
+         sortedCpuNodes = self._sortAndPrintDict(cpuNodes)
+         cpuTimePd = pd.DataFrame(sortedCpuNodes, columns=['Hosts','CpuTime(ms)'])
+         self._save_file(args, cpuTimePd, filename=self.STAGES_TOTAL_CPUTIME_FILE)
+      if len(ioNodes) > 0:
+         print("=======================")
+         print("==== IO hot nodes ====")
+         sortedIoNodes = self._sortAndPrintDict(ioNodes)
+         ioPd = pd.DataFrame(sortedIoNodes, columns=['Hosts','NoneCpuTime(ms)'])
+         self._save_file(args, ioPd, filename=self.STAGES_TOTAL_NONE_CPUTIME_FILE)
+      if len(memNodes) > 0:
+         print("=======================")
+         print("==== MEM hot nodes ====")
+         self._sortAndPrintDict(memNodes)
+
+   def _sortIORate(self, df, parameter, ioMetric):
       taskMetrics = []
       for m in ioMetric:
           if m in self.TASK_SUMMARY_TO_LIST_MAP:
@@ -310,7 +482,9 @@ class Base:
           rateMetric = "{o}.rateInKB".format(o=m)
           df[rateMetric] = df[m] / df['taskMetrics.executorRunTime']
           print("   ****** sort tasks by {m} ******   ".format(m=rateMetric))
-          print(df.sort_values(rateMetric,ascending=False)[['host','duration','status',rateMetric]])
+          printedDf = df.sort_values(rateMetric,ascending=False)[['host','duration','status',rateMetric]]
+          print(printedDf)
+          self._save_file(parameter, printedDf, filename="{s}_{p}".format(s=parameter.stageId, p=self.STAGES_IO_RATE_FILE))
 
    def _displayStages(self, normDf, args):
       df = normDf.rename(columns={"killedTasksSummary.Finish but did not commit due to another attempt succeeded":"killedButNoCommit",
@@ -416,7 +590,7 @@ class Base:
       durMean = simpleDf['duration'].mean()
       gcMean = simpleDf['task.jvmGcTime'].mean()
       filterDf = simpleDf[simpleDf.duration > durMean]
-      gcFilterDf = simpleDf[simpleDf.taskJvmGcTime > gcMean]
+      gcFilterDf = simpleDf[simpleDf['task.jvmGcTime'] > gcMean]
       simpleDf['taskInputReadRateInKB'] = simpleDf['task.inputMetrics.bytesRead'] / simpleDf['task.executorRunTime']
       print("")
       print("   ****** sort tasks by InputRead rate (K/B) ******   ")

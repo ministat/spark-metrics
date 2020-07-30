@@ -112,6 +112,18 @@ def printMetricsMap(m):
           res+=",{k1}={v1}".format(k1=k,v1=v)
    print(res)
 
+def calcuatePendingTasks(m):
+   numTask = m['spark_job_numTasks']
+   completedTask = m['spark_job_numCompletedTasks']
+   activeTask = m['spark_job_numActiveTasks']
+   pendingTask = numTask - completedTask - activeTask
+   if pendingTask > 0:
+      m['spark_job_numPendingTasks'] = pendingTask
+      m['spark_job_ratePendingTasks'] = pendingTask/activeTask if activeTask > 0 else 0
+   else:
+      m['spark_job_numPendingTasks'] = 0
+      m['spark_job_ratePendingTasks'] = 0
+
 def jobTaskMetrics(args):
    result = 0
    data = metricsInternal(args.appId, "jobs", status='running')
@@ -120,6 +132,7 @@ def jobTaskMetrics(args):
          print(data)
       if args.allStatus:
          m = getAllMetrics(data, JOB_TASK_STAT_MAP)
+         calcuatePendingTasks(m)
          printMetricsMap(m)
       else:
          result = getMetrics(data, args.taskStatus, TASK_STAT_MAP)
@@ -127,6 +140,7 @@ def jobTaskMetrics(args):
    else:
       if args.allStatus:
          m = getEmptyAllMetrics(JOB_TASK_STAT_MAP)
+         calcuatePendingTasks(m)
          printMetricsMap(m)
       
 

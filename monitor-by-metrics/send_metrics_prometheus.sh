@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 WORKDIR=`dirname $0`
 
 function send_to_spark_metrics_prometheus() {
