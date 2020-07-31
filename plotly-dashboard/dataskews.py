@@ -16,22 +16,22 @@ MATRIX_MAP_TO_TASK={
     "outputMetrics.bytesWritten":"taskMetrics.outputMetrics.bytesWritten"
 }
 LONG_NAME_TO_READABLE_NAME={
-    "taskMetrics.shuffleReadMetrics.remoteBytesRead.min":"shuffle remoteBytesRead min",
-    "taskMetrics.shuffleReadMetrics.remoteBytesRead.max":"shuffle remoteBytesRead max",
-    "taskMetrics.shuffleReadMetrics.remoteBytesRead.min.host":"shuffle remoteBytesRead min host",
-    "taskMetrics.shuffleReadMetrics.remoteBytesRead.max.host":"shuffle remoteBytesRead max host",
-    "taskMetrics.shuffleWriteMetrics.bytesWritten.min":"shuffle bytesWritten min",
-    "taskMetrics.shuffleWriteMetrics.bytesWritten.max":"shuffle bytesWritten max",
-    "taskMetrics.shuffleWriteMetrics.bytesWritten.min.host":"shuffle bytesWritten min host",
-    "taskMetrics.shuffleWriteMetrics.bytesWritten.max.host":"shuffle bytesWritten max host",
-    "taskMetrics.inputMetrics.bytesRead.min":"input bytesRead min",
-    "taskMetrics.inputMetrics.bytesRead.max":"input bytesRead max",
-    "taskMetrics.inputMetrics.bytesRead.min.host":"input bytesRead min host",
-    "taskMetrics.inputMetrics.bytesRead.max.host":"input bytesRead max host",
-    "taskMetrics.outputMetrics.bytesWritten.min":"output bytesWritten min",
-    "taskMetrics.outputMetrics.bytesWritten.max":"output bytesWritten max",
-    "taskMetrics.outputMetrics.bytesWritten.min.host":"output bytesWritten min host",
-    "taskMetrics.outputMetrics.bytesWritten.max.host":"output bytesWritten max host",
+    "taskMetrics.shuffleReadMetrics.remoteBytesRead.min":"rShuf remo min",
+    "taskMetrics.shuffleReadMetrics.remoteBytesRead.max":"rShuf remo max",
+    "taskMetrics.shuffleReadMetrics.remoteBytesRead.min.host":"rShufH remo min",
+    "taskMetrics.shuffleReadMetrics.remoteBytesRead.max.host":"rShufH remo max",
+    "taskMetrics.shuffleWriteMetrics.bytesWritten.min":"wShuf min",
+    "taskMetrics.shuffleWriteMetrics.bytesWritten.max":"wShuf max",
+    "taskMetrics.shuffleWriteMetrics.bytesWritten.min.host":"wShuf min host",
+    "taskMetrics.shuffleWriteMetrics.bytesWritten.max.host":"wShuf max host",
+    "taskMetrics.inputMetrics.bytesRead.min":"rInput min",
+    "taskMetrics.inputMetrics.bytesRead.max":"rInput max",
+    "taskMetrics.inputMetrics.bytesRead.min.host":"rInput min host",
+    "taskMetrics.inputMetrics.bytesRead.max.host":"rInput max host",
+    "taskMetrics.outputMetrics.bytesWritten.min":"wOutput min",
+    "taskMetrics.outputMetrics.bytesWritten.max":"wOutput max",
+    "taskMetrics.outputMetrics.bytesWritten.min.host":"wOutput min host",
+    "taskMetrics.outputMetrics.bytesWritten.max.host":"wOutput max host",
 }
 
 STAGE_SKEWS_FILE="stages_skew.csv"
@@ -73,14 +73,14 @@ def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
             imax = hostSkewsDf[tm].idxmax()
             imin = hostSkewsDf[tm].idxmin()
             if MERGE_MIN_MAX is True:
-                if "max" in dic:
-                    dic["max"] += "," + tm
-                else:
-                    dic["max"] = tm
-                if "min" in dic:
-                    dic["min"] += "," + tm
-                else:
-                    dic["min"] = tm
+                #if "max" in dic:
+                #    dic["max"] += "," + tm
+                #else:
+                #    dic["max"] = tm
+                #if "min" in dic:
+                #    dic["min"] += "," + tm
+                #else:
+                #    dic["min"] = tm
                 if "max.host" in dic:
                     dic["max.host"] += "," + hostSkewsDf.iloc[imax][['host']][0]
                 else:
@@ -89,6 +89,8 @@ def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
                     dic["min.host"] += "," + hostSkewsDf.iloc[imin][['host']][0]
                 else:
                     dic["min.host"] = hostSkewsDf.iloc[imin][['host']][0]
+                dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
+                dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
             else:
                 dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
                 dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
@@ -159,13 +161,13 @@ def get_data_skews_datatable(df):
         filter_action="native",
         sort_action="native",
         sort_mode="multi",
-        column_selectable="single",
-        row_selectable="multi",
+        #column_selectable="single",
+        #row_selectable="multi",
         page_size = 10,
         style_header={
             'backgroundColor': 'rgb(230, 230, 230)',
             'fontWeight': 'bold',
-            'whileSpace': 'normal'
+            'whileSpace': 'normal',
         },
         style_cell={
             'overflow': 'hidden',
