@@ -96,6 +96,24 @@ def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
                 dic["{m}.min.host".format(m=tm)] = hostSkewsDf.iloc[imin][['host']][0]
     return dic
 
+def gen_empty_data_skew(queue):
+    dic = {}
+    dic["queue"] = queue
+    dic["stageId"] = "N/A"
+    dic["sql"] = "N/A"
+    dic["submissionTime"] = "N/A"
+    if MERGE_MIN_MAX is True:
+        dic["max"] = "N/A"
+        dic["min"] = "N/A"
+        dic["max.host"] = "N/A"
+        dic["min.host"] = "N/A"
+    else:
+        dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
+        dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
+        dic["{m}.max.host".format(m=tm)] = hostSkewsDf.iloc[imax][['host']][0]
+        dic["{m}.min.host".format(m=tm)] = hostSkewsDf.iloc[imin][['host']][0]
+    df = pd.DataFrame()
+    return df.append(pd.Series(dic), ignore_index=True)
 
 def load_data_skew_stages(dataDir, selectedQueue):
     df = pd.DataFrame()

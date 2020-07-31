@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
 
-from dataskews import get_data_skews_datatable, load_data_skew_stages
+from dataskews import get_data_skews_datatable, load_data_skew_stages, gen_empty_data_skew
 
 def load_stages(dataDir):
     dic = {}
@@ -51,8 +51,7 @@ queue_list=[
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("data").resolve()
 dfDic = load_stages(DATA_PATH.joinpath("stageAnalysis"))
-#print(dfDic)
-#df = pd.read_csv(DATA_PATH.joinpath("stages_info.csv"))
+
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 )
@@ -223,7 +222,10 @@ app.layout = html.Div(
 )
 def update_data_skews_table(queue_selector):
     df = load_data_skew_stages(DATA_PATH.joinpath("stageAnalysis"), queue_selector)
-    return get_data_skews_datatable(df)
+    if df.empty == False:
+        return get_data_skews_datatable(df)
+    else:
+        return get_data_skews_datatable(gen_empty_data_skew(queue_selector))
 
 @app.callback(
     [
