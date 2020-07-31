@@ -1,0 +1,799 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"SELECT  lstg_type,
+        CASE 
+		WHEN COBRAND = 0 THEN 'DESKTOP' 
+		WHEN (COBRAND = 7 OR (COBRAND = 6 AND APP_ID = 50497)) THEN 'mWEB' 
+		WHEN (COBRAND = 6 AND APP_ID <> 50497) THEN 'APP' 
+		ELSE 'UNKNOWN' 
+	    END AS PLATFORM,
+	    sum(leads)
+FROM VEH_COBRAND_LEADS_v2
+WHERE lstg_type != 'Classified'
+and lead_date between '2019-07-21' AND '2019-07-27'
+GROUP BY 1,2"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T06:57:11.265GMT|116450642336|4841832070||0|run at AccessController.java:0|490|0|0|0|0|20500|0|0|[127788, 127771, 127785, 127780, 127783, 127768, 127777, 127779, 127784, 127769, 127775, 127782, 127778, 127774, 127770, 127772, 127787, 127786, 127773, 127781, 127767, 127776]|default|0|0|0|0|48429|ACTIVE|2020-07-30T06:57:11.212GMT
+[]|0|"SELECT  lstg_type,
+        CASE 
+		WHEN COBRAND = 0 THEN 'DESKTOP' 
+		WHEN (COBRAND = 7 OR (COBRAND = 6 AND APP_ID = 50497)) THEN 'mWEB' 
+		WHEN (COBRAND = 6 AND APP_ID <> 50497) THEN 'APP' 
+		ELSE 'UNKNOWN' 
+	    END AS PLATFORM,
+	    sum(leads)
+FROM VEH_COBRAND_LEADS_v2
+WHERE lstg_type != 'Classified'
+and lead_date between '2019-07-21' AND '2019-07-27'
+GROUP BY 1,2"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|843032|923485|0|2020-07-30T06:56:55.599GMT|61919796277|2275226159||0|run at AccessController.java:0|3|98|98|0|0|100|0|0|[127760, 127758, 127759]|default|0|0|21179332222|928464164|48423|ACTIVE|2020-07-30T06:56:55.584GMT
+[]|0|"CREATE TABLE IF NOT EXISTS  P_tony_hermes.wssp_program_acct_action_inr  
+using delta (
+select slr_id
+,sum(INR) as wh_INR
+,sum(INR_no_protection) as wh_INR_no_protection
+,count(*) as wh_trx
+,sum(gmv) as wh_gmv
+from P_tony_hermes.wssp_program_trx001_20200719
+where trans_dt between '2020-06-28' and '2020-07-11'
+and seller_location='GC' and item_location<>'GC'
+group by 1
+)"|"org.apache.spark.sql.delta.commands.ConvertToDeltaCommandBase$$anonfun$performConvert$1.apply(ConvertToDeltaCommand.scala:190)
+com.databricks.spark.util.DatabricksLogging$class.recordOperation(DatabricksLogging.scala:77)
+org.apache.spark.sql.delta.commands.ConvertToDeltaCommandBase.recordOperation(ConvertToDeltaCommand.scala:68)
+org.apache.spark.sql.delta.metering.DeltaLogging$class.recordDeltaOperation(DeltaLogging.scala:103)
+org.apache.spark.sql.delta.commands.ConvertToDeltaCommandBase.recordDeltaOperation(ConvertToDeltaCommand.scala:68)
+org.apache.spark.sql.delta.commands.ConvertToDeltaCommandBase.performConvert(ConvertToDeltaCommand.scala:190)
+org.apache.spark.sql.delta.commands.ConvertToDeltaCommandBase.run(ConvertToDeltaCommand.scala:104)
+org.apache.spark.sql.execution.command.CreateDataSourceTableAsSelectCommand.run(createDataSourceTables.scala:245)
+org.apache.spark.sql.execution.command.DataWritingCommandExec.sideEffectResult$lzycompute(commands.scala:111)
+org.apache.spark.sql.execution.command.DataWritingCommandExec.sideEffectResult(commands.scala:109)
+org.apache.spark.sql.execution.command.DataWritingCommandExec.executeCollect(commands.scala:126)
+org.apache.spark.sql.execution.adaptive.AdaptiveSparkPlanExec.executeCollect(AdaptiveSparkPlanExec.scala:244)
+org.apache.spark.sql.Dataset$$anonfun$6.apply(Dataset.scala:197)
+org.apache.spark.sql.Dataset$$anonfun$6.apply(Dataset.scala:197)
+org.apache.spark.sql.Dataset$$anonfun$52.apply(Dataset.scala:3302)
+org.apache.spark.sql.execution.SQLExecution$$anonfun$withNewExecutionId$1.apply(SQLExecution.scala:105)
+org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:156)
+org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:91)
+org.apache.spark.sql.Dataset.withAction(Dataset.scala:3301)
+org.apache.spark.sql.Dataset.<init>(Dataset.scala:197)"|0|0|0|0|0|2020-07-30T06:56:52.456GMT|0|0||0|apply at DatabricksLogging.scala:77|1|0|0|0|0|1|0|0|[127743, 127741, 127742]|default|1793|31|0|0|48416|ACTIVE|2020-07-30T06:56:52.448GMT
+[]|0|"select count(item_id)
+from itm2
+where lower(Gender) in ('unspecified')	
+ 		and lower(types) in (lower('Gender-Specified-Only'), lower('NA'))
+ 		and lower(tag_value_std) in (lower('unbranded'),lower('undisclosed'),lower('unlisted'),lower('unknown'))"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T06:56:49.715GMT|0|0||0|run at AccessController.java:0|1|0|0|0|0|1|0|0|[127734, 127731, 127732, 127733]|default|147205|2495|0|0|48411|ACTIVE|2020-07-30T06:56:49.649GMT
+[]|0|"CREATE TEMPORARY TABLE P_SIQI_ROUTINE_T.GMV
+AS
+(
+SELECT
+
+CASE WHEN  BBE.ITEM_LSTD_SITE_ID IN (0,100) THEN 'US'                                          
+     WHEN  BBE.ITEM_LSTD_SITE_ID IN (3) THEN 'UK'                                           
+     WHEN  BBE.ITEM_LSTD_SITE_ID IN (77) THEN 'DE'                                         
+     WHEN  BBE.ITEM_LSTD_SITE_ID IN (15) THEN 'AU'                                
+     ELSE 'other' 
+END AS LSTG_SITE,
+
+case when  cate.bsns_vrtcl_name in ('Parts & Accessories') then   'D. P&A'
+            when  cate.bsns_vrtcl_name in ('Business & Industrial') then   'E. B&I'
+            when  cate.bsns_vrtcl_name in ('Home & Garden') then   'C. H&G'
+            when  cate.bsns_vrtcl_name in ('Electronics') then   'A. TECH'
+            when  cate.bsns_vrtcl_name in ('Fashion') then   'B. Fashion'
+            when  cate.bsns_vrtcl_name in ('Lifestyle') then   'F. Lifestyle'
+            when  cate.bsns_vrtcl_name in ('Collectibles') then   'G. Collectibles'
+            when  cate.bsns_vrtcl_name in ('Media') then   'H. Media'
+                  else 'I. OTHERS'
+END AS VERTICAL, 
+
+SUM(CAST(BBE.ITEM_PRICE_NUM AS decimal(18,2))*CAST(BBE.ITEM_SOLD_QTY AS decimal(18,2))  *CAST(LPR.CURNCY_PLAN_RATE AS decimal(18,2))) AS GMV
+
+FROM  ( SELECT BBE.Slr_id
+            , BBE.ITEM_LSTD_SITE_ID
+            , BBE.ITEM_CNTRY_ID
+            , BBE.ITEM_PRICE_NUM
+            , BBE.ITEM_SOLD_QTY
+			, BBE.TRANS_DT
+			, BBE.rprtd_wacko_yn_ind
+			, BBE.CK_WACKO_YN_IND
+			, BBE.LSTG_CURNCY_ID
+			, BBE.leaf_categ_id
+			, BBE.trans_id
+         FROM PRS_RESTRICTED_V.EBAY_TRANS_RLTD_EVENT  BBE 
+         where
+       BBE.AUCT_TYPE_CODE NOT IN (10,12,13,15,-3,-4,-5)
+       and BBE.BBE_ELGB_TRANS_IND = 1
+	   and BBE.slr_cntry_id in (45)
+	   and BBE.TRANS_DT >= (select distinct retail_start_date from dw_cal_dt where age_for_rtl_week_id = -30)
+	   and BBE.TRANS_DT <=(select distinct retail_wk_end_date from dw_cal_dt where age_for_rtl_week_id = -1)
+	   AND COALESCE(rprtd_wacko_yn_ind, CK_WACKO_YN_IND) = 'N' 
+     ) BBE 
+JOIN SSA_CURNCY_PLAN_RATE_DIM LPR ON BBE.LSTG_CURNCY_ID = LPR.CURNCY_ID
+LEFT JOIN DW_CATEGORY_GROUPINGS Cate ON cate.site_id = BBE.ITEM_LSTD_SITE_ID 
+AND cate.leaf_categ_id = BBE.leaf_categ_id
+AND cate.sap_category_id NOT IN (5,7,41,23,-999)
+
+GROUP BY 1,2
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|11935|139361|0|2020-07-30T06:56:49.494GMT|0|0||0|run at AccessController.java:0|4|39|39|0|0|43|33674|40|[127715, 127714]|default|21427609|197901|0|0|48407|ACTIVE|2020-07-30T06:56:49.387GMT
+[]|0|"select count(*)
+from
+    (select * from P_zhiyaochen_T.tmp_czy_base_transaction_table_1 
+	where SRC_CRE_DT between '2020-04-01' and '2020-04-30' ) odr left join
+    (select
+         wllt_id
+         , token_id
+         , bin_range
+         , src_cre_dt
+     from
+         DW_PG_SCRTCH_WLLT 
+		 where SRC_CRE_DT between '2020-04-01' and '2020-04-30' 
+		 and pymt_mthd_id = 1) tc
+on
+    odr.pymnt_mthd_type_id = 27 
+	and odr.remembered = 0 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = tc.wllt_id"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|397793|689437|0|2020-07-30T06:56:44.027GMT|0|0|6.0|0|run at AccessController.java:0|10|198|198|0|6|203|0|0|[127702, 127699, 127700, 127701, 127698, 127696, 127697]|default|2536294523|129212728|11681|198|48396|ACTIVE|2020-07-30T06:56:44.018GMT
+[]|0|"CREATE TABLE P_P_us_prop_base_T.ck_jun AS (
+	SELECT
+		CT.BUYER_ID, CT.BYR_CNTRY_ID, CT.SALE_TYPE, CT.ITEM_PRICE, CT.QUANTITY, CT.TOTAL_AMOUNT, CT.SHPMT_MTHD_ID, CT.PAID_AMT, CT.INSURANCE_FEE_AMT, CT.ACTL_SHPNG_COST_AMT, CT.BIN_YN_ID, 
+		CASE WHEN (CAST(CT.CK_FLAGS2 AS BIGINT) & 32768) = 32768 THEN 1 ELSE 0 END AS BO,
+		CASE WHEN(CAST(CT.CK_FLAGS6 AS INT) & 1048576) = 1048576 THEN 1 ELSE 0 END AS SIO
+	FROM
+		ACCESS_VIEWS.DW_CHECKOUT_TRANS CT
+		WHERE 
+		 CT.CREATED_DT > '2020-06-01' AND CT.CREATED_DT < '2020-07-01'
+		 AND CT.TRANSACTION_ID IN (
+		 	SELECT CK_TRANS_ID FROM P_P_us_prop_base_T.credits_fees_jul01 WHERE CK_TRANS_ID > 0
+		 )
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|2673125|5347255|0|2020-07-30T06:56:42.410GMT|0|0|5.0|0|run at AccessController.java:0|2|4999|4999|16|5|5000|48488401|1909246|[127692, 127691]|default|13460748388|192383715|0|0|48392|ACTIVE|2020-07-30T06:56:42.344GMT
+[]|0|"Generating download files with arguments [null, SELECT clsfd_sum_dt
+  ,clsfd_site_id
+  ,experience
+   ,COUNT(clsfd_sum_dt)
+   ,COUNT(CLSFD_SITE_ID)
+   ,COUNT(experience)  
+FROM traffic
+group by 1,2,3, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|19788689|23189247|0|2020-07-30T06:56:02.657GMT|106919059666|4109406764||0|run at AccessController.java:0|493|717|717|0|0|1291|0|0|[127642, 126551, 126046, 126664, 127111, 125932, 125918, 126793, 125782, 126160, 125759, 125922, 126438, 126957, 126241, 126168, 127122, 126606, 126779, 126088, 125636, 126946, 126037, 126774, 126064, 125806, 125779, 126690, 126235, 125958, 125730, 126157, 126538, 126015, 127033, 126766, 126879, 126982, 125735, 127067, 126729, 126744, 126147, 125838, 126120, 126300, 126937, 126423, 126615, 126296, 127078, 126104, 126066, 126017, 126334, 126685, 126912, 126553, 126757, 126194, 126974, 125763, 126529, 126775, 125876, 126480, 126473, 126532, 126517, 126839, 126305, 126463, 126872, 126840, 126092, 125843, 126933, 126358, 125625, 125712, 126002, 126139, 126486, 125940, 125817, 126073, 126367, 125772, 125775, 126549, 127091, 125708, 127090, 126942, 125819, 125963, 125743, 125626, 126285, 125839, 125865, 125683, 126470, 126640, 126348, 126649, 126167, 126278, 126080, 125856, 125705, 126007, 125813, 126429, 126322, 126299, 126375, 126799, 125955, 127103, 126431, 125713, 127115, 125699, 125831, 126027, 126426, 126924, 127081, 125952, 125987, 126699, 125909, 126624, 126680, 125933, 126914, 125914, 125719, 126940, 125753, 126391, 126598, 126607, 126571, 126836, 126057, 126000, 125733, 126628, 126991, 126403, 126541, 126667, 126356, 126889, 127050, 126179, 126449, 126770, 126166, 127038, 126306, 126956, 126370, 126467, 125871, 126490, 125650, 125658, 127106, 127112, 126308, 126721, 127110, 126524, 126182, 126489, 126657, 125811, 126842, 126177, 126342, 125770, 126360, 125783, 126237, 126755, 125921, 125938, 126939, 125916, 127054, 126915, 126152, 125989, 126502, 126265, 126896, 126059, 126106, 126688, 125966, 126727, 125693, 125647, 126590, 126437, 125996, 125815, 126204, 126499, 125877, 126292, 125842, 127003, 125720, 125698, 126030, 126203, 126543, 126990, 127061, 125824, 125929, 126737, 125744, 125745, 126170, 126364, 126301, 126504, 127041, 126385, 126814, 126149, 126691, 126373, 126900, 126825, 126838, 126833, 126863, 127046, 126311, 126684, 126372, 126114, 127019, 126714, 126108, 126009, 125671, 126023, 126562, 125956, 126949, 127124, 126392, 126409, 125861, 126687, 126797, 125892, 126376, 125766, 125773, 126815, 127047, 126302, 126368, 126212, 126125, 125895, 126648, 126117, 127104, 126625, 126845, 126970, 126287, 126122, 126678, 126984, 126001, 125794, 126045, 125884, 126475, 126862, 126189, 126481, 126623, 126718, 126959, 125997, 126540, 126153, 127052, 126067, 125834, 125886, 127076, 127020, 125894, 126221, 126597, 126411, 125898, 126602, 126652, 125787, 126233, 126248, 125755, 126561, 126454, 127065, 126821, 127068, 126225, 126928, 126442, 126988, 126112, 126531, 127029, 125707, 125657, 126756, 125995, 126935, 127066, 126599, 126564, 127123, 126021, 126274, 127109, 125882, 126310, 125869, 126698, 126269, 126236, 125771, 126936, 126619, 126550, 126275, 127001, 126633, 126010, 126804, 125910, 126826, 126877, 126217, 125718, 126613, 126290, 126717, 126094, 125950, 126443, 125799, 126053, 126135, 126686, 126244, 126883, 126456, 126764, 125885, 126393, 126932, 126844, 125704, 125803, 126604, 126951, 125928, 125696, 125769, 126493, 125964, 126953, 125923, 126746, 127092, 125734, 126783, 127071, 127117, 126734, 126972, 125774, 126796, 125662, 125975, 127000, 126962, 125937, 126528, 125792, 126617, 126934, 126312, 126786, 126344, 126229, 125661, 127026, 126695, 126401, 127062, 126566, 126968, 126629, 126164, 125807, 125855, 125959, 126506, 125920, 126601, 126976, 126072, 126986, 126369, 126460, 126710, 127040, 126647, 125728, 125931, 126361, 127064, 126785, 125655, 127057, 126345, 126720, 126719, 126662, 127108, 126338, 125946, 126266, 125791, 125810, 126210, 125761, 126457, 126520, 126635, 127022, 127014, 126544, 126523, 126005, 126738, 126498, 125746, 125820, 125915, 126592, 126215, 125751, 126352, 125967, 126239, 125706, 126542, 126569, 126858, 126964, 126321, 126503, 125679, 125951, 127025, 126450, 127063, 127102, 125887, 126191, 126702, 126397, 126906, 125796, 126890, 126439, 125993, 126961, 126240, 125827, 126637, 126723, 126728, 126587, 126289, 126856, 125891, 126277, 126777, 126907, 126776, 126512, 126725, 126249, 126111, 125991, 126987, 126745, 126548, 126876, 126653, 126383, 125737, 126577, 126631, 126705, 126143, 126414, 126966, 125934, 125786, 126500, 127070, 126835, 126284, 126124, 126563, 126065, 126430, 126733, 126920, 126682, 126406, 125947, 126830, 126184, 126521, 126176, 126055, 126496, 125822, 125726, 126644, 126387, 125645, 127036, 125944, 125765, 126841, 125816, 126722, 126955, 126902, 126105, 126223, 126018, 126462, 126716, 126837, 126753, 126441, 125830, 126097, 126142, 125889, 127075, 125686, 126087, 126921, 126918, 125721, 126056, 125749, 125635, 126459, 127035, 126588, 126526, 126013, 126340, 126421, 126279, 126424, 126434, 126791, 126898, 126226, 126471, 127008, 125961, 126199, 126477, 126419, 126259, 126137, 127083, 127069, 127037, 125846, 126995, 125672, 126014, 126848, 125982, 126132, 126257, 126163, 126127, 125709, 126222, 126402, 126847, 125637, 125648, 126063, 127093, 126034, 126455, 125740, 126822, 125732, 126555, 125968, 126715, 126917, 125748, 125873, 126323, 126171, 126609, 125954, 126198, 126665, 126929, 126320, 126853, 127055, 126485, 125665, 126709, 126832, 125837, 126834, 126386, 126082, 125646, 127087, 126029, 126405, 127085, 125642, 126407, 125988, 126466, 125653, 126227, 125767, 126118, 126997, 125651, 126169, 125965, 125697, 126919, 126829, 126899, 126091, 125689, 126100, 127084, 126052, 126539, 126192, 126938, 126989, 127053, 127034, 126349, 126977, 125854, 125640, 125731, 125676, 126251, 125900, 126398, 127012, 126336, 127094, 125860, 125986, 126554, 125850, 126074, 125848, 126303, 126947, 125789, 125781, 126099, 125747, 126740, 125905, 125949, 126395, 126788, 126904, 127077, 126573, 126452, 126159, 125758, 126190, 125664, 125960, 126150, 126185, 126792, 127074, 126693, 127113, 126156, 126488, 126144, 126963, 126552, 126054, 126070, 126712, 126689, 125935, 127116, 126400, 126612, 126353, 126410, 125723, 125760, 126519, 126743, 126658, 126901, 126093, 126440, 126422, 126769, 125908, 126681, 126742, 126016, 126019, 126655, 126790, 127048, 126978, 127099, 125818, 126787, 125984, 126316, 125710, 126335, 125826, 126558, 125893, 125716, 125858, 126451, 126739, 125980, 125825, 126487, 126622, 125883, 125678, 126036, 126432, 126611, 126960, 126634, 126849, 125809, 126812, 126817, 126283, 126497, 126646, 126031, 126873, 127051, 126501, 126677, 126696, 125911, 126897, 126314, 126925, 125888, 126636, 126351, 125675, 125864, 125930, 126453, 125979, 126661, 125945, 126188, 126620, 125785, 126355, 125941, 126508, 126679, 126576, 127082, 127089, 126262, 126948, 125631, 125879, 125998, 126186, 125874, 126325, 126271, 126469, 126704, 126379, 126433, 125750, 126530, 125804, 125970, 126175, 126741, 126641, 126365, 126304, 126309, 126418, 126537, 125674, 126584, 125969, 126232, 126276, 126319, 126865, 125890, 127013, 126565, 127060, 126119, 126436, 126116, 126213, 126855, 126567, 126268, 126672, 125643, 126399, 126768, 125800, 126568, 126706, 125868, 127049, 125862, 126676, 125870, 126465, 127080, 126254, 126196, 126286, 125624, 126195, 126724, 125741, 126891, 126039, 125663, 126331, 126969, 125828, 126663, 126025, 125976, 126024, 126476, 126141, 126731, 126894, 126810, 126084, 126671, 127578, 126028, 126208, 125722, 126711, 126642, 126533, 126357, 126668, 126992, 126513, 126973, 125695, 125688, 126492, 126893, 126362, 126435, 126394, 126187, 126095, 126536, 125878, 125881, 125667, 127072, 126085, 126600, 126378, 126675, 127007, 127044, 127009, 127011, 125801, 126864, 126913, 127114, 127120, 126004, 126505, 126579, 126993, 125790, 126101, 126133, 126580, 126062, 125942, 126747, 127023, 125994, 126994, 125805, 126514, 126643, 126944, 127027, 125703, 126930, 125919, 127096, 126339, 126205, 125795, 125845, 126035, 126131, 126824, 125656, 126129, 125673, 125907, 126632, 125927, 126252, 126260, 126871, 127005, 127056, 126692, 126038, 126823, 125666, 126026, 126735, 126582, 126086, 126754, 126058, 125680, 126151, 125632, 125836, 126773, 126758, 125776, 126350, 125738, 126522, 126468, 126859, 126985, 126765, 126081, 125768, 125788, 126861, 126880, 126707, 125896, 125844, 126077, 126083, 126593, 125669, 125913, 126616, 125641, 125644, 126282, 126998, 126910, 126121, 126495, 125714, 126174, 126697, 126813, 125687, 127097, 126330, 126318, 126803, 126474, 126293, 126363, 126572, 126207, 126870, 127032, 126846, 125875, 125802, 125684, 126180, 127121, 125711, 126126, 126708, 126750, 125926, 126556, 125953, 125936, 126183, 126214, 125823, 126068, 126138, 126860, 126874, 126155, 125739, 126780, 125780, 127100, 126781, 125904, 125972, 125992, 126507, 126044, 126380, 125682, 125757, 125812, 125841, 126428, 126461, 126583, 126382, 125902, 126802, 126596, 126464, 126954, 126807, 125985, 125897, 126238, 126866, 127118, 126123, 126908, 127073, 126581, 126006, 126109, 126110, 126162, 126413, 126761, 126224, 126621, 126771, 126916, 126172, 125906, 125962, 126996, 126557, 126136, 126950, 126446, 126396, 126216, 126660, 126875, 127006, 125797, 126574, 126980, 126042, 126343, 126851, 126032, 125638, 126806, 126267, 126656, 126264, 126778, 126048, 126061, 126887, 126261, 126516, 126420, 126941, 125724, 125974, 126478, 126748, 126850, 126831, 126545, 126892, 126377, 127042, 126003, 127577, 126049, 126666, 127015, 126669, 126389, 127016, 126197, 126148, 126559, 127021, 126181, 127039, 126154, 126280, 126816, 126448, 126412, 126374, 126943, 126854, 126096, 126200, 125660, 125849, 125847, 126444, 126294, 126749, 126805, 127079, 125702, 125725, 126146, 126366, 126975, 125717, 127086, 125852, 126605, 125924, 126243, 126578, 126228, 126161, 126627, 125764, 126482, 126128, 125832, 126255, 126494, 126560, 126388, 126772, 125867, 126043, 126447, 125990, 126022, 126923, 125971, 126090, 125973, 126857, 125925, 126888, 125692, 125901, 126535, 126527, 126060, 126247, 126878, 127017, 126867, 126078, 127024, 125701, 126272, 126683, 126730, 126800, 125628, 127031, 127043, 126650, 125863, 126713, 125715, 126651, 126736, 126509, 126618, 126313, 125857, 125630, 126882, 125814, 126263, 126971, 126895, 126515, 126795, 125999, 126337, 125866, 126041, 126079, 125957, 126868, 125939, 126931, 127030, 126327, 126333, 125736, 125742, 127058, 126952, 125627, 125808, 126071, 126245, 126595, 125829, 126752, 126427, 126206, 125798, 125793, 126219, 126927, 125977, 126416, 126673, 125872, 126700, 126328, 126113, 126828, 126008, 126315, 126979, 127010, 126273, 126811, 126827, 126483, 125690, 126178, 126645, 126820, 126759, 125677, 126347, 125633, 126075, 126140, 126107, 125668, 126371, 125833, 126220, 126011, 126415, 126458, 126484, 125983, 125649, 126510, 126076, 126211, 126012, 126726, 126102, 126603, 125729, 126158, 126253, 126789, 126307, 126909, 126246, 125784, 125629, 126594, 126242, 125778, 126381, 126885, 126326, 126202, 126479, 126639, 126098, 126881, 126965, 126903, 126050, 126614, 126630, 125659, 125917, 127095, 125821, 126417, 126798, 126472, 126230, 125634, 126359, 126911, 126193, 126586, 125851, 126608, 125899, 126103, 126209, 126425, 126843, 126767, 125752, 126051, 125681, 126869, 126258, 126818, 126819, 126298, 126905, 127101, 126324, 126145, 126201, 126130, 126317, 126546, 125756, 126967, 126884, 127028, 125762, 127045, 125654, 127088, 125835, 125700, 127059, 125691, 126346, 126659, 126999, 126390, 126701, 126115, 126922, 126288, 125853, 127018, 125685, 126341, 125859, 126638, 126408, 125880, 126981, 126808, 126945, 126020, 126297, 126547, 126784, 126654, 126958, 126069, 127107, 126511, 126525, 126674, 125670, 126801, 125639, 126852, 126534, 126281, 126295, 126234, 125903, 126033, 125652, 127004, 126354, 126134, 126332, 126763, 126751, 126329, 126173, 126762, 126491, 126575, 125978, 126591, 126270, 126404, 125694, 125777, 125981, 126703, 126760, 127119, 126165, 126585, 126694, 126782, 126445, 125727, 125754, 126040, 126983, 126384, 126809, 126670, 126218, 126089, 126570, 125912, 126047, 126732, 126626, 126231, 126886, 126794, 126518, 126610, 125948, 126256, 126250, 125943, 125840, 126589, 127105, 126291, 127098, 127002, 126926]|default|0|0|201122750051|1922868750|48359|ACTIVE|2020-07-30T06:56:02.623GMT
+[]|0|select  distinct count(*)/*page_name,site_id,user_id, a.slr_id, e.item_id, url_query_string,session_start_dt,referrer, guid, page_id*/ from UBI_V.UBI_EVENT e inner join access_views.dw_lstg_item a on e.user_id = a.slr_id where e.session_start_dt = '2020-07-06' and e.page_name = 'ViewBidsLogin'  and url_query_string LIKE '%_trksid=p2047675.l2564%' and CAST (sojlib.soj_nvl( e.url_query_string, 'item') as decimal(18,0)) = a.item_id|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|46492443|54517080|0|2020-07-30T06:55:19.471GMT|710136897902|57474754665||0|run at AccessController.java:0|495|7505|7505|0|0|10000|0|0|[127534, 127533, 127532, 127531, 127530]|default|0|0|442789|7505|47722|ACTIVE|2020-07-30T06:55:19.444GMT
+[]|0|"INSERT INTO P_DE_PROD_ANALYTICS_T.REWARDS_ACTIVATIONS (USER_ID, ACTIVATION_DT, ACTIVATION_TYPE)
+SELECT  sojlib.soj_nvl(soj, 'plusBenefitUserId') as  plusBenefitUserId,
+		session_start_dt,
+		sojlib.soj_nvl(soj, 'plusBenefitEvent') as plusBenefitEvent
+from UBI_V.UBI_EVENT_SKEW s
+where   page_id =2550541
+	and session_start_dt between date_sub(current_date,4) and  date_sub(current_date,2)
+	and s.site_id = 77 
+	and sojlib.soj_nvl(soj, 'plusBenefitEvent') = 'signUp'
+	and sojlib.soj_nvl(soj, 'plusBenefitType') = 'EBAYPOINTS'"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|6642769|61540132|0|2020-07-30T06:54:56.495GMT|8834792311410|11856875613||0|run at AccessController.java:0|491|2042|2042|0|0|6000|0|0|[127518, 127516, 127517, 127515, 127513, 127514]|default|0|0|0|0|47708|ACTIVE|2020-07-30T06:54:56.447GMT
+[]|0|"SELECT `custom_sql_query`.`ASP_BUCKET` AS `asp_bucket`,
+  `custom_sql_query`.`SLR_STD_LVL_DESC` AS `slr_std_lvl_desc`,
+  `custom_sql_query`.`cov_bucket` AS `cov_bucket`,
+  `custom_sql_query`.`edd` AS `edd`,
+  `custom_sql_query`.`eu_b2c_c2c_flag` AS `eu_b2c_c2c_flag`,
+  `custom_sql_query`.`item_cntry` AS `item_cntry`,
+  `custom_sql_query`.`late_deliveries` AS `late_deliveries`,
+  `custom_sql_query`.`non_risk_inr_count` AS `non_risk_inr_count`,
+  `custom_sql_query`.`retail_week` AS `retail_week`,
+  `custom_sql_query`.`retail_wk_end_date` AS `retail_wk_end_date`,
+  `custom_sql_query`.`retail_year` AS `retail_year`,
+  `custom_sql_query`.`rw` AS `rw`,
+  `custom_sql_query`.`rwed` AS `rwed`,
+  `custom_sql_query`.`ry` AS `ry`,
+  `custom_sql_query`.`slr_cntry` AS `slr_cntry`,
+  `custom_sql_query`.`tracked_txs` AS `tracked_txs`,
+  `custom_sql_query`.`trans_dt` AS `trans_dt`,
+  `custom_sql_query`.`txs` AS `txs`
+FROM (
+  SELECT  
+    cal.retail_year
+     ,cal.retail_week
+     ,trans_dt
+     ,t.retail_year as ry
+     ,t.retail_week as rw
+     ,cal.retail_wk_end_date
+     ,t.retail_wk_end_date as rwed
+     ,eu_b2c_c2c_flag
+     ,cov_bucket
+  	,ASP_BUCKET
+          ,a.SLR_STD_LVL_DESC
+     ,case  when item_cntry_id in(92,45,196) then 'GC' when item_cntry_id in(3) then 'UK' else 'Other' end  as item_cntry
+     ,case  when slr_cntry_id in(92,45,196) then 'GC' when slr_cntry_id in(3) then 'UK' else 'Other' end  as slr_cntry
+     ,cde_max_lcl_dt as edd
+     , count(*)  as txs
+     ,sum(case  when  ( ((inr_dt-cde_dt)<=14 and (rsk.item_id) is null) and  lower(final_claim_type) like lower('%INR%')) then 1 else 0 end ) as non_risk_inr_count
+     ,sum(case  when  ( ( ((dlvry_actl_in_5bsns_days) is not null and not_cncnld_flag=1) and (dlvry_dt) is not null) and dlvry_dt>cde_max_lcl_dt) then sold_item_qty else 0 end ) as late_deliveries
+     ,sum(case  when  ((dlvry_actl_in_5bsns_days) is not null and not_cncnld_flag=1) then sold_item_qty else 0 end ) as tracked_txs 
+   FROM ( 
+   
+   SELECT  
+    bbe.item_id
+     ,bbe.trans_id
+     ,bbe.slr_id
+     ,bbe.byr_id
+     ,cps.final_claim_type
+     ,bbe.vertical_group_desc
+     ,bbe.byr_cntry_id
+     ,bbe.late_dlvry_flag
+     ,bbe.lstg_crncy_exchng_rate
+     ,cast(bbe.item_price_num as DECIMAL(18,2)) as item_price_num
+     ,cast(bbe.item_sold_qty as DECIMAL(18,2)) as item_sold_qty
+     ,coalesce(ssa.cde_max_dt,case  when bbe.byr_cntry_id=bbe.item_cntry_id then (bbe.trans_dt+7) else (bbe.trans_dt+30) end ) as cde_dt
+     ,case  when  lower(cps.final_claim_type) like lower('%SNAD%') then cps.rcnt_cps_claim_open_dt end  as snad_dt
+     ,case  when  lower(cps.final_claim_type) like lower('%INR%') then cps.rcnt_cps_claim_open_dt end  as inr_dt
+     ,bbe.trans_dt
+     ,bbe.item_cntry_id
+     ,bbe.slr_cntry_id
+     ,bbe.slr_std_lvl_desc
+     ,bbe.eu_b2c_c2c_flag
+     ,bbe.asp_bucket
+     ,bbe.stockout_flag
+     ,ssa.trking_carrier_id
+     ,mthd.shpmt_mthd_id
+     ,mthd.genrc_type_desc
+     ,mthd.lcl_name
+     ,cps.resolution_appl
+     ,cps.claim_clsr_rsn_txt
+     ,cps.cps_claim_close_dt
+     ,cps.rcnt_esc_date
+     ,cps.rcnt_cps_claim_open_dt
+     ,evo.carrier_id
+     ,cov_bucket
+     ,dlvry_dt
+     ,ssa.trking_src_cre_dt
+     ,sold_item_qty
+     ,dlvry_actl_in_5bsns_days
+     ,not_cncnld_flag
+     ,trans_shipped_dt
+     ,acptnc_scan_dt
+     ,rev_spcfd_hndlng_days_num
+     ,mthd.carrier_sla
+     ,fact.cde_max_lcl_dt 
+   FROM ( 
+   
+   SELECT  
+    trans_id
+     ,eu_b2c_c2c_flag
+     ,pre_claim_block_inr_dt
+     ,pre_claim_block_snad_ind
+     ,pre_claim_block_snad_dt
+     ,item_cntry_id
+     ,slr_cntry_id
+     ,vertical_group_desc
+     ,cbt_ind
+     ,byr_id
+     ,slr_id
+     ,late_dlvry_dt
+     ,slr_std_lvl_desc
+     ,leaf_categ_id
+     ,byr_cntry_id
+     ,trkd_trans_flag
+     ,trans_dt
+     ,low_dsr_st_flag
+     ,low_dsr_sc_flag
+     ,low_dsr_iad_flag
+     ,low_dsr_comm_flag
+     ,byr_to_slr_nn_flag
+     ,late_dlvry_flag
+     ,lstg_crncy_exchng_rate
+     ,cast(item_price_num as DECIMAL(18,2)) as item_price_num
+     ,cast(item_sold_qty as DECIMAL(18,2)) as item_sold_qty
+     ,item_id
+     ,stockout_flag
+     ,pre_claim_block_inr_ind
+     ,cps_claim_open_dt
+     ,asp_bucket
+     ,case  when  (lower(cncl_yn_ind)=lower('Y') or lower(ma_dspt_yn_ind)=lower('Y'))  then 0 else 1 end  as not_cncnld_flag
+     ,case  when trans_site_id in(100,0) then 'US' when trans_site_id in(3) then 'UK' when trans_site_id in(77) then 'DE' when trans_site_id in(15) then 'AU' when trans_site_id in(2,210) then 'CA' when trans_site_id in(71) then 'FR' when trans_site_id in(101) then 'IT' when trans_site_id in(186) then 'ES' else 'OTHER' end  as trans_site 
+   FROM PRS_RESTRICTED_V.ebay_trans_rltd_event 
+   WHERE  ( ( (1=1 and trans_dt between  to_date('2019-01-01') and date_sub(current_date,1)) and trans_site_id in(3)) and bbe_elgb_trans_ind=1) 
+  ) as bbe
+  inner join
+  ACCESS_VIEWS.ssa_shpmt_trans_fact as ssa
+  on  ( (ssa.lstg_id=bbe.item_id and ssa.ck_trans_id=bbe.trans_id) and lstg_end_dt>='2019-01-01')
+  left join
+  ACCESS_VIEWS.ssa_shpmt_dlvry_exp_fact as fact
+  on  (fact.item_id=ssa.lstg_id and fact.trans_id=ssa.ck_trans_id)
+  left join
+  ( 
+   
+   SELECT  
+    a.item_id
+     ,a.ck_trans_dt
+     ,a.ck_trans_id
+     ,a.auct_type_cd
+     ,c.primary_user_id as byr_id
+     ,a.slr_id
+     ,a.app_id
+     ,a.lstg_channel
+     ,a.ftl_ind
+     ,b.buyer_type_desc 
+   FROM PRS_RESTRICTED_V.slng_trans_super_fact as a
+  left join
+  PRS_RESTRICTED_V.user_dna_dim as c
+  on a.byr_id=c.user_id
+  left join
+  PRS_RESTRICTED_V.user_dna_fm_sgmnt as b
+  on  (c.primary_user_id=b.user_id and a.ck_trans_dt between  b.start_date and b.end_date) 
+   WHERE  ( ( (1=1 and a.created_dt between  to_date('2019-01-01') and current_date) and a.auct_end_dt>=date_sub(cast ( to_date('2019-01-01') as DATE),30)) and a.ck_trans_site_id in(3)) 
+  ) as tsf
+  on  (bbe.item_id=tsf.item_id and bbe.trans_id=tsf.ck_trans_id)
+  left join
+  ( 
+   
+   SELECT  
+    tsh.item_id
+     ,tsh.trans_dt
+     ,tsh.trans_id
+     ,tsh.buyer_id
+     ,tsh.seller_id
+     ,tsh.trking_carrier_id
+     ,tsh.shpmt_mthd_id
+     ,pudo.pudo_trans_ind
+     ,mthd.shpmt_mthd_desc
+     ,mthd.domstc_yn_id
+     ,mthd.genrc_type_desc
+     ,mthd.lcl_name
+     ,mthd.carrier_id
+     ,mthd.carrier_sla 
+   FROM ( 
+   
+   SELECT  
+    item_id
+     ,trans_dt
+     ,trans_id
+     ,buyer_id
+     ,seller_id
+     ,trking_carrier_id
+     ,shpmt_mthd_id 
+   FROM ACCESS_VIEWS.ssa_shpmt_dlvry_exp_fact 
+   WHERE  (1=1 and auct_end_dt>=to_date('2019-01-01')) 
+  ) as tsh
+  left join
+  ( 
+   
+   SELECT  
+    item_id
+     ,trans_dt
+     ,trans_id
+     ,carrier_id
+     ,pudo_trans_ind 
+   FROM PRS_RESTRICTED_V.pudo_trans_fact 
+   WHERE  (1=1 and trans_dt>=to_date('2019-01-01')) 
+  ) as pudo
+  on  (pudo.item_id=tsh.item_id and pudo.trans_id=tsh.trans_id)
+  left join
+  ( 
+   
+   SELECT  
+    sml.shpmt_mthd_id
+     ,sml.shpmt_mthd_desc
+     ,sml.genrc_type_id
+     ,sml.domstc_yn_id
+     ,sml.lcl_name
+     ,sgtl.genrc_type_desc
+     ,sml.carrier_id
+     ,sml.max_dlvry_tm_in_hour/24 as carrier_sla 
+   FROM ACCESS_VIEWS.dw_shpmt_mthd_lkp as sml
+  inner join
+  ACCESS_VIEWS.dw_shpmt_genrc_type_lkp as sgtl
+  on sml.genrc_type_id=sgtl.genrc_type_id 
+  ) as mthd
+  on mthd.shpmt_mthd_id=tsh.shpmt_mthd_id 
+  ) as mthd
+  on  (bbe.item_id=mthd.item_id and bbe.trans_id=mthd.trans_id)
+  left join
+  ( 
+   
+   SELECT  
+    item_id
+     ,tran_id
+     ,final_claim_type
+     ,resolution_appl
+     ,claim_clsr_rsn_txt
+     ,cps_claim_close_dt
+     ,rcnt_esc_date
+     ,first_esc_date
+     ,rcnt_cps_claim_open_dt 
+   FROM ACCESS_VIEWS.rsltn_cps 
+   WHERE  ( ( (1=1 and ck_tran_cre_dt between  to_date('2019-01-01') and date_sub(current_date,1)) and tran_site_id in(3)) and ( lower(final_claim_type) like lower('%SNAD%')  or lower(final_claim_type) like lower('%INR%') )) 
+  ) as cps
+  on  (bbe.item_id=cps.item_id and bbe.trans_id=cps.tran_id)
+  left join
+  ( 
+   
+   SELECT  
+    item_id
+     ,trans_id
+     ,carrier_id 
+   FROM PRS_RESTRICTED_V.evo_sps_trans_dtl 
+  ) as evo
+  on  (evo.item_id=bbe.item_id and evo.trans_id=bbe.trans_id)
+  left join
+  p_csi_tbs_v.covid_Categories as covid
+  on  ( (covid.leaf_categ_id=bbe.leaf_categ_id and site_id=3) and  !  lower(cov_bucket) in (lower('Customer Marketing blacklist' ) )) 
+  ) as a
+  left join
+  -- P_SELLER_RISK_ANALYTICS_T.fraud_claim_txn
+  p_seller_risk_analytics_t.fraud_claim_txn as rsk
+  on  ( (a.item_id=rsk.item_id and a.trans_id=rsk.transaction_id) and created_dt>='2019-01-01')
+  inner join
+  ACCESS_VIEWS.dw_cal_dt as cal
+  on cal.cal_dt=a.trans_dt
+  inner join
+  ACCESS_VIEWS.dw_cal_dt as t
+  on t.cal_dt=a.cde_max_lcl_dt
+  left join
+  ACCESS_VIEWS.dw_shpmt_carrier_lkp as b
+  on a.carrier_id=b.carrier_id 
+   WHERE 1=1 
+   GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+) `custom_sql_query`"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|31387148|75586896|0|2020-07-30T06:54:19.237GMT|426399577745|20265436012||0|run at AccessController.java:0|495|4465|4465|0|0|5000|0|0|[127453, 127443, 127450, 127444, 127452, 127445, 127446, 127449, 127448, 127451, 127447]|default|383533132027|15807531244|47775541107|916761679|47674|ACTIVE|2020-07-30T06:54:19.216GMT
+[]|0|"SELECT `custom_sql_query`.`bsns_vrtcl_name` AS `bsns_vrtcl_name`,
+  `custom_sql_query`.`count(DISTINCT item_id)` AS `count_distinct_item_id_`,
+  `custom_sql_query`.`meta_categ_id` AS `meta_categ_id`,
+  `custom_sql_query`.`site` AS `site`,
+  `custom_sql_query`.`snapshot_date` AS `snapshot_date`,
+  `custom_sql_query`.`wmg_score` AS `wmg_score`
+FROM (
+  select snapshot_date, site, bsns_vrtcl_name, meta_categ_id, case when wmg_score >= 0 and wmg_score <= 0.1 then ""0-0.1""
+  	        when wmg_score > 0.1 and wmg_score <= 0.2 then ""0.11-0.2""
+  			when wmg_score > 0.2 and wmg_score <= 0.3 then ""0.21-0.3""
+  			when wmg_score > 0.3 and wmg_score <= 0.4 then ""0.31-0.4""
+  			when wmg_score > 0.4 and wmg_score <= 0.5 then ""0.41-0.5""
+  			when wmg_score > 0.5 and wmg_score <= 0.6 then ""0.51-0.6""
+  			when wmg_score > 0.6 and wmg_score <= 0.7 then ""0.61-0.7""
+  			when wmg_score > 0.7 and wmg_score <= 0.8 then ""0.71-0.8""
+  			when wmg_score > 0.8 and wmg_score <= 0.9 then ""0.81-0.9""
+  			when wmg_score > 0.9 and wmg_score <= 1 then ""0.91-1""
+  			end as wmg_score,
+  count(distinct item_id) from cvdata_db.nsfw_wmg_x11color_iq_class
+  where snapshot_date = (select max(snapshot_date) from cvdata_db.snapshot_date)
+  and auctionenddate <= date_add(snapshot_date,30)
+  and auctionenddate > date_add(snapshot_date,-30)
+  and site in (0,3,15,77)
+  and wmg_score is not null
+  group by 1,2,3,4,5
+) `custom_sql_query`"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|80472421|109714630|0|2020-07-30T06:52:41.921GMT|3006689138427|27145179348||0|run at AccessController.java:0|497|12339|12339|0|0|34223|0|0|[127187, 127186, 127185, 127183, 127184, 127182]|default|0|0|5939952919|174423830|47574|ACTIVE|2020-07-30T06:52:41.730GMT
+[]|0|"Generating download files with arguments [null, SELECT clsfd_sum_dt
+   ,clsfd_site_id
+   ,clsfd_exprnc_name as experience 
+   ,COUNT(clsfd_sum_dt)
+   ,COUNT(CLSFD_SITE_ID)
+   ,COUNT(CLSFD_EXPRNC_NAME)
+ FROM CLSFD_ACCESS_VIEWS.clsfd_advrtsng_v2_sd 
+ WHERE  1=1 
+ and clsfd_sum_dt BETWEEN '2020-01-01'AND '2020-01-10'
+ and clsfd_site_id in(2,9041,9042,9044,201,1011,1020,1021,1022,3001,4001,4011,4005,4007,5001,6001,8103,9011,9021,9031,6000081) 
+ GROUP BY 1,2,3, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|625037|124648949|0|2020-07-30T06:51:54.543GMT|7485210|100442||0|run at AccessController.java:0|492|62620|62620|0|0|64898|0|0|[127156, 127155, 127154]|default|0|0|353095|31476|47561|ACTIVE|2020-07-30T06:51:54.348GMT
+[]|0|"Generating download files with arguments [null, WITH TRGT_DATA AS (
+SELECT 'VALENTINES_DAY_20_01_14_02' AS RETAIL_FLG,
+		CAST(LOWER(KEYWORD)AS STRING) AS KEYWORD,
+		KW.USER_ID
+FROM p_ads_custom_insights.TRGT_0409_AN KW
+INNER JOIN (SELECT DISTINCT buyer_id
+			FROM p_ads_custom_insights.BASE_USR_SHOP_0409_AN
+			WHERE CREATED_DT BETWEEN '2020-01-20' and '2020-02-14' 
+			)trgt
+ON KW.USER_ID = trgt.buyer_id
+WHERE KW.SESSION_START_DT BETWEEN '2020-01-20' and '2020-02-14' 
+GROUP BY 1,2,3),
+
+BASE_DATA AS(
+SELECT 'VALENTINES_DAY_20_01_14_02' AS RETAIL_FLG,
+		CAST(LOWER(KEYWORD)AS STRING) AS KEYWORD,
+		KW.USER_ID
+FROM p_ads_custom_insights.BASE_0409_AN KW
+INNER JOIN (SELECT DISTINCT buyer_id
+			FROM p_ads_custom_insights.BASE_USR_SHOP_0409_AN
+			WHERE  CREATED_DT BETWEEN '2020-01-01' and '2020-01-19' 
+			OR CREATED_DT BETWEEN '2020-02-15' and '2020-12-31'     			)bs
+ON KW.USER_ID = bs.buyer_id
+WHERE KW.SESSION_START_DT  BETWEEN '2020-01-01' and '2020-01-19' 
+	OR KW.SESSION_START_DT BETWEEN '2020-02-15' and '2020-12-31'     
+GROUP BY 1,2,3)
+
+SELECT *
+FROM
+(
+	SELECT RETAIL_FLG,
+			KEYWORD,	
+		TARGET_USERS,
+		BASE_USERS,
+		RANK() OVER(ORDER BY TARGET_USERS DESC) AS RNK
+	FROM
+	(
+		SELECT TARGET.RETAIL_FLG,
+				TARGET.KEYWORD,
+			COUNT(DISTINCT TARGET.USER_ID) AS TARGET_USERS,
+			COUNT(DISTINCT BASE.USER_ID) AS BASE_USERS
+		FROM
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.TRGT_DATA
+			
+		)TARGET
+		LEFT JOIN
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.BASE_DATA
+		)BASE
+		ON TARGET.KEYWORD = BASE.KEYWORD
+		GROUP BY 1,2
+	)KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+
+AND BASE_USERS > 1
+AND BASE_USERS IS NOT NULL, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|216428621899|0|158709191|199190361|0|2020-07-30T06:46:27.282GMT|0|0|70.0|5459306086400|run at AccessController.java:0|5|3332|3332|0|70|3334|0|0|[125259, 125257, 125255, 125258, 125256, 125253, 125254]|default|277867999695|122158008691|124475924410|3739993479|47402|ACTIVE|2020-07-30T06:46:27.268GMT
+[]|0|"SELECT `custom_sql_query`.`site` AS `site`
+FROM (
+  select snapshot_date, site, bsns_vrtcl_name, meta_categ_id, case when nsfw >= 0 and nsfw <= 0.1 then ""0-0.1""
+  	        when nsfw > 0.1 and nsfw <= 0.2 then ""0.11-0.2""
+  			when nsfw > 0.2 and nsfw <= 0.3 then ""0.21-0.3""
+  			when nsfw > 0.3 and nsfw <= 0.4 then ""0.31-0.4""
+  			when nsfw > 0.4 and nsfw <= 0.5 then ""0.41-0.5""
+  			when nsfw > 0.5 and nsfw <= 0.6 then ""0.51-0.6""
+  			when nsfw > 0.6 and nsfw <= 0.7 then ""0.61-0.7""
+  			when nsfw > 0.7 and nsfw <= 0.8 then ""0.71-0.8""
+  			when nsfw > 0.8 and nsfw <= 0.9 then ""0.81-0.9""
+  			when nsfw > 0.9 and nsfw <= 1 then ""0.91-1""
+  			end as nsfw_score,
+  count(distinct item_id) from cvdata_db_v.nsfw_wmg_x11color_iq_class
+  where snapshot_date = (select max(snapshot_date) from cvdata_db.snapshot_date)
+  and auctionenddate <= date_add(snapshot_date,30)
+  and auctionenddate > date_add(snapshot_date,-30)
+  and site in (0,3,15,77)
+  and nsfw is not null
+  group by 1,2,3,4,5
+) `custom_sql_query`
+GROUP BY `custom_sql_query`.`site`"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|208292594|286550186|0|2020-07-30T06:44:49.104GMT|8305061024700|74731201159|4.0|0|run at AccessController.java:0|405|33842|33842|0|4|34223|0|0|[124930, 124929, 124928, 124926, 124925, 124927]|default|0|0|118145994|1083193|47274|ACTIVE|2020-07-30T06:44:48.900GMT
+[]|0|"CREATE TABLE P_liran_analysis_T.prefill_rdf_rnf_agg AS
+select aa.item_site_id,aa.BSNS_VRTCL_NAME,dcg.meta_categ_name
+,count(distinct aa.item_id)item_cnt  --- Number of live items
+,count(distinct case when SELF_TAG_YN_IND=1 then aa.item_id else null end) active_item_cnt  -----Number of actively adopted items – whether we approved the match within Matching or not.
+,count(distinct case when SELF_TAG_YN_IND=1 and aa.st_prod_ref_id=aa.prod_ref_id then aa.item_id else null end) active_approve_item_cnt  -- Number of actively adopted items that were approved by Matching 
+,count(distinct case when SELF_TAG_YN_IND=1 and aa.prod_ref_id is null then aa.item_id else null end) active_filtered_item_cnt ----Number of actively adopted we dont approved 
+,count(distinct case when SELF_TAG_YN_IND=0 and aa.prod_ref_id is not null then aa.item_id else null end) passive_item_cnt   ----Number of passive adopted items
+,count(distinct case when aa.st_prod_ref_id is not null and a.aspct_src=101 and a.ns_type_cd in ('rdf','rnf') and b.LSTG_ATTR_ID=3982 then aa.item_id else null end) active_item_rdf_rnf -- Number of actively adopted items with item-product conflicting NVs 
+,count(distinct case when aa.st_prod_ref_id is not null and a.aspct_src=101 and a.ns_type_cd in ('rdf','rnf') and b.LSTG_ATTR_ID=3982 and aa.st_ctlg_mpn_txt is not null then aa.item_id else null end) active_item_rdf_rnf_MPN --Number of actively adopted items with item-product conflicting NVs which also include MPN aspect from the product
+,count(distinct case when aa.st_prod_ref_id is not null and a.aspct_src=101 and a.ns_type_cd in ('rdf','rnf') and b.LSTG_ATTR_ID=3982 and COALESCE(aa.ST_CTLG_UPC_TXT,ST_CTLG_EAN_TXT,ST_CTLG_ISBN_TXT) is not null then aa.item_id else null end) active_item_rdf_rnf_GTIN --Number of actively adopted items with item-product conflicting NVs which also include GTIN aspect from the product
+from access_views.ctlg_item_fact aa
+inner join access_views.ITEM_ASPCT_CLSSFCTN a
+on aa.item_id=a.item_id
+inner join access_views.dw_attr_lstg_tag_dtl b
+on a.item_id=b.item_id and a.prdct_aspct_nm=b.TAG_NAME and a.aspct_vlu_nm=b.tag_value_txt
+inner join ACCESS_VIEWS.dw_category_groupings As  dcg 
+ON aa.LEAF_CATEG_ID=dcg.LEAF_CATEG_ID AND aa.item_site_id=dcg.SITE_ID and dcg.leaf_categ_id=dcg.move_to
+WHERE  1=1
+and dcg.BSNS_VRTCL_NAME IN ('Business & Industrial','Collectibles','Electronics','Fashion','Home & Garden','Lifestyle','Media','Parts & Accessories')
+and msku_flag=0 and aa.item_site_id in (0,3,15,77) AND aa.auct_end_dt >= date_sub(CURRENT_DATE(), 2)
+group by 1,2,3"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|21697181459891|0|908292911|986316651|0|2020-07-30T06:24:32.229GMT|271488918527|472982495324||74303718555648|run at AccessController.java:0|506|7678|7678|0|0|10000|0|0|[118954, 118951, 118949, 118950, 118947, 118948, 118945, 118952, 118946, 118953, 118944]|default|5205909087952|161702976819|52571333352|970802490|46075|ACTIVE|2020-07-30T06:24:32.187GMT
+[]|1|"Generating download files with arguments [null, SELECT *
+FROM
+(
+	SELECT RETAIL_FLG,
+			KEYWORD,	
+		TARGET_USERS,
+		BASE_USERS,
+		RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_USERS DESC) AS RNK
+	FROM
+	(
+		SELECT TARGET.RETAIL_FLG,
+				TARGET.KEYWORD,
+			COUNT(DISTINCT TARGET.USER_ID) AS TARGET_USERS,
+			COUNT(DISTINCT BASE.USER_ID) AS BASE_USERS
+		FROM
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.TRGT_KW_0409_AISH
+			
+		)TARGET
+		LEFT JOIN
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.BASE_KW_0409_AISH
+		)BASE
+		ON TARGET.KEYWORD = BASE.KEYWORD
+		GROUP BY 1,2
+	)KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+
+AND BASE_USERS > 1
+AND BASE_USERS IS NOT NULL, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|408556480|0|375792107|390032990|0|2020-07-30T06:32:38.501GMT|0|0||2281701376|run at AccessController.java:0|4991|510|510|0|0|9307|0|0|[118682, 118679, 118676, 118678, 118677, 118680, 118681]|default|497203103161|16330321796|37053528953|917806615|45948|ACTIVE|2020-07-30T06:32:38.422GMT
+[]|2|"Generating download files with arguments [null, SELECT *
+FROM
+(
+	SELECT RETAIL_FLG,
+			KEYWORD,	
+		TARGET_USERS,
+		BASE_USERS,
+		RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_USERS DESC) AS RNK
+	FROM
+	(
+		SELECT TARGET.RETAIL_FLG,
+				TARGET.KEYWORD,
+			COUNT(DISTINCT TARGET.USER_ID) AS TARGET_USERS,
+			COUNT(DISTINCT BASE.USER_ID) AS BASE_USERS
+		FROM
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.TRGT_KW_0409_AISH
+			
+		)TARGET
+		LEFT JOIN
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.BASE_KW_0409_AISH
+		)BASE
+		ON TARGET.KEYWORD = BASE.KEYWORD
+		GROUP BY 1,2
+	)KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+
+AND BASE_USERS > 1
+AND BASE_USERS IS NOT NULL, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|613049806|0|18679208|18876241|0|2020-07-30T06:02:22.954GMT|0|0||4395630592|run at AccessController.java:0|2715|6|6|0|0|2721|0|0|[102644, 102638, 102640, 102643, 102641, 102642, 102639]|default|262610800636|9152881541|482544236|12340402|42511|ACTIVE|2020-07-30T06:02:22.932GMT

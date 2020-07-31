@@ -1,0 +1,3 @@
+CPUBound,IOBound,MemBound,MixBound,ResourceLimit,dataSkew,numTasks,stageId,status,submissionTime
+0,0,0,1,0,0,6000,37151,ACTIVE,2020-07-30T06:59:13.031GMT
+1,0,0,0,0,0,5,37142,ACTIVE,2020-07-30T06:58:57.568GMT

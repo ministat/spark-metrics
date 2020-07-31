@@ -1,0 +1,91 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"insert into p_bx_t.Search_HP_events_100pct
+	SELECT
+	e.guid
+	,e.session_skey
+	,e.session_start_dt
+	,e.seqnum
+	,e.site_id
+	,e.page_id
+	FROM ubi_v.ubi_event AS e
+	INNER JOIN p_bx_t.myebay_sessions_100pct AS s
+	ON e.session_start_dt=s.session_start_dt
+	AND e.session_skey=s.session_skey
+	AND e.guid=s.guid
+	AND e.site_id=s.site_id
+	AND e.seqnum>s.min_seqnum
+	WHERE 1 = 1
+ 	AND e.session_start_dt BETWEEN to_date('2020-05-22') and to_date('2020-05-28')
+ 	AND s.session_start_dt BETWEEN to_date('2020-05-22') and to_date('2020-05-28')
+	AND e.rdt=0
+	AND (
+		(e.page_id IN (2045573,3286,2047936,1468757,2051457,1677950,2046791,2053742,2054032,5387,1637,4999,2059706) 
+					   OR (e.page_id = 2351460 AND sojlib.soj_nvl(e.soj, 'eactn') = 'EXPC'))
+		OR 
+		(e.page_id IN (1661332,2056088,1468738,5366,2036606,2054466,1700521,2051383,2059705,5197,154,2364986,3841,3030,4939,1677902,
+						2050601,1468737,2047939,1676558,3907,1677906,2481888,1625112,2387624,2045310,2045308))
+		)
+	GROUP BY 1,2,3,4,5,6"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T06:59:13.110GMT|94401871434|180734487|0|run at AccessController.java:0|6000|0|0|0|0|6000|0|0|[54385, 54383, 54384, 54381, 54379, 54382, 54380, 54375]|default|7190526|0|0|0|37151|ACTIVE|2020-07-30T06:59:13.031GMT
+[]|0|"select
+E.SITE_ID,
+case when E.SITE_ID=0 and e.GBH_YN=1 THEN '5. GBH' ELSE E.SITE_NAME END AS SITE_NAME,
+
+count(1) as TNX_ITM_COUNT,
+
+avg(CasMaxEBuDays*1.0000000) AS CasMaxEBuDays_AVG,
+STDDEV_POP(CasMaxEBuDays*1.0000000) AS CasMaxEBuDays_STDDEV,
+
+avg(fssmd*1.0000000) AS fssmd_AVG,
+STDDEV_POP(fssmd*1.0000000) AS fssmd_STDDEV,
+
+avg(DLVRY_ESTMT_IN_5BSNS_DAYS*1.0000000) AS DLVRY_ESTMT_IN_5BSNS_DAYS_AVG,
+STDDEV_POP(DLVRY_ESTMT_IN_5BSNS_DAYS*1.0000000) AS DLVRY_ESTMT_IN_5BSNS_DAYS_STDDEV
+
+from P_SD_T.LY_EDD_Cassi_0701_21 e
+join 
+(select 
+a.*,
+datediff(a.opt1_EDD_MAX,a.SESSION_START_DT) AS opt1_EDD_MAX_CalDays,
+
+CASE  WHEN item_cntry_id  IN (45,92) THEN 'China+HK' 
+WHEN item_cntry_id  IN (1) and a.site_id=0 THEN 'domestic'
+WHEN item_cntry_id  IN (3,15,77) and a.site_id=item_cntry_id THEN 'domestic'
+WHEN item_cntry_id  IN (4,7,10,11,14,15,18,20,21,26,27,32,33,36,38,41,45,50,59,60,64,69,72,73,82,83,84,90,92,95,96,102,104,107,109,113,114,123,127, 128,131,139,140,145,147,148,149, 153, 156, 157, 159, 162, 170, 110, 111, 171, 172, 173, 174, 178, 180, 183, 187, 196, 197, 199, 202, 205, 206, 207, 212, 213,216, 217, 218, 220, 226, 227) THEN 'other APAC'
+else 'other countries' end as item_cntry_gp,
+
+CASE  WHEN slr_cntry_id  IN (45,92) THEN 'China+HK' 
+WHEN slr_cntry_id  IN (1) and a.site_id=0 THEN 'domestic'
+WHEN slr_cntry_id  IN (3,15,77) and a.site_id=slr_cntry_id THEN 'domestic'
+WHEN slr_cntry_id  IN (4,7,10,11,14,15,18,20,21,26,27,32,33,36,38,41,45,50,59,60,64,69,72,73,82,83,84,90,92,95,96,102,104,107,109,113,114,123,127, 128,131,139,140,145,147,148,149, 153, 156, 157, 159, 162, 170, 110, 111, 171, 172, 173, 174, 178, 180, 183, 187, 196, 197, 199, 202, 205, 206, 207, 212, 213,216, 217, 218, 220, 226, 227) THEN 'other APAC'
+else 'other countries' end as slr_cntry_gp
+from P_SD_T.LY_EDD_TNX_0705_11_v3 a
+)s
+   ON e.GUID=s.GUID
+  AND e.SESSION_SKEY=s.SESSION_SKEY
+  AND e.SESSION_START_DT=s.SESSION_START_DT
+  AND e.SITE_ID=s.SITE_ID
+  AND e.cobrand=s.cobrand
+  AND e.seqnum=s.SRP_seqnum 
+where e.session_start_dt between to_date('2020-07-05') and to_date('2020-07-11')
+and CasMaxEBuDays is not null and ITEM_IN_SRCH_FLAG=1
+and DLVRY_ESTMT_IN_5BSNS_DAYS is not null
+and CasMaxEBuDays is not null and ITEM_IN_VI_FLAG=1
+GROUP BY 1,2"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|327|791|0|2020-07-30T06:58:57.578GMT|0|0|0|run at AccessController.java:0|3|2|2|0|0|5|0|0|[54354, 54352, 54351, 54353]|default|734699|3841|0|0|37142|ACTIVE|2020-07-30T06:58:57.568GMT

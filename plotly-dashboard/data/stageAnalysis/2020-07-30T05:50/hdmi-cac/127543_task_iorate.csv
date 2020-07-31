@@ -1,0 +1,2 @@
+host,duration,status,taskMetrics.shuffleReadMetrics.remoteBytesRead.rateInKB
+hdc49-mcc10-01-0710-3908-030-tess0035.stratus.rno.ebay.com,312094,RUNNING,inf

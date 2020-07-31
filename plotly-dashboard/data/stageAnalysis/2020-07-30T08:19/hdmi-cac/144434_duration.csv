@@ -1,0 +1,3 @@
+host,duration,status,taskMetrics.executorCpuTime,taskMetrics.executorDeserializeCpuTime,taskMetrics.shuffleWriteMetrics.writeTime
+hdc49-mcc10-01-0910-1901-011-tess0028.stratus.rno.ebay.com,258615,RUNNING,0,0,0
+hdc49-mcc10-01-0710-3302-014-tess0035.stratus.rno.ebay.com,239621,SUCCESS,227671,5968882,2035313

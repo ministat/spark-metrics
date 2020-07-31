@@ -1,0 +1,37 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"insert into p_bx_t.Search_HP_events_100pct
+	SELECT
+	e.guid
+	,e.session_skey
+	,e.session_start_dt
+	,e.seqnum
+	,e.site_id
+	,e.page_id
+	FROM ubi_v.ubi_event AS e
+	INNER JOIN p_bx_t.myebay_sessions_100pct AS s
+	ON e.session_start_dt=s.session_start_dt
+	AND e.session_skey=s.session_skey
+	AND e.guid=s.guid
+	AND e.site_id=s.site_id
+	AND e.seqnum>s.min_seqnum
+	WHERE 1 = 1
+ 	AND e.session_start_dt BETWEEN to_date('2020-06-15') and to_date('2020-06-21')
+ 	AND s.session_start_dt BETWEEN to_date('2020-06-15') and to_date('2020-06-21')
+	AND e.rdt=0
+	AND (
+		(e.page_id IN (2045573,3286,2047936,1468757,2051457,1677950,2046791,2053742,2054032,5387,1637,4999,2059706) 
+					   OR (e.page_id = 2351460 AND sojlib.soj_nvl(e.soj, 'eactn') = 'EXPC'))
+		OR 
+		(e.page_id IN (1661332,2056088,1468738,5366,2036606,2054466,1700521,2051383,2059705,5197,154,2364986,3841,3030,4939,1677902,
+						2050601,1468737,2047939,1676558,3907,1677906,2481888,1625112,2387624,2045310,2045308))
+		)
+	GROUP BY 1,2,3,4,5,6"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|217564661|709678605|0|2020-07-30T05:50:45.085GMT|69307369674007|137389787160|133|0|run at AccessController.java:0|208|5896|5896|0|133|6000|2987098606|509753068|[52871, 52868, 52869, 52866, 52865, 52870, 52864, 52867]|default|7569478198|154751584|0|0|35288|ACTIVE|2020-07-30T05:50:45.019GMT

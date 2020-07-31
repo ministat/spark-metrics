@@ -1,0 +1,268 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"create temporary table p_belxie_t.browser_session_dtl_w_eligible_YN using parquet as(
+select
+	a.*,
+	case when b.session_start_dt is not null then 'Y' else 'N' end as eligible_YN
+from
+	p_belxie_t.browser_session_dtl_w_eng as a
+	left join
+		p_belxie_t.eligible_session as b
+		on a.session_start_dt=b.session_start_dt
+		and a.session_skey=b.session_skey
+		and a.guid=b.guid
+		and a.site_id=b.site_id
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|21100595|27951250|0|2020-07-30T06:59:18.521GMT|0|0||0|run at AccessController.java:0|7054|2946|2946|0|0|10000|698313818092|598025719|[244330]|default|2419424046939|1968181865|0|0|132941|ACTIVE|2020-07-30T06:59:18.455GMT
+[]|0|"create temporary table p_belxie_t.eligible_session using parquet as(
+select
+	session_start_dt,
+	guid,
+	session_skey,
+	site_id
+from
+	p_belxie_t.browser_session_dtl_w_eng
+where
+	page_name='HOME'
+	and page_signed_in_flag=0
+group by
+	1,2,3,4
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|52899|176392|0|2020-07-30T06:59:05.698GMT|0|0||0|run at AccessController.java:0|137|65|65|0|0|202|68224438|2079480|[244304, 244303]|default|973963421|9273801|0|0|132931|ACTIVE|2020-07-30T06:59:05.651GMT
+[]|0|"create temporary table p_belxie_t.first_banner_imprsn using parquet as(
+select
+	session_start_dt,
+	guid,
+	session_skey,
+	site_id,
+	event_timestamp
+from
+	p_belxie_t.browser_session_dtl_w_eligible_YN
+where
+	plcmnt_id in (100000,100007,100010)
+	and imprsn_cnt>0
+qualify row_number() over (partition by session_start_dt, guid, session_skey, site_id order by seqnum asc)=1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|23748|100786|0|2020-07-30T06:59:05.588GMT|0|0||0|run at AccessController.java:0|148|54|54|0|0|202|21064229|487094|[244302, 244301, 244299, 244300]|default|332606612|2739841|0|0|132929|ACTIVE|2020-07-30T06:59:05.540GMT
+[]|0|"create temporary table P_JS_temp.op_click_w using parquet as (
+    select
+        guid,
+        session_skey,
+        user_id,
+        session_start_dt,
+        event_timestamp,
+        event_dt,
+        seqnum,
+        site_id,
+        page_id,
+        tdt,
+        imprsn_id,
+        click_id,
+        plmt,
+        msg_id,
+        cmpgn_id,
+        plcmnt_id,
+        segmt_id,
+        tmplt_id,
+        tmplt_type,
+        component,
+        title,
+        version,
+        moduledtl,
+        vrtn_id,
+        event_dt as dt
+    from (
+            select
+                guid,
+                session_skey,
+                user_id,
+                session_start_dt,
+                event_timestamp,
+                cast(cast(event_timestamp as timestamp) as date) as event_dt,
+                seqnum,
+                site_id,
+                page_id,
+                tdt,
+                cast(sojlib.soj_extract_nvp(tdt, 'iid', ',', ':') as decimal(36, 0)) as imprsn_id,
+                cast(sojlib.soj_extract_nvp(tdt, 'clkid', ',', ':') as decimal(36, 0)) as click_id,
+                plmt,
+                cast(case when page_id = 2616 then msg_id else sojlib.soj_extract_nvp(plmt, 'mid', '\\ ', ':') end as integer) as msg_id,
+                cast(sojlib.soj_extract_nvp(plmt, 'cid', '\\ ', ':') as integer) as cmpgn_id,
+                cast(sojlib.soj_extract_nvp(plmt, 'pid', '\\ ', ':') as integer) as plcmnt_id,
+                cast(sojlib.soj_extract_nvp(plmt, 'sid', '\\ ', ':') as integer) as segmt_id,
+                sojlib.soj_extract_nvp(plmt, 'tid', '\\ ', ':') as tmplt_id,
+                sojlib.soj_extract_nvp(plmt, 'ttype', '\\ ', ':') as tmplt_type,
+                case when page_id in (2208336, 2356359) then sojlib.soj_extract_nvp(moduledtl, 'c', '\\|', ':') else null end as component,
+                case when page_id in (2208336, 2356359) then sojlib.soj_extract_nvp(moduledtl, 'title', '\\|', ':') else null end as title,
+                case when page_id in (2208336, 2356359) then sojlib.soj_extract_nvp(moduledtl, 'ver', '\\|', ':') else null end as version,
+                moduledtl,
+                sojlib.soj_extract_nvp(plmt, 'vid', '\\ ', ':') as vrtn_id,
+                row_number() over (partition by cast(sojlib.soj_extract_nvp(tdt, 'clkid', ',', ':') as decimal(36, 0)) order by page_rnk, event_timestamp) as rnk
+            from (
+                    select
+                        guid,
+                        session_skey,
+                        user_id,
+                        session_start_dt,
+                        event_timestamp,
+                        seqnum,
+                        site_id,
+                        page_id,
+                        case when page_id in (2403006, 2616) then sojlib.soj_parser(soj, 'tdt')['tdt']
+                            when page_id in (2208336, 2356359) then sojlib.soj_extract_nvp(sojlib.soj_parser(soj, 'amdata')['amdata'], 'tdt', '\\|', '=')
+                        end as tdt,
+                        case when page_id in (2403006, 2616) then regexp_replace(sojlib.soj_parser(soj, 'plmt')['plmt'], '[\\(\\)]', '')
+                            when page_id in (2208336, 2356359) then regexp_replace(sojlib.soj_extract_nvp(sojlib.soj_parser(soj, 'amdata')['amdata'], 'plmt', '\\|', '='), '[\\(\\)]', '')
+                        end as plmt,
+                        case when page_id in (2208336, 2356359) then sojlib.soj_parser(soj, 'moduledtl')['moduledtl'] else null end as moduledtl,
+                        sojlib.soj_nvl(soj, 'm') as msg_id,
+                        case when page_id in (2208336, 2356359) then 0 when page_id = 2403006 then 1 else 2 end as page_rnk
+                    from P_JS_temp.op_soj_w
+                    where (page_id in (2403006, 2616)
+                            or (page_id in (2208336, 2356359) /*and soj_nvl(applicationpayload, 'ampid') = 'MADRONA'*/ and sojlib.soj_parser(soj, 'eactn')['eactn'] = 'ACTN')
+                            )
+                )
+            where sojlib.is_decimal(sojlib.soj_extract_nvp(tdt, 'clkid', ',', ':'), 36, 0) = 1
+        )
+    where rnk = 1
+    )"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|21880|153672|0|2020-07-30T06:59:04.005GMT|0|0||0|run at AccessController.java:0|84|119|119|0|0|203|14822927|81860|[244298, 244295, 244297, 244296]|default|76799030|157051|0|0|132927|ACTIVE|2020-07-30T06:59:03.880GMT
+[]|0|"CREATE TEMPORARY TABLE P_CACHADOOP_T.CAL_ 
+USING PARQUET
+AS(
+  SELECT MIN(CAL_DT) AS MIN_CAL_DT, MAX(CAL_DT) AS MAX_CAL_DT
+  FROM  P_CACHADOOP_T.CALENDAR
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T06:59:02.602GMT|0|0||0|run at AccessController.java:0|1|0|0|0|0|1|0|0|[244291, 244290]|default|17021|266|0|0|132924|ACTIVE|2020-07-30T06:59:02.536GMT
+[]|0|"create temporary table p_belxie_t.first_banner_imprsn using parquet as(
+select
+	session_start_dt,
+	guid,
+	session_skey,
+	site_id,
+	event_timestamp
+from
+	p_belxie_t.browser_session_dtl_w_eligible_YN
+where
+	plcmnt_id in (100004,100010)
+	and imprsn_cnt>0
+qualify row_number() over (partition by session_start_dt, guid, session_skey, site_id order by seqnum asc)=1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|16153|166181|0|2020-07-30T06:58:59.452GMT|0|0||0|run at AccessController.java:0|57|145|145|0|0|202|1915482|38288|[244286, 244283, 244284, 244285]|default|7666480|62335|0|0|132921|ACTIVE|2020-07-30T06:58:59.376GMT
+[]|0|"create temporary table p_belxie_t.norbs_acquired_14d using parquet as(
+select
+	a.primary_user_id,
+	a.site,
+	a.buyer_type,
+	a.buyer_type_group,
+	a.categories,
+	a.categ_lvl4_name,
+	c.leaf_categ_id as rp_leaf_categ_id,
+	c.site_id as rp_site_id,
+	c.categ_lvl4_name as rp_categ_lvl4_name,
+	coalesce(cov.cov_bucket,'Others') as rpr_categories,
+	sum(cast(chk.ITEM_SOLD_QTY as float)*cast(chk.ITEM_PRICE_NUM as float)*cast(cry.curncy_plan_rate as float) ) as rpr_gmb_14d,
+	sum(chk.ITEM_SOLD_QTY) as rpr_bi_14d,
+	sum(case when chk.ESC_SNAD_FLAG=1 or chk.OPEN_SNAD_FLAG=1 or chk.RTRN_SNAD_FLAG=1 or chk.SNAD_MSG_FLAG = 1 then 1 else 0 end) as rpr_SNAD_14d,
+	sum(case when chk.INR_MSG_FLAG=1 or chk.OPEN_INR_FLAG=1 or chk.INR_MSG_FLAG=1 then 1 else 0 end) as rpr_INR_14d,
+	sum(case when chk.STOCKOUT_FLAG=1 then 1 else 0 end) as rpr_STOCKOUT_14d,
+	sum(case when chk.BYR_TO_SLR_NN_FLAG=1 then 1 else 0 end) as rpr_NN_FEEDBACK_14d,
+	sum(case when chk.ESC_SNAD_FLAG=1 or chk.OPEN_SNAD_FLAG=1 or chk.RTRN_SNAD_FLAG=1 or chk.SNAD_MSG_FLAG = 1 
+			or chk.INR_MSG_FLAG=1 or chk.OPEN_INR_FLAG=1 or chk.INR_MSG_FLAG=1 
+			or chk.STOCKOUT_FLAG=1 
+			or chk.BYR_TO_SLR_NN_FLAG=1 then 1 else 0 end) as rpr_BBE_14d
+from
+	p_belxie_t.norbs_acquired_final as a
+	inner join
+		PRS_RESTRICTED_V.USER_DNA_DIM as dna
+		on a.primary_user_id=dna.primary_user_id
+		and date_add(a.wk_end_dt,14)<=date_sub(current_date,2)
+	inner join
+		ACCESS_VIEWS.EBAY_TRANS_RLTD_EVENT as chk
+		on dna.user_id=chk.byr_id
+		and chk.trans_dt between date_add(a.created_dt,1) and date_add(a.created_dt,14)
+		and chk.auct_type_code not in (10,12,13,15)
+		and chk.rprtd_wacko_yn_ind='N'
+		and chk.ck_wacko_yn_ind='N'
+	inner join
+		ACCESS_VIEWS.DW_CATEGORY_GROUPINGS as c
+		on c.leaf_categ_id=chk.leaf_categ_id
+		and c.site_id=chk.item_lstd_site_id
+		and c.sap_category_id  not in (5, 7, 23, 41,-999)
+		and c.leaf_categ_id <> 172036
+	inner join
+		ACCESS_VIEWS.DW_CATEG_SAP_GLBL_LKP as s
+		on c.sap_category_id=s.sap_category_id
+	inner join
+		ACCESS_VIEWS.GLBL_RPRT_BSNS_CTGRY_LKP as v
+		on s.glbl_rprt_bsns_ctgry_cd=v.glbl_rprt_bsns_ctgry_cd
+		and v.glbl_rprt_bsns_ctgry_shrt_desc not in ('VEHICLES', 'REAL ESTATE')
+	inner join
+		ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM as cry
+		on chk.lstg_curncy_id=cry.curncy_id
+	left join
+		p_csi_tbs_t.covid_categories as cov
+		on c.leaf_categ_id=cov.leaf_categ_id
+		and c.site_id=cov.site_id
+		and cov.cov_bucket not in ('Customer Marketing blacklist')
+group by
+	1,2,3,4,5,6,7,8,9,10
+having 
+	sum(chk.ITEM_SOLD_QTY)>0
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|2520682|7860557|0|2020-07-30T06:57:04.716GMT|0|0|6.0|0|run at AccessController.java:0|2|217|217|0|6|218|0|0|[244178, 244172, 244173, 244171, 244170, 244176, 244177]|default|22879199136|2312457046|375154700|4097143|132874|ACTIVE|2020-07-30T06:57:04.703GMT

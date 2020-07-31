@@ -1,0 +1,322 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"CREATE TEMPORARY TABLE TXNS_BASE
+AS ( 
+ SELECT  
+  co.item_id
+   ,co.trans_id
+   ,co.trans_dt
+   ,co.trans_site_id
+   ,co.slr_id
+   ,co.slr_std_lvl_desc
+   ,co.asp_bucket
+   ,case  when co.slr_cntry_id in(3,71,77,101,5,8,16,22,23,29,34,53,56,57,66,70,79,80,86,93,94,99,105,
+			115,120,121,122,124,130,137,138,228,146,154,163,167,168,175,229,181,182,186,192,193,209,
+			214,222) then co.eu_b2c_c2c_flag
+			else b2c_c2c_flag end as slr_seg
+   ,co.cbt_ind
+   ,case  when co.rtrn_shpng_payer_type_cd=2 then 1 else 0 end  as free_rtrn
+   ,case when (cast(case  when txn.ck_flags6<0 then (txn.ck_flags6+2147483648)
+			else txn.ck_flags6 end /256 as int) %2)=1 then 'GSP' else 'EBG' end  as program
+   ,case  when trans_site_id in(15) then
+			 case  when txn.payment_method in(12,32,34) then 'COVERED' 
+															else 'NOTCOVERED' end
+		  when trans_site_id in(3,77) then 
+		  case  when txn.payment_method in(12) then 'COVERED' else 'NOTCOVERED' end  
+		  else 'COVERED' end  as ebg_covered
+   ,co.item_sold_qty
+   ,case  when lower(txn.intmdt_pymnt_mthd_used_ind)=lower('Y') then 1 else 0 end  as pymnt_2_0_flag
+   ,cast(co.lstg_crncy_exchng_rate*co.item_price_num*co.item_sold_qty as DECIMAL(18,2)) as gmv
+   ,cast(co.lstg_crncy_exchng_rate*co.item_price_num as DECIMAL(18,2)) as asp
+   ,ck.nors_type_desc
+   ,case  when co.item_cntry_id in(1,2) then 'NA' 
+		  when co.item_cntry_id in(15) then 'AU'
+		  when co.item_cntry_id in(45,92,196) then 'GC' 
+		  when co.item_cntry_id in(4,7,13,17,19,20,27,33,38,50,55,69,73,76,84,95,96,97,98,100,104,106,
+			107,109,112,113,114,116,123,127,128,131,226,139,144,145,148,149,153,155,156,157,159,162,166
+			,176,180,183,187,195,197,199,201,204,205,207,210,212,213,216,218,220,221) then 'APAC Other' 
+		  when co.item_cntry_id in(3,77,71,101,186,5,8,16,22,23,29,34,53,56,57,66,70,71,77,79,80,86,93,
+			94,99,101,105,115,120,121,122,124,130,137,138,228,146,154,163,167,168,175,229,181,182,192,193
+			,209,3,214,222) then 'EU' 
+		  else 'OTHER' end  as item_region
+	,case when byr_cntry_id in (15) then 'AU'
+		  when byr_cntry_id in (77) then 'DE'
+		  when byr_cntry_id in (71,172,186,101,214) then 'FRITES'
+          when byr_cntry_id in (189,27,166,84,191,103,63,124,147,21,82,8,210,204,212,25,86,187,6,164,132
+         ,145,4,227,229,65,44,170,88,46,69,48,126,31,149,107,33,208,10,153,67,128,143,168,115,206,216
+         ,121,105,39,159,220,201,56,58,98,117,224,222,136,83,50,94,72,111,92,30,51,11,178,152,9,133,173
+         ,91,89,129,192,112,93,26,49,148,70,28,66,5,108,45,150,167,169,228,106,213,207,47,68,190,118
+         ,181,125,43,219,123,59,144,127,81,142,104,7,102,100,116,76,161,137,79,179,87,119,160,203,177
+         ,198,37,20,165,60,55,188,120,34,223,156,205,38,226,36,157,96,182,35,199,13,78,197,138,75,85
+         ,14,218,24,95,217,17,211,196,155,180,73,154,53,134,183,113,131,174,18,22,122,52,175,200,32
+         ,80,40,171,176,19,202,64,209,62,61,195,141,140,135,221,29,74,215,90,184,158,139,114,41,151,162
+         ,57,185,42,109,130) then 'GBH'
+			when byr_cntry_id in (3)	then 'UK'
+			when byr_cntry_id in (1)	then 'US'
+			else 'Others' end as Byr_Region
+  ,case when slr_cntry_id in (15) then 'AU'
+	when slr_cntry_id in (77) then 'DE'
+	when slr_cntry_id in (71,172,186,101,214) then 'FRITES'
+	when co.slr_cntry_id in(45,92,196) then 'GC'
+	when slr_cntry_id in (189,27,166,84,191,103,63,124,147,21,82,8,210,212,25,86,187,6,164,132
+    ,145,4,227,229,65,44,170,88,46,69,48,126,31,107,33,208,10,153,67,128,143,168,115,206
+    ,121,105,39,159,220,201,56,58,98,117,224,222,136,83,50,94,72,30,51,11,178,152,9,133,173
+    ,91,89,129,192,112,93,26,49,148,70,28,66,5,108,150,167,169,228,106,213,207,47,68,190,118
+    ,181,125,43,219,123,59,144,81,142,7,102,100,116,76,161,137,79,179,87,119,160,203,177
+    ,198,37,20,165,60,55,188,120,34,223,156,205,38,226,36,157,182,35,13,78,197,138,75,85
+    ,14,218,24,217,17,211,155,73,154,53,134,183,113,131,174,18,22,122,52,175,200,32
+    ,80,40,171,176,19,202,64,209,62,61,195,141,140,135,221,29,74,215,90,184,158,139,114,41,151
+    ,57,185,42,109,130) then 'GBH'
+	when slr_cntry_id in (3)	then 'UK'
+	when slr_cntry_id in (1)	then 'US'
+	else 'Others' end as Slr_Region	  
+   ,item_lstd_site_id
+   ,co.leaf_categ_id
+   ,stockout_flag
+   ,byr_to_slr_nn_flag
+   ,late_dlvry_flag
+   ,trkd_trans_flag
+   ,byr_id
+   ,trans_site
+   ,cncl_yn_ind
+   ,case  when stockout_flag=1 then  least( stockout_dt,cncl_start_dt) end  as stockout_date
+   ,case  when byr_to_slr_nn_flag=1 then byr_fdbk_rcvd_dt end  as nn_feedback_dt
+   ,case  when lower(covid.cov_bucket) in(lower('Mask'),lower('Other hygiene'),lower('confinement'))
+			then cov_bucket else 'Others' end  as covid_categories
+   ,case  when (wht.seller_id) is not null then 'Y' else 'N' end  as covid_whtlst_slr
+   ,coalesce(ssa.cde_max_dt,case  when ssa.buyer_cntry_id=ssa.item_cntry_id 
+				then date_add(co.trans_dt,7) 
+		when  ( ((ssa.buyer_cntry_id) is null and (ssa.item_cntry_id) is null) 
+				and co.byr_cntry_id=co.item_cntry_id) then date_add(co.trans_dt,7)
+    	else date_add(co.trans_dt,30) end ) as edd_dt
+   ,case  when (pl.item_id) is not null then 'Y' else 'N' end  as pl_flag 
+   ,case  when (AEL.item_id) is not null then 'Y' else 'N' end  as AdminEndLstg_flag
+   ,case when ulp.item_id is not null and ulp.transaction_id is not null then 1 else 0 end as ulp_flag
+ FROM ( 
+ 
+ SELECT  
+  item_id
+   ,trans_id
+   ,trans_dt
+   ,trans_site_id
+   ,slr_id
+   ,slr_std_lvl_desc
+   ,asp_bucket
+   ,slr_cntry_id
+   ,rtrn_shpng_payer_type_cd
+   ,eu_b2c_c2c_flag
+   ,b2c_c2c_flag
+   ,cbt_ind
+   ,item_sold_qty
+   ,item_price_num
+   ,lstg_crncy_exchng_rate
+   ,cncl_yn_ind
+   ,item_cntry_id
+   ,item_lstd_site_id
+   ,leaf_categ_id
+   ,stockout_flag
+   ,stockout_dt
+   ,byr_to_slr_nn_flag
+   ,late_dlvry_flag
+   ,trkd_trans_flag
+   ,byr_cntry_id
+   ,byr_id
+   ,cncl_start_dt
+   ,byr_fdbk_rcvd_dt
+   ,case  when trans_site_id in(100,0) then 'US'
+		  when trans_site_id in(3) then 'UK'
+		  when trans_site_id in(77) then 'DE'
+		  when trans_site_id in(15) then 'AU' 
+		  when trans_site_id in(2,210) then 'CA'
+		  when trans_site_id=71 then 'FR' 
+		  when trans_site_id=101 then 'IT'
+		  when trans_site_id=186 then 'ES' 
+		  when trans_site_id=16 then 'AT' 
+		  when trans_site_id=193 then 'CH' 
+		  else 'Other' end  as trans_site 
+ FROM ACCESS_VIEWS.ebay_trans_rltd_event 
+ WHERE  1=1
+		and trans_dt between add_months(date_sub(current_date(), (DAY(CURRENT_DATE) - 1)),-8) and current_date
+		and lower(rprtd_wacko_yn_ind)=lower('N')
+		and core_categ_ind=1
+		and  ! auct_type_code in(10,12,15)
+) as co
+left join
+( 
+ 
+ SELECT  
+  item_id
+   ,transaction_id
+   ,intmdt_pymnt_mthd_used_ind
+   ,payment_method
+   ,ck_flags6 
+ FROM ACCESS_VIEWS.dw_checkout_trans 
+ WHERE  created_dt between add_months(date_sub(current_date(), (DAY(CURRENT_DATE) - 1)),-8) and current_date
+		and auct_end_dt>=add_months(date_sub(current_date(), (DAY(CURRENT_DATE) - 1)),-8)
+) as txn
+on  (co.item_id=txn.item_id and co.trans_id=txn.transaction_id)
+left join
+( 
+ 
+ SELECT  
+  item_id
+   ,ck_trans_id
+   ,nors_type_desc 
+ FROM PRS_RESTRICTED_V.slng_trans_super_fact_ext 
+ WHERE ck_trans_dt>=add_months(date_sub(current_date(), (DAY(CURRENT_DATE) - 1)),-8)
+) as ck
+on  (co.item_id=ck.item_id and co.trans_id=ck.ck_trans_id)
+left join
+( 
+ 
+ SELECT  
+  * 
+ FROM P_RM_TRUST_T.covid_categories 
+ WHERE  lower(cov_bucket) in (lower('Mask'),lower('Other hygiene'),lower('confinement' ) ) 
+) as covid
+on  (co.item_lstd_site_id=covid.site_id and co.leaf_categ_id=covid.leaf_categ_id)
+left join
+( 
+ 
+ SELECT  
+  a.seller_id,
+  cat.site_id,
+  cat.leaf_category_id 
+ FROM P_CSI_TBS_T.covid_whitelisted_sellers a
+ INNER JOIN P_CSI_TBS_T.COVID_WHITELISTED_CATEGORIES CAT
+    ON (CASE 
+            WHEN a.SITE_NAME = 'US' THEN 0 
+            WHEN a.SITE_NAME = 'UK' THEN 3
+            WHEN a.SITE_NAME = 'DE' THEN 77
+            WHEN a.SITE_NAME = 'AU' THEN 15
+            WHEN a.SITE_NAME = 'CA' THEN 2
+            WHEN a.SITE_NAME = 'ES' THEN 186
+            ELSE 9999
+        END) = CAT.SITE_ID 
+
+) as wht
+on  (co.slr_id=wht.seller_id 
+and co.trans_site_id=wht.site_id and co.leaf_categ_id=wht.leaf_category_id)
+left join
+( 
+ 
+ SELECT  
+  lstg_id
+   ,ck_trans_id
+   ,cde_max_dt
+   ,buyer_cntry_id
+   ,item_cntry_id 
+ FROM ACCESS_VIEWS.ssa_shpmt_trans_fact 
+ WHERE lstg_end_dt>=add_months(date_sub(current_date(), (DAY(CURRENT_DATE) - 1)),-8))SSA
+on  (ssa.lstg_id=co.item_id and ssa.ck_trans_id=co.trans_id)
+left join
+( 
+ 
+ SELECT  
+  item_id
+   ,trans_id 
+ FROM PRS_RESTRICTED_V.pl_ads_cps_trans 
+ WHERE cps_trans_sts_id=2 
+ GROUP BY 1,2 
+) as pl
+on  (pl.item_id=co.item_id and pl.trans_id=co.trans_id)
+LEFT JOIN P_RM_TRUST_T.ADMIN_ENDED_LSTG AEL 
+ON CO.ITEM_ID = AEL.ITEM_ID
+left join 
+(select 
+item_id,
+transaction_id
+from
+p_kb_t.pp_ulp_txns
+where ebay_txn_cre_dt >=add_months(date_sub(current_date(), (DAY(CURRENT_DATE) - 1)),-8)
+)ulp
+on CO.ITEM_ID= ulp.ITEM_ID AND CO.TRANS_ID=ulp.transaction_id
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|20976033512|0|209988|238989|0|2020-07-30T05:20:14.479GMT|0|0|4|75363254272|run at AccessController.java:0|10|210|210|0|4|215|0|0|[280932, 280927, 280929, 280926, 280928, 280930, 280931]|default|21877087005|1437394181|2251257863|201374612|108926|ACTIVE|2020-07-30T05:20:14.472GMT
+[]|0|"create volatile table refusal_rawreason as(
+ SELECT  
+    oms_prchs_order_id
+   ,processor_refusal_rawreason
+   ,src_cre_dt
+   ,src_cre_tm 
+ FROM  
+( SELECT  
+   c.oms_prchs_order_id
+   ,e.processor_refusal_rawreason
+   ,a.src_cre_dt
+   ,a.src_cre_tm
+   ,(row_number() over (partition by c.oms_prchs_order_id order by a.src_cre_dt desc,a.src_cre_tm desc)) AS alias_694 
+ FROM ( 
+ 
+ SELECT  
+  * 
+ FROM access_views.pymt_exec_dtl 
+ WHERE  ! length(extrnl_rfrnc_key) in(9,13,20) 
+) as a
+inner join
+access_views.pymt_exec_sub_actvty_info as b
+on  (a.exec_pymt_id=b.exec_rsrc_ref_id and b.type_id=1)
+left join
+refusal_rawreason_0 as e
+on b.exec_actvty_dtl_id=e.exec_actvty_dtl_id
+inner join
+access_views.dw_oms_order as c
+on coalesce(c.order_ref_id,c.oms_order_id) =substring_index(extrnl_rfrnc_key, '!', -1)
+left join
+access_views.dw_oms_prchs_order as d
+on c.oms_prchs_order_id=d.oms_prchs_order_id 
+ WHERE  ( ( !  lower(extrnl_rfrnc_key) in (lower('externalReferenceKey'),lower('ManualPayout1'),lower('ManualPayout2' ) ) 
+ and not  lower(extrnl_rfrnc_key) like lower('externalReferenceKey%')) and c.src_cre_dt>'2018-01-01') 
+)alias_695 
+ WHERE alias_695.alias_694 = 1
+
+union
+
+ SELECT  
+    oms_prchs_order_id
+   ,processor_refusal_rawreason
+   ,src_cre_dt
+   ,src_cre_tm 
+ FROM  
+( SELECT  
+c.OMS_PRCHS_ORDER_ID
+   ,e.processor_refusal_rawreason
+   ,a.src_cre_dt
+   ,a.src_cre_tm
+   ,(row_number() over (partition by oms_prchs_order_id order by a.src_cre_dt desc,a.src_cre_tm desc)) AS alias_696 
+ FROM ( 
+ 
+ SELECT  
+  * 
+ FROM access_views.pymt_exec_dtl 
+ WHERE  ! length(extrnl_rfrnc_key) in(9,13,20) 
+) as a
+inner join
+access_views.pymt_exec_sub_actvty_info as b
+on  (a.exec_pymt_id=b.exec_rsrc_ref_id and b.type_id=1)
+left join
+refusal_rawreason_0 as e
+on b.exec_actvty_dtl_id=e.exec_actvty_dtl_id
+inner join
+access_views.dw_oms_prchs_order as c
+on COALESCE(c.order_ref_id, c.oms_prchs_order_id)=substring_index(extrnl_rfrnc_key, '!', -1)
+ WHERE  ( ( !  lower(extrnl_rfrnc_key) in (lower('externalReferenceKey'),lower('ManualPayout1'),lower('ManualPayout2' ) ) and not  lower(extrnl_rfrnc_key) like lower('externalReferenceKey%')) and c.src_cre_dt>'2018-01-01') 
+)alias_697 
+ WHERE alias_697.alias_696 = 1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|44935280368|0|13886904|14429405|0|2020-07-30T04:54:45.742GMT|0|0|11|250316062720|run at AccessController.java:0|2|434|434|0|11|435|0|0|[274283, 274280, 274281, 274278, 274282, 274279, 274277]|default|67384381277|9412860016|1548481|22455|108033|ACTIVE|2020-07-30T04:54:45.736GMT

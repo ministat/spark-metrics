@@ -1,0 +1,498 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.Finish but did not commit due to another attempt succeeded|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|select sub_dmn_txt, count(*) from BN_pageviews where exprnc_name = 'Browser: Core Site' group by 1|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T03:34:39.572GMT|0|0|||0|run at AccessController.java:0|3069|0|0|0|0|3334|0|0|[91684, 91683, 91682]|default|0|0|0|0|39424|ACTIVE|2020-07-30T03:34:39.346GMT
+[]|0|"Create table P_CM_Wanted_Inventory_T.2020_Focus_track USING PARQUET (	
+Select 	
+	
+a.*,	
+case when newdata.Owner_prmry_orcl_id is NULL then 'NO' else newdata.signup_status END as signup_status	
+	
+from	
+	
+(SELECT  	
+    cal.year_id	
+   ,cal.month_id	
+   ,cal.WEEK_ID	
+   ,cal.cal_dt	
+   ,cate.bsns_vrtcl_name as vertical	
+   ,cate.site	
+   ,cate.meta_categ_id	
+   ,leaf.meta_categ_name	
+   ,leaf.categ_lvl2_id	
+   ,leaf.categ_lvl3_id	
+   ,leaf.categ_lvl4_id	
+   ,leaf.categ_lvl5_id	
+   ,leaf.categ_lvl2_name	
+   ,leaf.categ_lvl3_name	
+   ,leaf.categ_lvl4_name	
+   ,leaf.categ_lvl5_name	
+   ,leaf.site_l5	
+   ,cate.Owner as strategic_owner	
+   ,cate.Product_line_name as strategic_group	
+   ,concat(cate.Owner,'_',ERS.prmry_orcl_id) as Owner_prmry_orcl_id	
+   ,slr.slr_l1	
+   ,slr.slr_l2	
+   ,slr.slr_l3	
+   ,slr.slr_l4	
+   ,slr.slr_l5	
+   ,ERS.prmry_orcl_id	
+   ,ERS.prmry_user_slctd_id	
+   ,ERS.am	
+   ,ERS.acct_type_seg	
+   ,cki.slr_id	
+   ,du.USER_SLCTD_ID as slr_name	
+   ,case 	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<10 then '1. <10$' 	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<20 then '2. <20$' 	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<50 then '3. <50$'	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<100 then '4. <100$' 	
+   else '5. >=100$' end  as price_tranche_usd	
+	,location.CNTRY_DESC as item_location_name
+	,location.CNTRY_CODE as item_location_code
+	,CASE WHEN DTL.Brand IS NULL THEN 'Unbranded' Else DTL.Brand End as Brand
+	,sum(cast(cki.item_price as float)*cast(cki.qty as float)*cast(lpr.curncy_plan_rate as decimal(18,2))) as GMV_SUM
+    ,cast (sum(cki.qty) as decimal (18,0)) as SI_SUM	
+	,count(distinct lstg.item_id) as Sold_LL
+	
+	
+FROM ACCESS_VIEWS.DW_GEM2_CMN_CK_I as CKI     	
+Inner JOIN dw_cal_dt as cal  ON CAL.CAL_DT = CKI.CK_DATE  	
+Inner JOIN SSA_CURNCY_PLAN_RATE_DIM as LPR ON CKI.LSTG_CURNCY_ID=LPR.CURNCY_ID  	
+Inner Join dw_daily_exchange_rates as fx on fx.CURNCY_ID=CKI.LSTG_CURNCY_ID and cki.CK_DATE=fx.DAY_OF_TRANS_DT	
+Inner Join P_CM_Wanted_Inventory_T.SLR_BYR_MAPPING as SLR on slr.CNTRY_ID=cki.SLR_CNTRY_ID	
+Left join 	
+(Select 	
+acct_orcl_id,	
+prmry_orcl_id,	
+prmry_user_slctd_id,	
+am,	
+acct_type_seg	
+from P_DANIELYI.ERS	
+WHERE version=(SELECT max(version) FROM P_DANIELYI.ERS)) as ERS ON ERS.acct_orcl_id=CKI.SLR_ID	
+	
+Inner JOIN (Select cate.*,focus.owner,focus.Product_line_name from P_DANIELYI.Cate_ENG as cate Inner JOIN P_CM_Wanted_Inventory_T.Focus_cate as focus on trim(focus.Site_L5)=trim(cate.site_l5) WHERE cate.sap_category_id not in (-999) ) as cate on cate.site_id = cki.lstg_site_id and cate.leaf_categ_id = cki.leaf_categ_id      	
+Inner Join P_DANIELYI.LEAF_ENG as LEAF on LEAF.SITE_Leaf=cate.SITE_Leaf_New	
+Inner join dw_lstg_item as lstg on lstg.item_id=cki.LSTG_ID	
+Inner join dw_users as du on du.USER_ID=lstg.slr_id	
+Inner join P_CM_Wanted_Inventory_T.SLR_BYR_MAPPING as location on location.CNTRY_ID=lstg.item_cntry_id	
+	
+Left JOIN  	
+(Select DTL.item_id,DTL.Brand	
+from 	
+(Select	
+DTL.item_id,	
+DTL.TAG_VALUE_TXT as brand,	
+NOUSE.tag_value_txt,	
+(ROW_NUMBER() over (partition by ITEM_ID order by case upper(DTL.TAG_NAME) when 'BRAND' then 1 when 'MARKE' then 2 when 'MARCA' then 3 when 'MARQUE' then 4 end )) AS BRANDPRIORITY	
+	
+From DW_ATTR_LSTG_TAG_DTL AS DTL	
+Inner join (SELECT  	
+cki.LSTG_ID,	
+cki.LSTG_END_DT	
+FROM ACCESS_VIEWS.DW_GEM2_CMN_CK_I as CKI 	
+Inner Join P_DANIELYI.SLR_BYR_MAPPING as SLR on slr.CNTRY_ID=cki.SLR_CNTRY_ID	
+Inner JOIN (Select * from P_DANIELYI.Cate_ENG as cate Inner JOIN P_CM_Wanted_Inventory_T.Focus_cate as focus on trim(focus.Site_L5)=trim(cate.site_l5)) as cate on cate.site_id = cki.lstg_site_id and cate.leaf_categ_id = cki.leaf_categ_id  	
+Where	
+Slr.SLR_L1='ICBT'	
+and cki.LSTG_SITE_ID in(3,77,15,0,100,101,186,71,2) 	
+and cki.CK_DATE between '2018-01-01' and '2020-12-31'	
+Group by 1,2) AS cki on DTL.ITEM_ID =CKI.LSTG_ID AND DTL.AUCT_END_DT =cki.LSTG_END_DT AND DTL.GCS_ID=102 AND upper(DTL.TAG_NAME) in ('BRAND','MARKE','MARQUE','MARCA')	
+LEFT JOIN P_DANIELYI.remove_tag_value AS NOUSE ON upper(NOUSE.tag_value_txt)=upper(DTL.TAG_VALUE_TXT)	
+WHERE DTL.AUCT_END_DT>='2018-01-01' 	
+AND NOUSE.tag_value_txt is null) AS DTL WHERE DTL.BRANDPRIORITY=1) AS DTL ON DTL.item_id=cki.LSTG_ID	
+	
+Where	
+Slr.SLR_L1='ICBT'	
+and cki.LSTG_SITE_ID in(3,77,15,0,100,101,186,71,2) 	
+and cki.CK_DATE between '2018-01-01' and date_sub(current_date,1)	
+and CKI.LSTG_END_DT >='2018-01-01'	
+AND CKI.LSTG_SITE_ID IN (3, 77, 15, 0, 100, 101, 186, 71, 2) 	
+and cki.lstg_type_code not in (3,10,11,12,13,15,-1,-2,-3,-4,-5)   	
+AND Coalesce(CKI.RPRTD_WACKO_YN, CKI.CK_WACKO_YN)='N'    	
+AND CKI.ADJ_TYPE_ID NOT IN (3,5,-1,-7)          	
+and adj_type_id not in (3,5,-1,-7)      	
+and auct_end_dt >='2018-01-01'	
+and cal.cal_dt<=date_sub(current_date,1)	
+	
+	
+group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35) as a	
+	
+Left join P_CM_Wanted_Inventory_T.signup_2020 as newdata on trim(lower(newdata.Owner_prmry_orcl_id))=trim(lower(a.Owner_prmry_orcl_id)))"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T03:34:37.580GMT|0|0|||0|run at AccessController.java:0|9219|0|0|0|0|10000|0|0|[91681, 91675, 91678, 91676, 91679, 91677, 91680]|default|0|0|0|0|39423|ACTIVE|2020-07-30T03:34:37.545GMT
+[]|0|"create TEMPORARY table GMV
+as (
+
+select 
+CAL.retail_week,
+
+SLR.SELLER_GROUP,
+ 
+case when  cate.bsns_vrtcl_name in ('Home & Garden') then   'C. H&G'
+     else 'OTHERS'
+END AS VERTICAL, 
+
+CASE WHEN  BBE.ITEM_LSTD_SITE_ID IN (0,100) THEN 'US'                                          
+                WHEN  BBE.ITEM_LSTD_SITE_ID IN (3) THEN 'UK'                                           
+                WHEN  BBE.ITEM_LSTD_SITE_ID IN (77) THEN 'DE'                                         
+                WHEN  BBE.ITEM_LSTD_SITE_ID IN (15) THEN 'AU'                              
+                ELSE 'OTHERS' 
+END AS LSTG_SITE, 
+
+
+cate.meta_categ_id,
+cate.meta_categ_name,
+cate.categ_lvl2_id,
+cate.categ_lvl2_name,
+
+
+SUM(CAST( case when BBE.ITEM_PRICE_NUM is not null then  BBE.ITEM_PRICE_NUM else 0 end AS decimal(18,2))*
+         CAST(case when BBE.ITEM_SOLD_QTY is not null then  BBE.ITEM_SOLD_QTY else 0 end AS decimal(18,2))  *
+		 CAST(case when LPR.CURNCY_PLAN_RATE is not null then LPR.CURNCY_PLAN_RATE end AS decimal(18,2))) AS GMV,
+SUM(case when BBE.ITEM_SOLD_QTY is not null then BBE.ITEM_SOLD_QTY else 0 end) AS SI
+
+FROM ( SELECT BBE.Slr_id
+            , BBE.ITEM_LSTD_SITE_ID
+			, bbe.byr_cntry_id
+			, bbe.slr_cntry_id
+            , BBE.ITEM_CNTRY_ID
+            , BBE.ITEM_PRICE_NUM
+            , BBE.ITEM_SOLD_QTY
+			, BBE.TRANS_DT
+			, BBE.rprtd_wacko_yn_ind
+			, BBE.CK_WACKO_YN_IND
+			,BBE.LSTG_CURNCY_ID
+			 ,BBE.leaf_categ_id
+			 ,BBE.trans_id
+            FROM PRS_RESTRICTED_V.EBAY_TRANS_RLTD_EVENT  BBE 
+            where
+		    BBE.ITEM_LSTD_SITE_ID <> 223 AND BBE.ITEM_LSTD_SITE_ID NOT BETWEEN -10 AND -1
+			and bbe.trans_dt between  
+							  (select distinct retail_start_date from dw_cal_dt 
+				 			  where retail_week = (select distinct retail_week from dw_cal_dt where age_for_rtl_week_id=-1)
+			  	 			  and retail_year = (select distinct retail_year from dw_cal_dt where age_for_rtl_year_id =  0)) 
+							  and		  
+							  (select distinct retail_wk_end_date from dw_cal_dt 
+				 			  where retail_week = (select distinct retail_week from dw_cal_dt where age_for_rtl_week_id=-1)
+			  	 			  and retail_year = (select distinct retail_year from dw_cal_dt where age_for_rtl_year_id =  0))
+            and BBE.AUCT_TYPE_CODE NOT IN (10,12,13,15,-3,-4,-5)
+            and BBE.BBE_ELGB_TRANS_IND = 1
+	        and BBE.ITEM_LSTD_SITE_ID in (0,100,3,77,15)              and COALESCE(rprtd_wacko_yn_ind, CK_WACKO_YN_IND) = 'N' 
+     ) BBE 
+JOIN P_SIQI_ROUTINE_T.SLR SLR ON SLR.ACCT_ORCL_ID=BBE.Slr_id
+JOIN ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM LPR on BBE.LSTG_CURNCY_ID = LPR.CURNCY_ID
+JOIN DW_CATEGORY_GROUPINGS cate ON cate.site_id = BBE.ITEM_LSTD_SITE_ID AND cate.leaf_categ_id = BBE.leaf_categ_id
+JOIN dw_cal_dt CAL ON BBE.TRANS_DT= CAL.cal_dt
+and cate.sap_category_id NOT IN (5,7,41,23,-199) 
+AND Cate.bsns_vrtcl_name='Home & Garden'
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+
+
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|7400754|34531238|0|2020-07-30T03:34:23.551GMT|363514930878|21441355509|||0|run at AccessController.java:0|261|4739|4739|0|0|5000|0|0|[91665, 91663, 91664]|default|0|0|147216202|747956|39418|ACTIVE|2020-07-30T03:34:23.532GMT
+[]|0|"CREATE TEMPORARY TABLE GMV_LY
+AS (
+
+select 
+CAL.retail_week,
+
+CASE WHEN SLR.SELLER_GROUP IN ('Tiger_Team') then 'Tiger_Team'
+     WHEN SLR.SELLER_GROUP IN ('Eric_Team') then 'Eric_Team'
+     WHEN SLR.SELLER_GROUP IN ('MARS_Team') then 'MARS_Team'
+     WHEN SLR.SELLER_GROUP IN ('PSAM_Team') then 'PSAM_Team'
+ 	 WHEN SLR.SELLER_GROUP IN ('Bill_Team') then 'Bill_Team'
+	 WHEN SLR.SELLER_GROUP IN ('BD_Team') then 'BD_Team'
+	 WHEN BBE.SLR_CNTRY_ID IN (45) THEN 'CN_OTHERS' 
+		    ELSE 'NON-CN'
+END AS TEAM,
+ 
+case when  cate.bsns_vrtcl_name in ('Electronics') then   'TECH'
+     else 'OTHERS'
+END AS VERTICAL, 
+
+CASE WHEN  BBE.ITEM_LSTD_SITE_ID IN (0,100) THEN 'US'                                          
+                WHEN  BBE.ITEM_LSTD_SITE_ID IN (3) THEN 'UK'                                           
+                WHEN  BBE.ITEM_LSTD_SITE_ID IN (77) THEN 'DE'                                         
+                WHEN  BBE.ITEM_LSTD_SITE_ID IN (15) THEN 'AU'                              
+                ELSE 'OTHERS' 
+END AS LSTG_SITE, 
+
+
+cate.meta_categ_id,
+cate.meta_categ_name,
+cate.categ_lvl2_id,
+cate.categ_lvl2_name,
+cate.categ_lvl3_id,
+cate.categ_lvl3_name,
+
+SUM(CAST( case when BBE.ITEM_PRICE_NUM is not null then  BBE.ITEM_PRICE_NUM else 0 end AS decimal(18,2))*
+         CAST(case when BBE.ITEM_SOLD_QTY is not null then  BBE.ITEM_SOLD_QTY else 0 end AS decimal(18,2))  *
+		 CAST(case when LPR.CURNCY_PLAN_RATE is not null then LPR.CURNCY_PLAN_RATE end AS decimal(18,2))) AS GMV,
+SUM(case when BBE.ITEM_SOLD_QTY is not null then BBE.ITEM_SOLD_QTY else 0 end) AS SI
+
+FROM ( SELECT BBE.Slr_id
+            , BBE.ITEM_LSTD_SITE_ID
+			, bbe.byr_cntry_id
+			, bbe.slr_cntry_id
+            , BBE.ITEM_CNTRY_ID
+            , BBE.ITEM_PRICE_NUM
+            , BBE.ITEM_SOLD_QTY
+			, BBE.TRANS_DT
+			, BBE.rprtd_wacko_yn_ind
+			, BBE.CK_WACKO_YN_IND
+			,BBE.LSTG_CURNCY_ID
+			 ,BBE.leaf_categ_id
+			 ,BBE.trans_id
+            FROM PRS_RESTRICTED_V.EBAY_TRANS_RLTD_EVENT  BBE 
+            where
+		    BBE.ITEM_LSTD_SITE_ID <> 223 AND BBE.ITEM_LSTD_SITE_ID NOT BETWEEN -10 AND -1
+			and bbe.trans_dt between  
+							  (select distinct retail_start_date from dw_cal_dt 
+				 			  where retail_week = (select distinct retail_week from dw_cal_dt where age_for_rtl_week_id=-1)
+			  	 			  and retail_year = (select distinct retail_year from dw_cal_dt where age_for_rtl_year_id =  -1)) 
+							  and		  
+							  (select distinct retail_wk_end_date from dw_cal_dt 
+				 			  where retail_week = (select distinct retail_week from dw_cal_dt where age_for_rtl_week_id=-1)
+			  	 			  and retail_year = (select distinct retail_year from dw_cal_dt where age_for_rtl_year_id =  -1))
+            and BBE.AUCT_TYPE_CODE NOT IN (10,12,13,15,-3,-4,-5)
+            and BBE.BBE_ELGB_TRANS_IND = 1
+	        and BBE.ITEM_LSTD_SITE_ID in (0,100,3,77,15)              and COALESCE(rprtd_wacko_yn_ind, CK_WACKO_YN_IND) = 'N' 
+     ) BBE 
+JOIN P_SIQI_ROUTINE_T.SLR SLR ON SLR.ACCT_ORCL_ID=BBE.Slr_id
+JOIN ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM LPR on BBE.LSTG_CURNCY_ID = LPR.CURNCY_ID
+JOIN DW_CATEGORY_GROUPINGS cate ON cate.site_id = BBE.ITEM_LSTD_SITE_ID AND cate.leaf_categ_id = BBE.leaf_categ_id
+JOIN dw_cal_dt CAL ON BBE.TRANS_DT= CAL.cal_dt
+and cate.sap_category_id NOT IN (5,7,41,23,-199) 
+AND Cate.bsns_vrtcl_name='Electronics'
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8,9,10
+
+
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|7842245|42498214|0|2020-07-30T03:34:06.776GMT|403164510329|22573366537|8.0|120.0|0|run at AccessController.java:0|59|4971|4971|0|128|5000|0|0|[91598, 91596, 91597]|default|0|0|156994500|667522|39384|ACTIVE|2020-07-30T03:34:06.751GMT
+[]|0|"Create table P_CM_Wanted_Inventory_T.2020_Focus_track USING PARQUET (	
+Select 	
+	
+a.*,	
+case when newdata.Owner_prmry_orcl_id is NULL then 'NO' else newdata.signup_status END as signup_status	
+	
+from	
+	
+(SELECT  	
+    cal.year_id	
+   ,cal.month_id	
+   ,cal.WEEK_ID	
+   ,cal.cal_dt	
+   ,cate.bsns_vrtcl_name as vertical	
+   ,cate.site	
+   ,cate.meta_categ_id	
+   ,leaf.meta_categ_name	
+   ,leaf.categ_lvl2_id	
+   ,leaf.categ_lvl3_id	
+   ,leaf.categ_lvl4_id	
+   ,leaf.categ_lvl5_id	
+   ,leaf.categ_lvl2_name	
+   ,leaf.categ_lvl3_name	
+   ,leaf.categ_lvl4_name	
+   ,leaf.categ_lvl5_name	
+   ,leaf.site_l5	
+   ,cate.Owner as strategic_owner	
+   ,cate.Product_line_name as strategic_group	
+   ,concat(cate.Owner,'_',ERS.prmry_orcl_id) as Owner_prmry_orcl_id	
+   ,slr.slr_l1	
+   ,slr.slr_l2	
+   ,slr.slr_l3	
+   ,slr.slr_l4	
+   ,slr.slr_l5	
+   ,ERS.prmry_orcl_id	
+   ,ERS.prmry_user_slctd_id	
+   ,ERS.am	
+   ,ERS.acct_type_seg	
+   ,cki.slr_id	
+   ,du.USER_SLCTD_ID as slr_name	
+   ,case 	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<10 then '1. <10$' 	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<20 then '2. <20$' 	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<50 then '3. <50$'	
+   when cast (cki.item_price as FLOAT)*cast(fx.EXCHNG_RATE as DECIMAL(18,2))<100 then '4. <100$' 	
+   else '5. >=100$' end  as price_tranche_usd	
+	,location.CNTRY_DESC as item_location_name
+	,location.CNTRY_CODE as item_location_code
+	,CASE WHEN DTL.Brand IS NULL THEN 'Unbranded' Else DTL.Brand End as Brand
+	,sum(cast(cki.item_price as float)*cast(cki.qty as float)*cast(lpr.curncy_plan_rate as decimal(18,2))) as GMV_SUM
+    ,cast (sum(cki.qty) as decimal (18,0)) as SI_SUM	
+	,count(distinct lstg.item_id) as Sold_LL
+	
+	
+FROM ACCESS_VIEWS.DW_GEM2_CMN_CK_I as CKI     	
+Inner JOIN dw_cal_dt as cal  ON CAL.CAL_DT = CKI.CK_DATE  	
+Inner JOIN SSA_CURNCY_PLAN_RATE_DIM as LPR ON CKI.LSTG_CURNCY_ID=LPR.CURNCY_ID  	
+Inner Join dw_daily_exchange_rates as fx on fx.CURNCY_ID=CKI.LSTG_CURNCY_ID and cki.CK_DATE=fx.DAY_OF_TRANS_DT	
+Inner Join P_CM_Wanted_Inventory_T.SLR_BYR_MAPPING as SLR on slr.CNTRY_ID=cki.SLR_CNTRY_ID	
+Left join 	
+(Select 	
+acct_orcl_id,	
+prmry_orcl_id,	
+prmry_user_slctd_id,	
+am,	
+acct_type_seg	
+from P_DANIELYI.ERS	
+WHERE version=(SELECT max(version) FROM P_DANIELYI.ERS)) as ERS ON ERS.acct_orcl_id=CKI.SLR_ID	
+	
+Inner JOIN (Select cate.*,focus.owner,focus.Product_line_name from P_DANIELYI.Cate_ENG as cate Inner JOIN P_CM_Wanted_Inventory_T.Focus_cate as focus on trim(focus.Site_L5)=trim(cate.site_l5) WHERE cate.sap_category_id not in (-999) ) as cate on cate.site_id = cki.lstg_site_id and cate.leaf_categ_id = cki.leaf_categ_id      	
+Inner Join P_DANIELYI.LEAF_ENG as LEAF on LEAF.SITE_Leaf=cate.SITE_Leaf_New	
+Inner join dw_lstg_item as lstg on lstg.item_id=cki.LSTG_ID	
+Inner join dw_users as du on du.USER_ID=lstg.slr_id	
+Inner join P_CM_Wanted_Inventory_T.SLR_BYR_MAPPING as location on location.CNTRY_ID=lstg.item_cntry_id	
+	
+Left JOIN  	
+(Select DTL.item_id,DTL.Brand	
+from 	
+(Select	
+DTL.item_id,	
+DTL.TAG_VALUE_TXT as brand,	
+NOUSE.tag_value_txt,	
+(ROW_NUMBER() over (partition by ITEM_ID order by case upper(DTL.TAG_NAME) when 'BRAND' then 1 when 'MARKE' then 2 when 'MARCA' then 3 when 'MARQUE' then 4 end )) AS BRANDPRIORITY	
+	
+From DW_ATTR_LSTG_TAG_DTL AS DTL	
+Inner join (SELECT  	
+cki.LSTG_ID,	
+cki.LSTG_END_DT	
+FROM ACCESS_VIEWS.DW_GEM2_CMN_CK_I as CKI 	
+Inner Join P_DANIELYI.SLR_BYR_MAPPING as SLR on slr.CNTRY_ID=cki.SLR_CNTRY_ID	
+Inner JOIN (Select * from P_DANIELYI.Cate_ENG as cate Inner JOIN P_CM_Wanted_Inventory_T.Focus_cate as focus on trim(focus.Site_L5)=trim(cate.site_l5)) as cate on cate.site_id = cki.lstg_site_id and cate.leaf_categ_id = cki.leaf_categ_id  	
+Where	
+Slr.SLR_L1='ICBT'	
+and cki.LSTG_SITE_ID in(3,77,15,0,100,101,186,71,2) 	
+and cki.CK_DATE between '2018-01-01' and '2020-12-31'	
+Group by 1,2) AS cki on DTL.ITEM_ID =CKI.LSTG_ID AND DTL.AUCT_END_DT =cki.LSTG_END_DT AND DTL.GCS_ID=102 AND upper(DTL.TAG_NAME) in ('BRAND','MARKE','MARQUE','MARCA')	
+LEFT JOIN P_DANIELYI.remove_tag_value AS NOUSE ON upper(NOUSE.tag_value_txt)=upper(DTL.TAG_VALUE_TXT)	
+WHERE DTL.AUCT_END_DT>='2018-01-01' 	
+AND NOUSE.tag_value_txt is null) AS DTL WHERE DTL.BRANDPRIORITY=1) AS DTL ON DTL.item_id=cki.LSTG_ID	
+	
+Where	
+Slr.SLR_L1='ICBT'	
+and cki.LSTG_SITE_ID in(3,77,15,0,100,101,186,71,2) 	
+and cki.CK_DATE between '2018-01-01' and date_sub(current_date,1)	
+and CKI.LSTG_END_DT >='2018-01-01'	
+AND CKI.LSTG_SITE_ID IN (3, 77, 15, 0, 100, 101, 186, 71, 2) 	
+and cki.lstg_type_code not in (3,10,11,12,13,15,-1,-2,-3,-4,-5)   	
+AND Coalesce(CKI.RPRTD_WACKO_YN, CKI.CK_WACKO_YN)='N'    	
+AND CKI.ADJ_TYPE_ID NOT IN (3,5,-1,-7)          	
+and adj_type_id not in (3,5,-1,-7)      	
+and auct_end_dt >='2018-01-01'	
+and cal.cal_dt<=date_sub(current_date,1)	
+	
+	
+group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35) as a	
+	
+Left join P_CM_Wanted_Inventory_T.signup_2020 as newdata on trim(lower(newdata.Owner_prmry_orcl_id))=trim(lower(a.Owner_prmry_orcl_id)))"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|52430017|108842350|0|2020-07-30T03:34:02.237GMT|3113010706978|202124987224||23.0|0|run at AccessController.java:0|497|7252|7252|0|23|7500|0|0|[91550, 91543, 91549]|default|0|0|288906487367|9531538915|39361|ACTIVE|2020-07-30T03:34:02.205GMT
+[]|0|"CREATE TEMPORARY TABLE  P_ctsang_T.lstg_wk USING PARQUET (
+SELECT 	cal.retail_week AS week_id
+   		,cal.retail_year AS year_id
+   		,a.slr_cntry_id
+   		,a.slr_id
+   		,a.item_site_id
+		,a.DOM_or_CBT_sale
+		,a.New_listing
+		,SUM(a.GMV) AS GMV
+		,SUM(a.SI) AS SI
+   		,COUNT(DISTINCT a.item_id) AS LL
+   		
+   FROM 
+(SELECT
+  l.auct_end_dt,
+  l.auct_start_dt,
+  l.item_id,
+  l.slr_id,
+  l.item_site_id,
+  l.slr_cntry_id,
+  ck.rprtd_gmv_dt,
+  ck.lstg_id,
+  ck.lstg_site_id,
+  ck.byr_cntry_id,
+  CAST(ck.qty AS FLOAT) * CAST(ck.item_price AS FLOAT) * CAST(cc.curncy_plan_rate AS FLOAT) AS GMV,
+  ck.qty AS SI,
+  CASE
+    WHEN ck.byr_cntry_id <> ck.slr_cntry_id THEN 'CBT'
+    ELSE 'DOM'
+  END DOM_or_CBT_sale,
+  CASE
+  	WHEN l.auct_start_dt BETWEEN cal.retail_start_date AND cal.retail_wk_end_date 
+          AND DATEDIFF(cal.retail_wk_end_date,l.auct_start_dt) <= 7 THEN 'Y' 
+		   ELSE 'N' 
+	END New_listing 
+FROM dw_lstg_item l
+    LEFT JOIN dw_category_groupings cat 
+	ON l.item_site_id = cat.site_id AND l.leaf_categ_id = cat.leaf_categ_id
+	LEFT JOIN access_views.dw_gem2_cmn_ck_i ck
+	ON ck.LSTG_ID = l.ITEM_ID 
+	LEFT JOIN access_views.ssa_curncy_plan_rate_dim cc
+    ON cc.curncy_id = ck.lstg_curncy_id
+	LEFT JOIN P_ctsang_T.report_wkrefresh cal
+  ON l.auct_end_dt >= cal.cal_dt AND l.auct_start_dt <= cal.cal_dt
+	
+WHERE l.auct_end_dt >= '2017-12-31' 
+AND l.slr_cntry_id IN (180,127,162,216,96,199) 
+AND l.item_site_id NOT IN (-6,-7,-11,-12,-13,-14,223)
+AND l.auct_type_code NOT IN (10,15)
+AND cat.sap_category_id NOT IN (5,7,23,41,-999)
+AND ck.rprtd_gmv_dt >= '2018-12-30'
+  AND ck.lstg_end_dt >= '2018-12-30'
+  AND COALESCE(ck.RPRTD_WACKO_YN, ck.ck_wacko_yn)='N' 
+  AND ck.slr_cntry_id IN (180,127,162,216,96,199)
+  AND ck.lstg_site_id NOT IN (-6,-7,-11,-12,-13,-14)
+  AND ck.adj_type_id NOT IN (3,5,-1,-7)
+) a
+JOIN P_ctsang_T.report_wkrefresh cal
+  ON a.auct_end_dt >= cal.cal_dt AND a.auct_start_dt <= cal.cal_dt
+GROUP BY 1,2,3,4,5,6,7
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|2863491622|2924155823|0|2020-07-30T03:21:37.352GMT|333921925958|17596003045||158.0|0|run at AccessController.java:0|230|9911|9911|0|158|10000|0|0|[91032, 91020, 91021, 91028, 91031, 91030, 91025, 91029, 91027, 91024, 91023, 91026, 91022]|default|360827521|34232690|24893424379|307407015|39127|ACTIVE|2020-07-30T03:21:37.320GMT

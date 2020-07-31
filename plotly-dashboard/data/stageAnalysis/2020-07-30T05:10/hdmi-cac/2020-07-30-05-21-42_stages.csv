@@ -1,0 +1,326 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"create temporary table p_belxie_t.overall_metric using parquet as(
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'Banner' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when banner_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when banner_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when banner_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when banner_imprsn_flag>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when banner_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(banner_imprsn_cnt) as imprsn_cnt,
+	sum(banner_click_cnt) as click_cnt,
+	sum(banner_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+	
+union
+
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'Cmpgn' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when cmpgn_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when cmpgn_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when cmpgn_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when cmpgn_imprsn_flag>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when cmpgn_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(cmpgn_imprsn_cnt) as imprsn_cnt,
+	sum(cmpgn_click_cnt) as click_cnt,
+	sum(cmpgn_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+	
+union
+
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'BAU' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when bau_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when bau_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when bau_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when banner_imprsn_cnt>0 then 1 else 0 end)-sum(case when cmpgn_imprsn_cnt>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when banner_click_cnt>0 then 1 else 0 end)-sum(case when cmpgn_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(banner_imprsn_cnt)-sum(cmpgn_imprsn_cnt) as imprsn_cnt,
+	sum(banner_click_cnt)-sum(cmpgn_click_cnt) as click_cnt,
+	sum(bau_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|200|0|0|[232551, 232549, 232550]|default|0|0|0|0|126615|ACTIVE|2020-07-30T05:21:41.199GMT
+[]|0|"create temporary table p_belxie_t.overall_metric using parquet as(
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'Banner' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when banner_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when banner_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when banner_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when banner_imprsn_flag>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when banner_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(banner_imprsn_cnt) as imprsn_cnt,
+	sum(banner_click_cnt) as click_cnt,
+	sum(banner_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+	
+union
+
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'Cmpgn' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when cmpgn_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when cmpgn_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when cmpgn_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when cmpgn_imprsn_flag>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when cmpgn_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(cmpgn_imprsn_cnt) as imprsn_cnt,
+	sum(cmpgn_click_cnt) as click_cnt,
+	sum(cmpgn_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+	
+union
+
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'BAU' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when bau_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when bau_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when bau_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when banner_imprsn_cnt>0 then 1 else 0 end)-sum(case when cmpgn_imprsn_cnt>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when banner_click_cnt>0 then 1 else 0 end)-sum(case when cmpgn_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(banner_imprsn_cnt)-sum(cmpgn_imprsn_cnt) as imprsn_cnt,
+	sum(banner_click_cnt)-sum(cmpgn_click_cnt) as click_cnt,
+	sum(bau_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|200|0|0|[232548, 232546, 232547]|default|0|0|0|0|126614|ACTIVE|2020-07-30T05:21:41.102GMT
+[]|0|"create temporary table p_belxie_t.overall_metric using parquet as(
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'Banner' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when banner_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when banner_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when banner_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when banner_imprsn_flag>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when banner_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(banner_imprsn_cnt) as imprsn_cnt,
+	sum(banner_click_cnt) as click_cnt,
+	sum(banner_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+	
+union
+
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'Cmpgn' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when cmpgn_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when cmpgn_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when cmpgn_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when cmpgn_imprsn_flag>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when cmpgn_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(cmpgn_imprsn_cnt) as imprsn_cnt,
+	sum(cmpgn_click_cnt) as click_cnt,
+	sum(cmpgn_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+	
+union
+
+select
+	session_start_dt,
+	site_id,
+	experience,
+	'BAU' as content_type,
+	sum(1) as total_sess_cnt,
+	sum(case when sess_gmb>0 then 1 else 0 end) as total_coverted_sess,
+	sum(sess_gmb) as total_sess_gmb,
+	sum(sess_pi) as total_sess_pi,
+	sum(case when bau_imprsn_flag>0 and sess_gmb>0 then 1 else 0 end) as coverted_sess,
+	sum(case when bau_imprsn_flag>0 then sess_gmb else 0 end) as sess_gmb,
+	sum(case when bau_imprsn_flag>0 then sess_pi else 0 end) as sess_pi,
+	sum(case when banner_imprsn_cnt>0 then 1 else 0 end)-sum(case when cmpgn_imprsn_cnt>0 then 1 else 0 end) as imprsn_sess_cnt,
+	sum(case when banner_click_cnt>0 then 1 else 0 end)-sum(case when cmpgn_click_cnt>0 then 1 else 0 end) as click_sess_cnt,
+	sum(banner_imprsn_cnt)-sum(cmpgn_imprsn_cnt) as imprsn_cnt,
+	sum(banner_click_cnt)-sum(cmpgn_click_cnt) as click_cnt,
+	sum(bau_signin_sess) as signin_sess_cnt
+from
+	p_belxie_t.browser_session_summary_final
+group by
+	1,2,3,4
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|200|0|0|[232545, 232543, 232544]|default|0|0|0|0|126613|ACTIVE|2020-07-30T05:21:41.006GMT
+[]|0|Listing leaf files and directories for 2249 paths:<br/>viewfs://apollo-rno/sys/edw/prs_ddm/ddm_bsns_hlth_t/bsns_hlth/prchs_intent/snapshot/prchs_intent/prchs_intent_end_dt=2014-06-29, ...|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T05:21:39.617GMT|0|0||0|run at AccessController.java:0|1834|0|0|0|0|2249|0|0|[232542, 232540, 232541]|default|0|0|0|0|126612|ACTIVE|2020-07-30T05:21:39.588GMT
+[]|0|"create temporary table p_belxie_t.session_impression using parquet as(
+select 
+	session_start_dt,
+	guid,
+	session_skey,
+	page_id,
+	seqnum,
+	site_id,
+	plcmnt_id,
+	cmpgn_id,
+	count(distinct imprsn_id) as imprsn_cnt
+from 
+	p_belxie_t.op_imprsn_w 
+group by
+	1,2,3,4,5,6,7,8
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|313712|346422|0|2020-07-30T05:21:34.036GMT|0|0||0|run at AccessController.java:0|3|197|197|0|0|200|5573124190|141531647|[232539, 232538]|default|7814935390|143495286|0|0|126611|ACTIVE|2020-07-30T05:21:33.988GMT
+[]|0|"create temporary table p_belxie_t.last_dt_bfchurn using parquet as(
+select
+	a.primary_user_id,
+	max(a.cal_dt) as last_dt_bfchurn
+from
+	PRS_RESTRICTED_V.USER_DNA_SD as a
+	inner join
+		p_belxie_t.norb_acquired_cre_date as b
+		on a.primary_user_id=b.primary_user_id
+		and a.cal_dt<b.created_dt
+		and b.buyer_type='Reactivated'
+group by
+	1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|66924918164|0|13561036|16322555|0|2020-07-30T05:21:18.553GMT|149949362402|24899912869||352657080320|run at AccessController.java:0|99|2294|2294|0|0|2393|0|0|[232485, 232484, 232483]|default|0|0|151749291508|24523596663|126579|ACTIVE|2020-07-30T05:21:18.484GMT
+[]|0|"create temporary table p_belxie_t.norbs_acquired_v2 using parquet as(
+select
+	a.*,
+	case
+		when b.SESS_EXP_LEVEL2='Browser: mWeb' then 'mWeb'
+		when b.SESS_EXP_LEVEL2 like '%Apps%' then 'Apps'
+		else 'dWeb'
+	end as device,
+	b.sess_exp_level2 as device_type,
+	b.bbowa_traffic_source_id
+from
+	p_belxie_t.norbs_acquired_v1 as a
+	inner join
+		ACCESS_VIEWS.CHECKOUT_METRIC_ITEM_EXT as b
+		on a.item_id=b.item_id
+		and a.transaction_id=b.transaction_id
+		and b.created_dt between a.wk_start_dt and a.wk_end_dt
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|301440040845|0|51989795|54974562|0|2020-07-30T05:17:18.145GMT|764703323441|19699793054|13.0|1175478861824|run at AccessController.java:0|7|497|497|0|13|500|98897366|2071920|[232000, 231991, 231999, 231993, 231998, 231990, 231997, 231996]|default|220394290|2153310|0|0|126347|ACTIVE|2020-07-30T05:17:17.864GMT

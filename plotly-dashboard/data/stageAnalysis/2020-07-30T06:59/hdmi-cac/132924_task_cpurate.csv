@@ -1,0 +1,2 @@
+host,duration,status,taskCpuRate,taskMetrics.executorRunTime,taskMetrics.executorCpuTime
+hdc49-mcc10-01-0710-3908-006-tess0035.stratus.rno.ebay.com,50749,RUNNING,,0,0

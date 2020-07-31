@@ -1,0 +1,219 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"select count(*), count(distinct case_id_user||case_dt||source_id) from  P_INFRA_mz_T.ato_comp_sources_DATA
+where case_Dt <= '2020-07-29'"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|13555|23224|0|2020-07-30T07:00:20.476GMT|0|0||0|run at AccessController.java:0|59|141|141|0|0|200|0|0|[295003, 295002, 295001]|default|404295080|15059248|9165|141|130668|ACTIVE|2020-07-30T07:00:20.471GMT
+[]|0|select iso_curncy_id,count(distinct payee_id), count(*) from p_Ss_cop_t.seller_freq group by 1|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|57|64|0|2020-07-30T07:00:03.557GMT|0|0||0|run at AccessController.java:0|3|2|2|0|0|5|0|0|[294981, 294979, 294978, 294980]|default|35097|517|0|0|130662|ACTIVE|2020-07-30T07:00:03.552GMT
+[]|0|select * from PRS_SECURE_V.PG_BKCRD_INFO|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|44251|180969|0|2020-07-30T06:59:56.648GMT|12625570559|405504|3.0|0|run at AccessController.java:0|3|99|99|0|3|100|0|0|[294974, 294971, 294973, 294972, 294970, 294969]|default|0|0|0|0|130657|ACTIVE|2020-07-30T06:59:56.633GMT
+[]|0|"select * from PRS_SECURE_V.PG_BKCRD_INFO a
+inner join ACCESS_VIEWS.DW_PG_USER_MAPPING b on a.PG_USER_ID=b.PG_USER_ID
+where b.client_id = 1 
+and BKCRD_TOKEN_ID is not null and BKCRD_TOKEN_ID <> '' 
+and a.CRE_DATE >= '2020-01-01' 
+and ISSUE_BANK_NAME is not null and ISSUE_BANK_NAME <> ''"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|926353|1434702|0|2020-07-30T06:59:50.884GMT|21904097408|298863572|8.0|0|run at AccessController.java:0|2|179|179|0|8|180|0|0|[294962, 294959, 294961, 294960]|default|0|0|7969287103|32369798|130654|ACTIVE|2020-07-30T06:59:50.870GMT
+[]|0|"select count(*), count(Distinct case_id_user||case_dt) from  P_LVIS_DEV_mz_T.ATO_DASHBOARD_DATA"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|3441|28937|0|2020-07-30T06:59:23.726GMT|0|0||0|run at AccessController.java:0|130|73|73|0|0|203|0|0|[294956, 294955, 294954]|default|49698472|633678|4672|73|130653|ACTIVE|2020-07-30T06:59:23.721GMT
+[]|0|"select retail_week,login_dvc,login_mthd,metric,count(distinct metric||user_id||cal_date) as changes,count(distinct user_id) as users
+from
+(
+select a.*,
+login_dvc,login_mthd
+from p_gurajagopal_t.acc_info_chg_users a
+LEFT JOIN login b
+on a.user_id = b.user_id and a.cal_date = b.src_cre_dt
+qualify row_number() over (partition by a.user_id,a.cal_date,a.metric order by login_ts desc) = 1
+)
+group by 1,2,3,4
+order by 1,2,3,4"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|54269|55398|0|2020-07-30T06:58:59.191GMT|0|0||0|run at AccessController.java:0|150|53|53|0|0|203|0|0|[294933, 294925, 294926, 294930, 294931, 294929, 294927, 294928, 294932]|default|557846256|12205306|207594796|4607347|130643|ACTIVE|2020-07-30T06:58:59.185GMT
+[]|0|"select count(*),count(distinct item_id||trans_id) from txns_base_final"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T06:58:49.756GMT|0|0||0|run at AccessController.java:0|1|0|0|0|0|1|0|0|[294918, 294917, 294916, 294915]|default|24958|384|0|0|130638|ACTIVE|2020-07-30T06:58:49.752GMT
+[]|0|"CREATE TEMPORARY table base
+USING PARQUET
+OPTIONS (compression 'snappy') AS 
+ SELECT  
+  a.item_id
+   ,a.transaction_id
+   ,a.seller_id
+      ,a.created_dt
+   ,rdcps.elgbl_claim_usd_amt
+   ,cal.month_id, cal.YEAR_ID
+   ,cncl_rqst.rqstr_party_cd
+      ,case  when  lower(rdcps.final_claim_type) in (lower('Claim-INR' ) ) then 'INR' when  lower(rdcps.final_claim_type) in (lower('Return-SNAD'),lower('Claim-SNAD'),lower('Return-Remorse'),lower('Claim-Remorse' ) ) then 'Return' else 'N/A' end  as claim_type
+   ,case  when (rdcps.cps_claim_close_dt) is null then 'Claim Not Closed' when lower(rdcps.resolution)=lower('SMIR') then 'SMIR' when rdcps.resolution in('eBay Pyt (No Fault)','eBay Pyt (Buyer Fault)','eBay Pyt (Other)') then 'eMIR' when rdcps.resolution in('eBay Pyt (Slr Fault)','Forced Reversal','Return Seller Fault','FSNAD(No Pyt)') then 'Seller Fault' when  lower(rdcps.resolution) in (lower('Buyer Fault' ) ) then 'Buyer Fault' when  lower(rdcps.resolution) in (lower('Timeout General'),lower('Timeout No Response' ) ) then 'Timeouts' else 'Other' end  as escalation_outcome
+   ,case  when a.trans_site_id in(0,100) then 'US' when a.trans_site_id=3 then 'UK' when a.trans_site_id=77 then 'DE' when a.trans_site_id in(2,210) then 'CA' when a.trans_site_id=15 then 'AU' when a.trans_site_id=71 then 'FR' when a.trans_site_id=101 then 'IT' when a.trans_site_id=186 then 'ES' when a.trans_site_id=16 then 'AT' when a.trans_site_id=193 then 'CH' when a.trans_site_id=205 then 'IE' when a.trans_site_id=23 then 'BE' when a.trans_site_id=146 then 'NL' when a.trans_site_id=212 then 'PL' else 'Other' end  as tran_site
+   ,case  when  (a.checkout_status=2 and a.paid_dt<>to_date('1969-12-31')) then 1 else 0 end  as pymt_made_flag
+   ,case  when clsr_rsn_cd in(6,7,8) then 'Cancel Unsuccessful' when clsr_rsn_cd=10 then 'Partial Refund' when clsr_rsn_cd in(2,17) then 'Full Refund' else 'Others' end  as clsr_rsn
+   ,item_price*quantity*cast(lstg_curncy_exchng_rate as DECIMAL(18,4)) as gmv,
+   loss.total_recoup,
+ loss.total_loss, 
+ loss.seller_liable, loss.emir_usd_amt
+ FROM dw_checkout_trans as a
+left join
+access_views.rsltn_cps rdcps ON a.item_id = rdcps.item_id AND a.transaction_id = rdcps.tran_id
+AND  rdcps.ELGBL_CLAIM_USD_AMT <= 50000
+AND rdcps.rcnt_cps_claim_id  NOT IN (5002216012,5004766395,5005011010)
+JOIN  p_losses_credits_t.base_interim loss ON a.item_id = loss.item_id AND a.transaction_id = loss.transaction_id
+left join
+po_cncl_rqst_line_item as cncl
+on  (a.item_id=cncl.item_id and a.transaction_id=cncl.trans_id)
+left join
+po_cncl_rqst as cncl_rqst
+on cncl.cncl_rqst_id=cncl_rqst.cncl_rqst_id
+inner join
+dw_category_groupings as cat
+on  (a.site_id=cat.site_id and a.leaf_categ_id=cat.leaf_categ_id)
+inner join
+dw_cal_dt as cal
+on cal.cal_dt=a.created_dt 
+WHERE a.CREATED_DT BETWEEN '2019-01-01' AND '2019-12-31'
+AND a.ck_wacko_yn = 'N'                    
+AND a.RPRTD_WACKO_YN = 'N'                 AND a.sale_type NOT IN (10,12,15) 
+AND cat.sap_category_id NOT IN (23,5,7,41)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|1152825|47290887|0|2020-07-30T06:56:48.910GMT|0|0|23.0|0|run at AccessController.java:0|12|1064|1064|4|23|1070|1192350936|42220106|[294836, 294834, 294831, 294832, 294835, 294833]|default|7848552320|244642670|0|0|130600|ACTIVE|2020-07-30T06:56:48.862GMT
+[]|0|"create volatile table refusal_rawreason as(
+ SELECT  
+    oms_prchs_order_id
+   ,processor_refusal_rawreason
+   ,src_cre_dt
+   ,src_cre_tm 
+ FROM  
+( SELECT  
+   c.oms_prchs_order_id
+   ,e.processor_refusal_rawreason
+   ,a.src_cre_dt
+   ,a.src_cre_tm
+   ,(row_number() over (partition by c.oms_prchs_order_id order by a.src_cre_dt desc,a.src_cre_tm desc)) AS alias_694 
+ FROM ( 
+ 
+ SELECT  
+  * 
+ FROM access_views.pymt_exec_dtl 
+ WHERE  ! length(extrnl_rfrnc_key) in(9,13,20) 
+) as a
+inner join
+access_views.pymt_exec_sub_actvty_info as b
+on  (a.exec_pymt_id=b.exec_rsrc_ref_id and b.type_id=1)
+left join
+refusal_rawreason_0 as e
+on b.exec_actvty_dtl_id=e.exec_actvty_dtl_id
+inner join
+access_views.dw_oms_order as c
+on coalesce(c.order_ref_id,c.oms_order_id) =substring_index(extrnl_rfrnc_key, '!', -1)
+left join
+access_views.dw_oms_prchs_order as d
+on c.oms_prchs_order_id=d.oms_prchs_order_id 
+ WHERE  ( ( !  lower(extrnl_rfrnc_key) in (lower('externalReferenceKey'),lower('ManualPayout1'),lower('ManualPayout2' ) ) 
+ and not  lower(extrnl_rfrnc_key) like lower('externalReferenceKey%')) and c.src_cre_dt>'2018-01-01') 
+)alias_695 
+ WHERE alias_695.alias_694 = 1
+
+union
+
+ SELECT  
+    oms_prchs_order_id
+   ,processor_refusal_rawreason
+   ,src_cre_dt
+   ,src_cre_tm 
+ FROM  
+( SELECT  
+c.OMS_PRCHS_ORDER_ID
+   ,e.processor_refusal_rawreason
+   ,a.src_cre_dt
+   ,a.src_cre_tm
+   ,(row_number() over (partition by oms_prchs_order_id order by a.src_cre_dt desc,a.src_cre_tm desc)) AS alias_696 
+ FROM ( 
+ 
+ SELECT  
+  * 
+ FROM access_views.pymt_exec_dtl 
+ WHERE  ! length(extrnl_rfrnc_key) in(9,13,20) 
+) as a
+inner join
+access_views.pymt_exec_sub_actvty_info as b
+on  (a.exec_pymt_id=b.exec_rsrc_ref_id and b.type_id=1)
+left join
+refusal_rawreason_0 as e
+on b.exec_actvty_dtl_id=e.exec_actvty_dtl_id
+inner join
+access_views.dw_oms_prchs_order as c
+on COALESCE(c.order_ref_id, c.oms_prchs_order_id)=substring_index(extrnl_rfrnc_key, '!', -1)
+ WHERE  ( ( !  lower(extrnl_rfrnc_key) in (lower('externalReferenceKey'),lower('ManualPayout1'),lower('ManualPayout2' ) ) and not  lower(extrnl_rfrnc_key) like lower('externalReferenceKey%')) and c.src_cre_dt>'2018-01-01') 
+)alias_697 
+ WHERE alias_697.alias_696 = 1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|42705490211|0|14865094|29741455|0|2020-07-30T06:30:45.160GMT|0|0|21.0|237900922880|run at AccessController.java:0|2|434|434|0|21|435|0|0|[293833, 293831, 293827, 293829, 293832, 293830, 293828]|default|65613819055|9088313500|1548574|22455|129505|ACTIVE|2020-07-30T06:30:45.154GMT

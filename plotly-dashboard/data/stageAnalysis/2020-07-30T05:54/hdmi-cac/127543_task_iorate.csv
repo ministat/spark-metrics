@@ -1,0 +1,2 @@
+host,duration,status,taskMetrics.shuffleWriteMetrics.bytesWritten.rateInKB
+hdc49-mcc10-01-0710-1903-034-tess0035.stratus.rno.ebay.com,6975,SUCCESS,0.07967151707246795

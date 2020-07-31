@@ -1,0 +1,47 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"select cast(session_start_dt as DATE ) as session_start_dt, cast(cast(count(*) as decimal(38,2)) as varchar(40)) as check_sum_record_count
+, cast(sum(cast(coalesce(AGENT_ID,0) as decimal(38,6))) as  varchar(40))   as AGENT_ID
+, cast(sum(cast(coalesce(BOT_FLAGS64,0) as decimal(38,6))) as  varchar(40))   as BOT_FLAGS64
+, cast(sum(cast(coalesce(BOT_SESSION,0) as decimal(38,6))) as  varchar(40))   as BOT_SESSION
+, cast(sum(cast(coalesce(BUYER_SITE_ID,0) as decimal(38,6))) as  varchar(40))   as BUYER_SITE_ID
+,cast(sum(cast(coalesce(length(coalesce(trim(CGUID),'')),0) as decimal(38,0))) as  varchar(40)) as CGUID
+, cast(sum(cast(coalesce(COBRAND,0) as decimal(38,6))) as  varchar(40))   as COBRAND
+, cast(sum(cast(coalesce(DATA_SOURCE,0) as decimal(38,6))) as  varchar(40))   as DATA_SOURCE
+,cast(sum(cast(coalesce(length(coalesce(trim(DEVICE_TYPE),'')),0) as decimal(38,0))) as  varchar(40)) as DEVICE_TYPE
+,cast(coalesce( sum(cast(EdwDateToInteger(to_date(END_TIMESTAMP)) as decimal(38,2))),0) as varchar(30))  as END_TIMESTAMP
+, cast(sum(cast(coalesce(EXCLUDE,0) as decimal(38,6))) as  varchar(40))   as EXCLUDE
+, cast(sum(cast(coalesce(EXIT_PAGE_ID,0) as decimal(38,6))) as  varchar(40))   as EXIT_PAGE_ID
+, cast(sum(cast(coalesce(GR_1_CNT,0) as decimal(38,6))) as  varchar(40))   as GR_1_CNT
+, cast(sum(cast(coalesce(GR_CNT,0) as decimal(38,6))) as  varchar(40))   as GR_CNT
+, cast(sum(cast(coalesce(HOMEPAGE_CNT,0) as decimal(38,6))) as  varchar(40))   as HOMEPAGE_CNT
+, cast(sum(cast(coalesce(LNDG_PAGE_ID,0) as decimal(38,6))) as  varchar(40))   as LNDG_PAGE_ID
+, cast(sum(cast(coalesce(MAPPED_USER_ID,0) as decimal(38,6))) as  varchar(40))   as MAPPED_USER_ID
+, cast(sum(cast(coalesce(MAX_SC_SEQNUM,0) as decimal(38,6))) as  varchar(40))   as MAX_SC_SEQNUM
+, cast(sum(cast(coalesce(MIN_SC_SEQNUM,0) as decimal(38,6))) as  varchar(40))   as MIN_SC_SEQNUM
+, cast(sum(cast(coalesce(MYEBAY_CNT,0) as decimal(38,6))) as  varchar(40))   as MYEBAY_CNT
+, cast(sum(cast(coalesce(PARENT_UID,0) as decimal(38,6))) as  varchar(40))   as PARENT_UID
+, cast(sum(cast(coalesce(PRIMARY_APP_ID,0) as decimal(38,6))) as  varchar(40))   as PRIMARY_APP_ID
+, cast(sum(cast(coalesce(SESSION_CNTRY_ID,0) as decimal(38,6))) as  varchar(40))   as SESSION_CNTRY_ID
+, cast(sum(cast(coalesce(SESSION_FLAGS64,0) as decimal(38,6))) as  varchar(40))   as SESSION_FLAGS64
+,cast(sum(cast(coalesce(length(coalesce(trim(SESSION_REV_ROLLUP),'')),0) as decimal(38,0))) as  varchar(40)) as SESSION_REV_ROLLUP
+, cast(sum(cast(coalesce(SESSION_SKEY,0) as decimal(38,6))) as  varchar(40))   as SESSION_SKEY
+,cast(coalesce( sum(cast(EdwDateToInteger(to_date(SESSION_START_DT)) as decimal(38,2))),0) as varchar(30))   as SESSION_START_DT
+, cast(sum(cast(coalesce(SESSION_TRAFFIC_SOURCE_ID,0) as decimal(38,6))) as  varchar(40))   as SESSION_TRAFFIC_SOURCE_ID
+, cast(sum(cast(coalesce(SIGNEDIN_USER_ID,0) as decimal(38,6))) as  varchar(40))   as SIGNEDIN_USER_ID
+, cast(sum(cast(coalesce(SIGNIN_CNT,0) as decimal(38,6))) as  varchar(40))   as SIGNIN_CNT
+, cast(sum(cast(coalesce(SITE_ID,0) as decimal(38,6))) as  varchar(40))   as SITE_ID
+,cast(coalesce( sum(cast(EdwDateToInteger(to_date(START_TIMESTAMP)) as decimal(38,2))),0) as varchar(30))  as START_TIMESTAMP
+, cast(sum(cast(coalesce(VALID_PAGE_COUNT,0) as decimal(38,6))) as  varchar(40))   as VALID_PAGE_COUNT
+, cast(sum(cast(coalesce(VI_CNT,0) as decimal(38,6))) as  varchar(40))   as VI_CNT
+ from p_soj_cl_t.clav_session a
+where a.session_start_dt between '2015-01-01' and '2015-12-31'
+group by session_start_dt order by session_start_dt"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|532642|593864|0|2020-07-30T08:19:41.947GMT|1516811027|22864177|0|run at AccessController.java:0|2773|17|17|0|0|29409|0|0|[23367, 23366, 23365, 23364]|default|0|0|14280|26|10327|ACTIVE|2020-07-30T08:19:41.877GMT

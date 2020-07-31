@@ -1,0 +1,8 @@
+host,duration,status,taskMetrics.executorCpuTime,taskMetrics.executorDeserializeCpuTime,taskMetrics.shuffleWriteMetrics.writeTime
+hdc49-mcc10-01-0710-2102-011-tess0035.stratus.rno.ebay.com,15524,SUCCESS,7204,3859393,198114181
+hdc49-mcc10-01-0710-2603-009-tess0035.stratus.rno.ebay.com,14231,SUCCESS,7202,4018142,201050796
+hdc49-mcc10-01-0710-2605-033-tess0035.stratus.rno.ebay.com,14120,SUCCESS,6819,3705792,198913988
+hdc49-mcc10-01-0710-4205-023-tess0035.stratus.rno.ebay.com,13042,SUCCESS,6881,1890739,294279838
+hdc49-mcc10-01-0910-2703-019-tess0028.stratus.rno.ebay.com,13012,SUCCESS,7900,3685790,228436588
+hdc49-mcc10-01-0710-3503-039-tess0035.stratus.rno.ebay.com,12242,SUCCESS,6617,3669155,197683519
+hdc49-mcc10-01-0910-1803-031-tess0028.stratus.rno.ebay.com,11958,SUCCESS,6644,4390258,239000587

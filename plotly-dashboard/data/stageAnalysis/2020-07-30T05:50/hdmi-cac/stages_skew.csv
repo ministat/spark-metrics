@@ -1,0 +1,8 @@
+diskBytesSpilled,executorBlockTime,executorCpuTime,executorDeserializeCpuTime,executorDeserializeTime,executorRunTime,executorWaitTime,gettingResultTime,inputMetrics.bytesRead,inputMetrics.recordsRead,jvmGcTime,launchDelay,memoryBytesSpilled,outputMetrics.bytesWritten,outputMetrics.recordsWritten,peakExecutionMemory,resultSerializationTime,resultSize,schedulerDelay,shuffleReadMetrics.fetchWaitTime,shuffleReadMetrics.localBlocksFetched,shuffleReadMetrics.readBytes,shuffleReadMetrics.readRecords,shuffleReadMetrics.remoteBlocksFetched,shuffleReadMetrics.remoteBytesRead,shuffleReadMetrics.remoteBytesReadToDisk,shuffleReadMetrics.totalBlocksFetched,shuffleWriteMetrics.writeBytes,shuffleWriteMetrics.writeRecords,shuffleWriteMetrics.writeTime,stageId
+1,1,22,26,24,24,1,1,1,1,1,1,1,1,1,1,1,1,19,1,1,1,1,3,1,1,3,1,1,1,128460
+1,1,137,139,139,137,1,1,1,1,76,1,1,56,56,56,1,1,60,44,40,56,56,55,56,1,55,1,1,1,128455
+0,1,11,63,74,14,1,1,0,0,21,1,1,1,1,1,1,1,85,1,1,1,1,1,1,1,1,0,0,38,128419
+1,1,57,60,56,57,1,1,1,1,154,1,1,1,1,5,1,56,220,149,105,1,1,0,1,1,1,66,66,63,128418
+0,1,11,18,31,13,1,1,0,1,69,1,1,1,1,1,1,0,45,1,1,1,1,1,1,1,1,0,1,50,128407
+34,1,60,62,61,62,1,1,56,56,33,1,34,56,56,1,1,56,223,144,1,4,6,1,4,1,1,1,1,1,128260
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,127543

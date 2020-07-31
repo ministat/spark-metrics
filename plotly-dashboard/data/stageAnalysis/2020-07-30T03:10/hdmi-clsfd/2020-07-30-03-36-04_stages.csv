@@ -1,0 +1,86 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"INSERT INTO p_clsfd_usv.CLSFD_LSTG_PERF_DAILY
+(
+CAL_DT,
+SELLER_TYPE ,
+LISTING_TYPE,
+REVENUE_TYPE ,
+FEATURE ,
+L1_CATEGORY ,
+PLAEFORM,
+APPLICATION,
+METRIC_TYPE ,
+METRIC_VALUE,
+upd_date
+)
+SELECT 
+syi.CREATED_DATE
+,CASE
+WHEN S.USER_ID IS NOT NULL THEN 'Subs'
+WHEN E.SLR_ID IS NOT NULL AND syi.CREATED_DATE>=E.HVS_DATE THEN 'HVS'
+ELSE  'LVS'
+END AS SELLER_TYPE
+,CASE
+ WHEN syi.AUCT_TYPE_CODE IN (1,8) THEN 'Auction'
+ WHEN syi.AUCT_TYPE_CODE IN (7,9) THEN 'Fixed Price'
+ WHEN syi.AUCT_TYPE_CODE IN (13) THEN 'Classifieds'
+ end AS LISTINGS_TYPE
+,'-' AS REVENUE_TYPE 
+,'-'  AS FEATURE 
+,CASE
+ WHEN dcg.SAP_CATEGORY_ID IN (5,7)                           THEN dcg.USER_DEFINED_FIELD5
+ WHEN dcg.SAP_CATEGORY_ID = 41 AND dcg.CATEG_LVL2_ID = 26429 THEN dcg.CATEG_LVL2_NAME
+ WHEN dcg.SAP_CATEGORY_ID = 41 AND dcg.CATEG_LVL2_ID = 66466 THEN dcg.CATEG_LVL2_NAME
+ ELSE 'Other Vehicles'
+ end AS L1_CATEGORY
+ ,fact.experience_type  AS PLAEFORM
+,CASE    
+            WHEN syi.application_id IN (0) THEN 'SYI'
+            WHEN syi.application_id IN (12446) THEN 'DealerCenter'
+            WHEN syi.application_id IN (564) THEN 'TurboLister'
+            WHEN syi.application_id IN (2549, 2557) THEN 'BlackThorne'
+            WHEN syi.application_id IN (2828) THEN 'FileExchange'
+            WHEN syi.application_id IN (56507) THEN 'BEAR'
+            WHEN syi.application_id IN (1285) THEN 'SellingManager'
+            WHEN syi.application_id IN (71596) THEN 'LMS'
+            WHEN syi.application_id IN (1954) THEN 'AutoRevo'
+            WHEN syi.application_id IN (1180,78555) THEN 'Auction123'
+            WHEN syi.application_id IN (4209) THEN 'LiquidMotors'
+            WHEN syi.application_id IN (3003) THEN 'eCarList'
+            WHEN syi.application_id IN (1069) THEN 'eBiz'
+            WHEN syi.application_id IN (185140) THEN 'Cargigi'
+            WHEN syi.application_id IN (67161) THEN 'Gandalf' 
+            WHEN syi.application_id IN (114100) THEN 'Auto Relist' 
+            WHEN syi.application_id IN (194048 ) THEN 'CUB' 
+   WHEN syi.application_id IN (219527,290356) THEN 'BOLT' 
+            ELSE 'OTHER'
+        END AS APPLICATION
+ ,'Time to complete' AS metric_type
+ ,sum(ELAPSED_TIME) AS metric_value
+,date_sub(current_date,1) AS upd_date
+FROM access_views.DW_SYI_SCRATCH_ITEM syi
+INNER JOIN access_views.DW_CATEGORY_GROUPINGS AS dcg  ON syi.LEAF_CATEG_ID=dcg.LEAF_CATEG_ID AND syi.ITEM_SITE_ID=dcg.SITE_ID
+LEFT JOIN prs_restricted_v.SLNG_LSTG_SUPER_FACT_EXT fact ON syi.item_id=fact.item_id 
+LEFT JOIN  p_clsfd_usv.veh_hvs_sellers        AS E  ON E.SLR_ID=syi.SLR_ID
+LEFT JOIN p_clsfd_usv.veh_subs_lkp s ON to_date(date_trunc('month',to_date(syi.CREATED_DATE)))=s.month_beg_dt AND syi.slr_id=s.user_id
+WHERE dcg.SAP_CATEGORY_ID IN (5,7,41)
+AND syi.ITEM_SITE_ID  IN (0,1,100)
+AND syi.ITEM_CNTRY_ID IN (1, 225,-999, 0, 679, 1000)
+AND syi.AUCT_TYPE_CODE IN (1,7,8,9,13)
+AND syi.slr_id NOT IN (136163827, 156305321,1620234422)
+AND cast(syi.RYI_STATUS/1 as INT) % 2=0 
+AND cast(syi.LISTING_TIME as timestamp) <> cast('1969-12-31 00:00:00' as timestamp)
+AND syi.item_id IS NOT NULL
+AND syi.CREATED_DATE>=date_sub(current_date,30) 
+AND syi.CREATED_DATE< Current_Date
+and syi.application_id IN (219527,290356,194048,67161)
+GROUP BY 1,2,3,4,5,6,7,8,9"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|1207532687|1219914745|0|2020-07-30T03:29:47.615GMT|452436421012|42632508146|0|run at AccessController.java:0|1095|3905|3905|0|0|5000|0|0|[31946, 31943, 31942, 31941, 31940, 31944, 31945]|default|337689794535|48326741855|294538160410|37743198789|14987|ACTIVE|2020-07-30T03:29:47.599GMT

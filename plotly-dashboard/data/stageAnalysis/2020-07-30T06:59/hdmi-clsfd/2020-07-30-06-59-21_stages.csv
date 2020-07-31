@@ -1,0 +1,168 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"select count(DISTINCT ga_vstr_id) ga_users, trunc(ECG_SESSION_START_DT,'MM') y_m
+from CLSFD_ACCESS_VIEWS.CLSFD_ECG_SESSION
+where ecg_session_start_dt >= '2020-01-01'
+AND ecg_session_start_dt < '2020-08-01'
+and CLSFD_SITE_ID=9021
+group by y_m"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|4775988|6325473|0|2020-07-30T06:58:20.416GMT|42451279833|2372755201|0|run at AccessController.java:0|89|4687|4687|0|0|11151|0|0|[40298, 40297, 40296]|default|0|0|58037951325|2163009931|16533|ACTIVE|2020-07-30T06:58:20.390GMT
+[]|0|"CREATE TABLE P_CLSFD_JD_T.JD_ALL_GA_ACTIVITY_FRAUD
+USING parquet
+OPTIONS (compression 'snappy')
+PARTITIONED BY (USER_CLSFD_SITE_ID)
+AS ( 
+SELECT
+		  CASE WHEN ga.CLSFD_SITE_ID = 3001 THEN CAST(ga.CLSFD_USER_ID - 2e15 AS BIGINT)
+			   ELSE CAST(ga.CLSFD_USER_ID - 61e15 AS BIGINT) END AS USER_ID
+				, us.SUSPENDED_YN_ID AS SUSP_YN
+		, us.REG_DT AS REG_DT
+		, us.REG_TM AS REG_TM
+		, us.SLR_NAME AS USER_NAME
+		, us.reg_ip AS REG_IP
+		, uss.CITY AS CITY
+		, fr.SUSP_DT
+		, us.USER_CLSFD_SITE_ID
+		, CASE WHEN fr.CLSFD_SITE_ID = 3001 THEN CAST(fr.CLSFD_USER_ID - 2e15 AS BIGINT)
+			   ELSE CAST(fr.CLSFD_USER_ID - 61e15 AS BIGINT) END AS FRAUD_USER_ID
+		, CASE WHEN fr.CLSFD_USER_ID IS NOT NULL THEN 1 ELSE 0 END AS FRAUD_IND
+		, ga.USES_SITE_ID
+		, ga.GOOGLE_LOGIN
+		, ga.FACEBOOK_LOGIN
+		, ga.MANUAL_LOGIN
+		, ga.LINK_LOGIN
+		, ga.PLATFORM
+		, ga.SESSIONS
+		, ga.COOKIES
+		, ga.NR_HASHED_USER_IDS
+		, ga.NR_HASHED_EMAILS
+		, ga.GEO_CNTRY_NMS
+		, ga.APP_VRSNS
+		, ga.MBL_DVICS
+		, ga.LANG_CODES
+		, ga.PAGEVIEWS
+		, ga.HITS
+		, ga.SRP_PAGEVIEWS
+		, ga.UNQ_SRP_PV_CNT
+		, ga.VIP_PV_CNT
+		, ga.UNQ_VIP_PV_CNT
+		, ga.SCRN_VIEW_NT
+		, ga.UNQ_SCRN_VIEW_CNT
+		, ga.VST_DRNT_NUM
+		, ga.SCRN_DRTN_NUM
+		, ga.N_DEVICES
+		, ga.DEVICE_IDS
+		, ga.REPLIES
+		, ga.POSTED_ADS
+FROM
+(
+		SELECT 
+		      sess.CLSFD_USER_ID
+		    , MAX(sess.CLSFD_SITE_ID) AS CLSFD_SITE_ID
+		    , concat_ws('|', collect_list(DISTINCT sess.CLSFD_SITE_ID)) AS USES_SITE_ID
+		    , MAX(CASE WHEN sess.sess_cd[19] IN ('google', 'GoogleSignIn') THEN 1 END) AS GOOGLE_LOGIN
+		    , MAX(CASE WHEN sess.sess_cd[19] IN ('Facebook', 'facebook') THEN 1 END) AS FACEBOOK_LOGIN
+		    , MAX(CASE WHEN sess.sess_cd[19] IN ('Manual', 'WebCredential', 'GoogleSmartLock') THEN 1 END) AS MANUAL_LOGIN
+		    , MAX(CASE WHEN sess.sess_cd[19] IN ('ActivationLink') THEN 1 END) AS LINK_LOGIN
+		    , concat_ws('|', collect_list(DISTINCT CASE WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = 10 THEN 'web-desktop'
+		             WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = 20 THEN 'web-mobile'
+		             WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = 30 THEN 'web-tablet'
+		             WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = 40 THEN 'web-feature-mobile'
+		             WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = 90 THEN 'web-other'
+		             WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = 99 THEN 'web-unknown'
+		             WHEN hit.clsfd_pltfrm_id = 1 AND hit.clsfd_dvic_id = -99 THEN 'web-unknown'
+		             WHEN hit.clsfd_pltfrm_id = 3 THEN 'iOS'
+		             WHEN hit.clsfd_pltfrm_id = 4 THEN 'Android'
+		             END)) AS PLATFORM
+		    , COUNT(DISTINCT sess.ecg_session_id) SESSIONS 
+		    , COUNT(DISTINCT sess.ga_vstr_id) COOKIES
+		    , COUNT(DISTINCT sess.encypted_user_id) NR_HASHED_USER_IDS
+		    , COUNT(DISTINCT sess.encrptd_email) NR_HASHED_EMAILS
+		    , concat_ws('|', collect_list(DISTINCT sess.geo_cntry_name)) AS GEO_CNTRY_NMS
+		    , concat_ws('|', collect_list(DISTINCT sess.app_vrsn_txt)) AS APP_VRSNS
+		    , concat_ws('|', collect_list(DISTINCT sess.mbl_dvic_info_txt)) AS MBL_DVICS
+		    , concat_ws('|', collect_list(DISTINCT sess.lang_code)) AS LANG_CODES
+		    , SUM(sess.clsfd_pv_cnt) PAGEVIEWS
+		    , SUM(sess.clsfd_hit_cnt) HITS
+		    , SUM(sess.clsfd_srp_pv_cnt) SRP_PAGEVIEWS
+			, SUM(sess.clsfd_unq_srp_pv_cnt) UNQ_SRP_PV_CNT
+			, SUM(sess.clsfd_vip_pv_cnt) VIP_PV_CNT
+			, SUM(sess.clsfd_unq_vip_pv_cnt) UNQ_VIP_PV_CNT
+			, SUM(sess.clsfd_scrn_view_cnt) SCRN_VIEW_NT
+			, SUM(sess.clsfd_uniq_scrn_view_cnt) UNQ_SCRN_VIEW_CNT
+			, SUM(sess.clsfd_vst_drtn_num)  VST_DRNT_NUM
+			, SUM(sess.clsfd_scrn_drtn_num) SCRN_DRTN_NUM
+		    , COUNT(DISTINCT sess.sess_cd[69]) N_DEVICES
+		    , concat_ws('|', collect_list(DISTINCT sess.sess_cd[69])) AS DEVICE_IDS
+		    , SUM(CASE WHEN clsfd_event_action IN('R2SBidSuccess','R2SChatSuccess','R2SEmailSuccess') THEN 1 END) AS REPLIES
+		    , SUM(CASE WHEN clsfd_event_action IN('PostAdFreeSuccess','SYIFinished','SYISuccess','PostAdPaidSuccess','PostAdFree') THEN 1 END) AS POSTED_ADS
+		FROM
+		CLSFD_ACCESS_VIEWS.clsfd_ecg_hit AS hit
+		LEFT JOIN CLSFD_ACCESS_VIEWS.clsfd_ecg_session sess
+		ON hit.ecg_session_id  = sess.ecg_session_id
+		AND sess.CLSFD_SITE_ID IN (1021,1022,3001)
+		AND sess.ecg_session_start_dt >= date_sub(current_date(), 365)
+		WHERE 1 = 1
+		  AND hit.clsfd_site_id in (1021,1022,3001)
+		  AND hit.ecg_session_start_dt >= date_sub(current_date(), 365)
+		GROUP BY 1
+) ga
+FULL JOIN (
+			SELECT 
+					  a.CLSFD_USER_ID
+			 		, a.CLSFD_SITE_ID
+					, a.SUSP_DT
+			FROM(
+			SELECT  
+				  CLSFD_USER_ID
+				, USER_CLSFD_SITE_ID AS CLSFD_SITE_ID
+			FROM clsfd_access_views.dw_clsfd_user
+			WHERE 1 = 1
+				AND USER_CLSFD_SITE_ID IN (1021,1022,3001)
+				AND SUSPENDED_YN_ID = 1
+			) c
+			LEFT JOIN (
+			SELECT CLSFD_ENTITY_ID AS CLSFD_USER_ID
+				, CLSFD_SITE_ID
+				, MAX(SRC_CRE_DT) AS SUSP_DT
+			FROM clsfd_access_views.clsfd_cs_action as act
+			WHERE 1 = 1
+			AND CLSFD_SITE_ID IN (1021,1022,3001)
+				AND    act.action_type = 'USER_CLOSE'
+				AND    act.action_rsn IN ('SCAM_WITHOUT_FRAUD_ALERT',
+			                                'BO_WITH_FRAUD_ALERT',
+			                                'SCAM_WITH_FRAUD_ALERT',
+			                                'FOREIGN_FRAUDSTER','SPAM')
+			AND CRE_DATE >= date_sub(current_date(), 365)
+			GROUP BY 1,2) a
+			ON c.CLSFD_USER_ID = a.CLSFD_USER_ID
+			AND c.CLSFD_SITE_ID = a.CLSFD_SITE_ID
+			WHERE 1 = 1
+				AND a.CLSFD_USER_ID IS NOT NULL
+) fr
+ON fr.CLSFD_USER_ID = ga.CLSFD_USER_ID
+LEFT JOIN PRS_SECURE_V.dw_clsfd_user  AS us
+		ON us.CLSFD_USER_ID = COALESCE(ga.CLSFD_USER_ID,fr.CLSFD_USER_ID)
+		AND us.USER_CLSFD_SITE_ID  in (1021,1022,3001,1023,1024)
+LEFT JOIN CLSFD_ACCESS_VIEWS.CLSFD_USER_CNTCT_INFO AS uss
+         ON uss.CLSFD_user_id = COALESCE(ga.CLSFD_USER_ID,fr.CLSFD_USER_ID)
+         AND uss.user_CLSFD_SITE_ID in (1021,1022,3001,1023,1024)
+         AND uss.SRC_ID = 1
+WHERE 1 = 1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|374883993475|0|9764682590|10134594823|0|2020-07-30T06:02:34.637GMT|0|0|6559488802816|run at AccessController.java:0|4032|3934|3934|0|0|10000|0|0|[37705, 37699, 37702, 37704, 37703, 37700, 37701]|default|3075496982517|77522399063|407269423825|10450346093|16110|ACTIVE|2020-07-30T06:02:34.606GMT

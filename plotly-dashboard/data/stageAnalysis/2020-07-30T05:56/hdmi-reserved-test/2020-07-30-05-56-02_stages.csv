@@ -1,0 +1,58 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"SELECT *
+FROM
+(
+ SELECT RETAIL_FLG,
+   KEYWORD, 
+  TARGET_SEARCHES,
+  BASE_SEARCHES,
+  RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_SEARCHES DESC) AS RNK
+ FROM
+ (
+  SELECT TARGET.RETAIL_FLG,
+    TARGET.KEYWORD,
+   COUNT(DISTINCT (TARGET.GUID || TARGET.SESSION_SKEY || TARGET.SEQNUM ||  TARGET.SESSION_START_DT || TARGET.COBRAND || TARGET.CATEGORY_ID || TARGET.KEYWORD)) AS TARGET_SEARCHES ,
+   COUNT(DISTINCT (BASE.GUID || BASE.SESSION_SKEY || BASE.SEQNUM ||  BASE.SESSION_START_DT || BASE.COBRAND || BASE.CATEGORY_ID || BASE.KEYWORD)) AS BASE_SEARCHES
+   
+  FROM
+  (
+   SELECT RETAIL_FLG,
+     KEYWORD,
+     GUID ,
+     SESSION_SKEY ,
+     SEQNUM ,
+     SESSION_START_DT ,
+     COBRAND ,
+     CATEGORY_ID 
+   FROM p_ads_custom_insights.TRGT_0409_SRCH_KW_AN
+   
+  )TARGET
+  LEFT JOIN
+  (
+   SELECT RETAIL_FLG,
+     KEYWORD,
+     GUID ,
+     SESSION_SKEY ,
+     SEQNUM ,
+     SESSION_START_DT ,
+     COBRAND ,
+     CATEGORY_ID 
+   FROM p_ads_custom_insights.BASE_0409_SRCH_KW_AN
+  )BASE
+  ON TARGET.KEYWORD = BASE.KEYWORD
+  GROUP BY 1,2
+ )KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+AND BASE_SEARCHES > 1
+AND BASE_SEARCHES IS NOT NULL"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|105079941|117097250|0|2020-07-30T05:53:58.986GMT|3478667695215|57647954216|0|run at AccessController.java:0|2035|5974|5974|0|0|45000|0|0|[10732, 10731, 10730]|default|0|0|3906326778894|50818103713|3308|ACTIVE|2020-07-30T05:53:55.535GMT

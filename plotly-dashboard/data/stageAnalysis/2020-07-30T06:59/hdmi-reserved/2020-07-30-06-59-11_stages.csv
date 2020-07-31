@@ -1,0 +1,11 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|INSERT OVERWRITE TABLE P_nanwu4_T.selection_gap_RAW (`SLR_ID`, `TvsC`, `SEND_TO`, `OPENED`, `CLICKED` ) SELECT `SLR_ID`, `TvsC`, `SEND_TO`, `OPENED`, `CLICKED` FROM admin_tasks.selection_gap_RAW_1596092222957|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:200)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:214)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|7070|71782|0|2020-07-30T06:58:52.394GMT|1007593|91217|12|0|run at AccessController.java:0|4|266|266|0|12|268|0|0|[119627, 119626, 119625, 119624]|default|0|0|6518749|90545|56641|ACTIVE|2020-07-30T06:58:52.378GMT

@@ -1,0 +1,48 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"Generating download files with arguments [null, SELECT *
+FROM
+(
+	SELECT RETAIL_FLG,
+			KEYWORD,	
+		TARGET_USERS,
+		BASE_USERS,
+		RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_USERS DESC) AS RNK
+	FROM
+	(
+		SELECT TARGET.RETAIL_FLG,
+				TARGET.KEYWORD,
+			COUNT(DISTINCT TARGET.USER_ID) AS TARGET_USERS,
+			COUNT(DISTINCT BASE.USER_ID) AS BASE_USERS
+		FROM
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.TRGT_KW_0409_AISH
+			
+		)TARGET
+		LEFT JOIN
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.BASE_KW_0409_AISH
+		)BASE
+		ON TARGET.KEYWORD = BASE.KEYWORD
+		GROUP BY 1,2
+	)KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+
+AND BASE_USERS > 1
+AND BASE_USERS IS NOT NULL, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|855924944|0|5187298765|5253523268|0|2020-07-30T04:51:35.728GMT|0|0|5167382528|run at AccessController.java:0|4274|5726|5726|0|0|10000|0|0|[102644, 102638, 102640, 102643, 102641, 102642, 102639]|default|903132687957|29559306850|440989226028|10636968326|42511|ACTIVE|2020-07-30T04:51:35.695GMT

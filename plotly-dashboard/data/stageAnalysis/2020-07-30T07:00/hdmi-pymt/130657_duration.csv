@@ -1,0 +1,6 @@
+host,duration,status,taskMetrics.executorDeserializeCpuTime
+hdc49-mcc10-01-0910-1710-012-tess0028.stratus.rno.ebay.com,8547,SUCCESS,7690912
+hdc49-mcc10-01-0710-4102-039-tess0035.stratus.rno.ebay.com,4961,SUCCESS,9362742
+hdc49-mcc10-01-0710-1902-022-tess0035.stratus.rno.ebay.com,4322,SUCCESS,7541921
+hdc49-mcc10-01-0910-1710-012-tess0028.stratus.rno.ebay.com,3192,SUCCESS,7736698
+hdc49-mcc10-01-0710-2510-025-tess0035.stratus.rno.ebay.com,2913,SUCCESS,6185483

@@ -1,0 +1,287 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"Generating download files with arguments [null, SELECT  
+grp,
+  case  
+  when  lower(dna.prdctv_gndr) like lower('F') then 'Female' 
+  when  lower(dna.prdctv_gndr) like lower('M') then 'Male' 
+  when  lower(dna.prdctv_gndr) like lower('U') then 'Unknown' 
+  else 'Unknown' end  as gender,
+  case  
+  when dna.user_age<=34 then '18-34' 
+  when dna.user_age between  35 and 54 then '35-54' 
+  when dna.user_age>=55 then '55+' 
+  else 'Unknown' end  as age_group,
+  case  
+  when dna.edu_lvl_cd=1 then 'L1: Completed High School' 
+  when dna.edu_lvl_cd=2 then 'L2: Completed College' 
+  when dna.edu_lvl_cd=3 then 'L3: Completed Graduate School' 
+  when dna.edu_lvl_cd=4 then 'L4: Attended Vocational/Tech' 
+  else 'Unknown' end  as education_level,
+  case  
+  when ( lower(dna.mrtl_status_cd) like lower('M')  or lower(dna.mrtl_status_cd) like lower('A')  or lower(dna.mrtl_status_cd) like lower('F') ) then 'Married' 
+  when ( lower(dna.mrtl_status_cd) like lower('S')  or lower(dna.mrtl_status_cd) like lower('B')  or lower(dna.mrtl_status_cd) like lower('C')  or lower(dna.mrtl_status_cd) like lower('D')  or lower(dna.mrtl_status_cd) like lower('E') ) then 'Single' 
+  when  lower(dna.mrtl_status_cd) like lower('N') then 'Unknown' 
+  else 'Unknown' end  as marital_status,
+  case  
+  when  ( lower(dna.prdctv_gndr) like lower('M') and dna.chldrn_cnt>0) then 'Dad' 
+  when  ( lower(dna.prdctv_gndr) like lower('F') and dna.chldrn_cnt>0) then 'Mom' 
+  when ( lower(dna.prdctv_gndr) like lower('M')  or lower(dna.prdctv_gndr) like lower('F') ) then 'Not Parent' 
+  else 'Unknown' end  as parental_status,
+  case  
+  when dna.chldrn_cnt=0 then '0' 
+  when dna.chldrn_cnt=1 then '1' 
+  when dna.chldrn_cnt>1 then '>1' 
+  else 'Unknown' end  as children_in_household,
+  case  
+  when  lower(dna.rsdnc_ownr_cd) like lower('O') then 'Owner' 
+  when  lower(dna.rsdnc_ownr_cd) like lower('R') then 'Renter' 
+  else 'Unknown' end  as home_ownership,
+  case  
+  when ( dna.acx_annual_incme_cd like '1'  or dna.acx_annual_incme_cd like '2'  or dna.acx_annual_incme_cd like '3' ) then 'L1: Less than $30,000' 
+  when ( dna.acx_annual_incme_cd like '4'  or dna.acx_annual_incme_cd like '5' ) then 'L2: $30,000 - $49,999' 
+  when dna.acx_annual_incme_cd='6' then 'L3: $50,000 - $74,999' 
+  when ( dna.acx_annual_incme_cd like '7'  or dna.acx_annual_incme_cd like '8' ) then 'L4: $75,000 - $124,999' 
+  when dna.acx_annual_incme_cd='9' then 'L5: $125,000 and more' else 'Unknown' end  as income_level,
+  count(distinct dna.user_id)  as ids 
+ FROM PRS_SECURE_V.USER_DNA_DIM as dna
+
+inner join (select distinct user_id, grp from p_cia_akshay_t.audience_grp_mobil) FM 
+on FM.user_id = dna.user_id
+ WHERE  (dna.user_id>0 and dna.user_cntry_id=1) 
+ GROUP BY 1,2,3,4,5,6,7,8,9
+ ORDER BY 1,2,3,4,5,6,7,8,9, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|506|0|0|[115334, 115332, 115333]|default|0|0|0|0|44246|ACTIVE|2020-07-30T05:49:34.812GMT
+[]|0|"SELECT sum(leads)
+FROM VEH_COBRAND_LEADS_v2
+WHERE LSTG_TYPE != 'Classified'"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|397711210818|0|75682554|118099209|0|2020-07-30T05:48:26.875GMT|3744914335481|231494517725|2.0|1203127713792|run at AccessController.java:0|1000|20000|20000|0|2|20500|0|0|[115262, 115241, 115261, 115259, 115243, 115240, 115239, 115255, 115252, 115246, 115238, 115253, 115251, 115244, 115242, 115237, 115245, 115260, 115256, 115254, 115258, 115257]|default|677656899|23590912|4743994|45292|44218|ACTIVE|2020-07-30T05:48:26.688GMT
+[]|0|"SELECT sum(leads)
+FROM VEH_COBRAND_LEADS_v2
+WHERE LSTG_TYPE != 'Classified'"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|422307884711|0|96380216|231322950|0|2020-07-30T05:48:23.900GMT|4534532589708|216294061047|12.0|1094411354112|run at AccessController.java:0|1000|20000|20000|0|12|20500|0|0|[115236, 115222, 115212, 115225, 115220, 115218, 115234, 115219, 115230, 115210, 115213, 115221, 115232, 115211, 115217, 115235, 115233, 115231, 115223, 115224, 115214, 115216, 115215]|default|553412474|23590912|3553751|43305|44213|ACTIVE|2020-07-30T05:48:23.832GMT
+[]|0|"select count(*)
+from
+    (select * from P_zhiyaochen_T.tmp_czy_base_transaction_table_1 
+	where SRC_CRE_DT between '2020-04-01' and '2020-04-30' ) odr left join
+    (select
+         wllt_id
+         , token_id
+         , bin_range
+         , src_cre_dt
+     from
+         DW_PG_SCRTCH_WLLT 
+		 where SRC_CRE_DT between '2020-04-01' and '2020-04-30' 
+		 and pymt_mthd_id = 1) tc
+on
+    odr.pymnt_mthd_type_id = 27 
+	and odr.remembered = 0 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = tc.wllt_id
+left join
+    (select * from
+	    (select
+            wllt_id
+	        ,bkcrd_token_id
+	        ,bin_range
+	        ,src_cre_dt
+		    ,row_number () over (partition by wllt_id order by src_last_modfd_dt desc) rn
+	    from
+	        PG_BKCRD_INFO 
+			where SRC_CRE_DT <= '2020-04-30' ) t
+	where
+	    rn = 1) cc
+on
+    odr.pymnt_mthd_type_id = 27 
+	and odr.remembered = 1 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = cc.wllt_id
+left join
+    (select * from
+	     (select
+		    wllt_id
+	        ,bkcrd_token_id
+	        ,bin_range
+	        ,src_cre_dt
+		    ,row_number () over (partition by wllt_id order by src_last_mdfd_dt desc) rn
+		from
+		    PG_BKCRD_INFO_HIST 
+			where SRC_CRE_DT <= '2020-04-30' ) t
+	where
+	    rn = 1) cch
+on
+    odr.pymnt_mthd_type_id = 27 
+	and odr.remembered = 1 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = cch.wllt_id
+left join
+    (select
+         wllt_id
+         , token_id bban
+         , iban_token_id
+         , src_cre_dt
+     from
+        DW_PG_SCRTCH_WLLT 
+		where SRC_CRE_DT between '2020-04-01' and '2020-04-30' 
+		and pymt_mthd_id = 2) td
+on
+    odr.pymnt_mthd_type_id = 26 
+	and odr.remembered = 0 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = td.wllt_id
+left join
+    (select * from
+	    (select
+            wallet_id wllt_id
+	        ,bank_acct_token_id bban
+	        ,iban_token_id iban
+	        ,src_cre_dt
+		    ,row_number () over (partition by wallet_id order by src_cre_dt desc) rn
+	    from
+	        DW_PG_ACH_ACCT 
+			where src_cre_dt <= '2020-04-30') t
+	where
+	    rn = 1) dd
+on
+    odr.pymnt_mthd_type_id = 26 
+	and odr.remembered = 1 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = dd.wllt_id
+left join
+    (select * from
+	     (select
+		    wllt_id
+	        ,bank_acct_token_id bban
+	        ,iban_token_id iban
+	        ,src_cre_dt
+		    ,row_number () over (partition by wllt_id order by src_last_mdfd_dt desc) rn
+		from
+		    PG_ACH_ACCT_HIST 
+			where src_cre_dt <= '2020-04-30') t
+	where
+	    rn = 1) ddh
+on
+    odr.pymnt_mthd_type_id = 26 
+	and odr.remembered = 1 
+	and cast(substr(odr.ACCT_ID, 4) as bigint) = ddh.wllt_id"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|7157584025|0|1533550|1738263|0|2020-07-30T05:43:18.833GMT|0|0||12213813248|run at AccessController.java:0|2|202|202|0|0|203|0|0|[114986, 114971, 114964, 114973, 114979, 114985, 114976, 114984, 114965, 114974, 114983, 114982, 114968, 114966, 114972, 114975, 114977, 114981, 114980, 114969, 114978, 114967, 114970]|default|13484748671|842343605|11917|202|44071|ACTIVE|2020-07-30T05:43:18.810GMT
+[]|0|"Generating download files with arguments [null, SELECT *
+FROM
+(
+	SELECT RETAIL_FLG,
+			KEYWORD,	
+		TARGET_USERS,
+		BASE_USERS,
+		RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_USERS DESC) AS RNK
+	FROM
+	(
+		SELECT TARGET.RETAIL_FLG,
+				TARGET.KEYWORD,
+			COUNT(DISTINCT TARGET.USER_ID) AS TARGET_USERS,
+			COUNT(DISTINCT BASE.USER_ID) AS BASE_USERS
+		FROM
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.TRGT_KW_0409_AISH
+			
+		)TARGET
+		LEFT JOIN
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.BASE_KW_0409_AISH
+		)BASE
+		ON TARGET.KEYWORD = BASE.KEYWORD
+		GROUP BY 1,2
+	)KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+
+AND BASE_USERS > 1
+AND BASE_USERS IS NOT NULL, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|2|0|0|[113395, 113394, 113393]|default|0|0|0|0|43295|ACTIVE|2020-07-30T05:49:34.140GMT
+[]|0|"Generating download files with arguments [null, SELECT *
+FROM
+(
+	SELECT RETAIL_FLG,
+			KEYWORD,	
+		TARGET_USERS,
+		BASE_USERS,
+		RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_USERS DESC) AS RNK
+	FROM
+	(
+		SELECT TARGET.RETAIL_FLG,
+				TARGET.KEYWORD,
+			COUNT(DISTINCT TARGET.USER_ID) AS TARGET_USERS,
+			COUNT(DISTINCT BASE.USER_ID) AS BASE_USERS
+		FROM
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.TRGT_KW_0409_AISH
+			
+		)TARGET
+		LEFT JOIN
+		(
+			SELECT RETAIL_FLG,
+					KEYWORD,
+					USER_ID
+			FROM p_ads_custom_insights.BASE_KW_0409_AISH
+		)BASE
+		ON TARGET.KEYWORD = BASE.KEYWORD
+		GROUP BY 1,2
+	)KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+
+AND BASE_USERS > 1
+AND BASE_USERS IS NOT NULL, csv, Map(format -> csv, fetchBlockSize -> 1048576, compression -> none, maxStartTimeout -> 300000, timestampFormat -> yyyy-MM-dd HH:mm:ss, escape -> "", dateFormat -> yyyy-MM-dd, header -> false, maxAllowExportIdleTimeout -> 3600000, maxFetchBlockTime -> 30000, dumpBuffer -> 102400, maxRecordsPerFile -> 0, delimiter -> ,)]"|"org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2$$anon$3.run(SparkDownloadDataOperation.scala:123)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkDownloadDataOperation$$anon$2.run(SparkDownloadDataOperation.scala:136)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|2|0|0|[102615, 102613, 102614]|default|0|0|0|0|42509|ACTIVE|2020-07-30T05:49:34.133GMT

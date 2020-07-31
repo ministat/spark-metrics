@@ -1,0 +1,195 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"SELECT *
+FROM (
+  select t1.QueryDate, t1.FailureType, t1.TotalCount as TypeCount, t2.TotalCount, t1.TotalCount*100/t2.TotalCount as TypeRatio from (select date(start) as QueryDate,failure_type as FailureType, count(*) as TotalCount
+  from (
+      select (case
+  
+              when detail like 'org.apache.spark.sql.AnalysisException%' then 'user error'
+              when detail like 'org.apache.spark.sql.catalyst.analysis.UnresolvedException%' then 'user error'
+              when detail like 'org.apache.spark.sql.catalyst.parser.ParseException%' then 'user error'
+              when detail like 'java.lang.UnsupportedOperationException%' then 'user error'
+              when detail like 'org.apache.spark.SparkException: Scan size exceeded%' then 'user error'
+              when detail like 'org.apache.spark.SparkException: The skewed splits%' then 'user error'
+              when detail like 'java.lang.AssertionError: assertion failed: File counter%' then 'user error'
+              when detail like 'java.util.regex.PatternSyntaxException%' then 'user error'
+              when detail like 'scala.MatchError: Project%' then 'user error'
+              when detail like 'org.apache.spark.SparkException: csv file validation failed%' then 'user error'
+              when detail like 'java.lang.RuntimeException: Couldn%' then 'user error'
+              when detail like 'java.lang.IndexOutOfBoundsException: No group%' then 'user error'
+              when detail like 'org.apache.hadoop.hive.ql.security.authorization.plugin.HiveAccessControlException%' then 'user error'
+              when detail like 'org.apache.hadoop.hive.ql.metadata.HiveException: Duplicate column name%' then 'user error'
+              when detail like 'MetaException(message:Cannot grant role%' then 'user error'
+              when detail like 'org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.hdfs.protocol.DSQuotaExceededException%' then 'user error'
+              when detail like 'org.apache.spark.SparkException: Not valid file detected%' then 'user error'
+  
+              when detail like '%token (HDFS_DELEGATION_TOKEN%' then 'system error'
+              when detail like '%Server is too busy.' then 'system error'
+  
+  
+  
+              when detail like '%Adaptive execution failed%' then 'system error'
+                      when detail like '%Bucketed path was expected%' then 'system error'
+                      when detail like '%Job aborted%' then 'system error'
+                      when detail like '%Invalid call to%' then 'system error'
+                      when detail like '%None.get%' then 'system error'
+                      when detail like '%makeCopy, tree:%' then 'system error'
+                      when detail like '%serious problem%' then 'system error'
+                      when detail like '%Binding attribute%' then 'system error'
+                      when detail like '%Invalid bucket file%' then 'system error'
+                      when detail like '%cannot be cast to%' then 'system error'
+                      when detail like '%timeout%' then 'system error'
+                      when detail like '%Exception thrown in awaitResult%' then 'system error'
+                      when detail like '%requirement failed%' then 'system error'
+                      when detail like '%RDD Partitions have reached%' then 'system error'
+                      when detail like '%JDODataStoreException%' then 'system error'
+                      when detail like '%JDOUserException%' then 'system error'
+                      when detail like '%No handler for UDF/UDAF/UDTF%' then 'system error'
+                      when detail like '%assertion failed%' then 'system error'
+                      when detail like '%Can not load class%' then 'system error'
+                      when detail like '%TTransportException%' then 'system error'
+                      when detail like '%SafeModeException%' then 'system error'
+                      when detail like '%UnknownHostException%' then 'system error'
+                      when detail like '%Cannot call methods on a stopped%' then 'system error'
+                      when detail like '%Caught Hive MetaException attempting to%' then 'system error'
+                      when detail like '%Execution error%' then 'system error'
+                      when detail like '%empty.init%' then 'system error'
+                      when detail like 'Job%cancelled' then 'system error'
+                      when detail like '%NoSuchMethodError%' then 'system error'
+                      when detail like '%tried to access class%' then 'system error'
+                      when detail like '%zip RDDs%' then 'system error'
+                      when detail like '%ConnectException%' then 'system error'
+                      when detail like '%No group 1%' then 'system error'
+                      when detail like 'RuntimeException' then 'system error'
+                      when detail like 'Empty Mount table' then 'system error'
+                      when detail like 'Unable to execute method' then 'system error'
+                      when detail like 'header flag can be true or false' then 'system error'
+                      when detail like 'timed out' then 'system error'
+                      when detail like 'avro/SchemaBuilder' then 'system error'
+                      when detail like 'JDOFatalUserException' then 'system error'
+                      when detail like 'RemoteException' then 'system error'
+                      when detail like 'Illegal pattern character' then 'system error'
+                      when detail like 'UnknownHostException' then 'system error'
+                      when detail like 'SparkContext was shut down' then 'system error'
+  
+              when detail like '%RemoteException%' then 'system error'
+  
+              when detail like 'GROUP BY position' then 'user error'
+              when detail like '%Not allowed%' then 'user error'
+              when detail like '%Cannot up cast%' then 'user error'
+              when detail like '%not allowed%' then 'user error'
+              when detail like '%is not boolean%' then 'user error'
+              when detail like '%grouping expressions sequence is empty%' then 'user error'
+              when detail like '%grouping expressions sequence is empty%' then 'user error'
+              when detail like '%No such struct field%' then 'user error'
+              when detail like '%Null-aware predicate%' then 'user error'
+              when detail like '%Operation category READ%' then 'user error'
+              when detail like '%Error getting object from metastore%' then 'user error'
+              when detail like '%Unsupported privilege type ALL%' then 'user error'
+              when detail like '%Detected cartesian product%' then 'user error'
+              when detail like '%Error granting role%' then 'user error'
+              when detail like '%Permission denied%' then 'user error'
+              when detail like '%extraneous input%' then 'user error'
+              when detail like '%not found%' then 'user error'
+              when detail like '%mismatched input%' then 'user error'
+              when detail like '%already exists%' then 'user error'
+              when detail like '%no viable alternative at input%' then 'user error'
+              when detail like '%Undefined function%' then 'user error'
+              when detail like '%Error create role: null%' then 'user error'
+              when detail like '%be inserted have the same number of columns as the target table%' then 'user error'
+              when detail like '%Invalid number of arguments%' then 'user error'
+              when detail like '%Input path does not exist%' then 'user error'
+              when detail like '%missing%' then 'user error'
+              when detail like '%Operation not allowed%' then 'user error'
+              when detail like '%cannot resolve%' then 'user error'
+              when detail like '%expression%is neither present%nor%' then 'user error'
+              when detail like '%Reference%is ambiguous%' then 'user error'
+  
+              else 'other' end)failure_type,
+              detail,start
+              from carmel_system.carmel_ql_query_v a where state != 3 and state != 4 and
+              username!='b_carmel' and username != 'b_alation'
+  )
+  group by failure_type, date(start)) t1 join (
+  select date(start) as QueryDate, count(*) as TotalCount
+      from carmel_system.carmel_ql_query_v where username != 'b_carmel' and username != ""b_alation"" and username not like '%test%'
+  group by date(start)
+  ) t2 on t1.QueryDate = t2.QueryDate
+) `success and error  sqls count`
+LIMIT 0"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0|0|run at AccessController.java:0|0|0|0|0|0|1|0|0|[10755, 10753, 10754]|default|0|0|0|0|3314|ACTIVE|2020-07-30T06:45:57.148GMT
+[]|0|UPLOAD DATA INPATH 'afab1b04-5f98-4a6c-b4b1-c61e8d220c38' OVERWRITE INTO TABLE p_soj_cl_t.acol_evcal_chnl2  OPTION(delimiter='{',header='false')|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|1808|3879|0|2020-07-30T06:18:04.941GMT|0|0|0|run at AccessController.java:0|3|215|215|1|0|300|0|0|[10752, 10746, 10750, 10751, 10749, 10748, 10747, 10745, 10740]|default|0|0|0|0|3313|ACTIVE|2020-07-30T06:04:44.822GMT
+[]|0|"SELECT *
+FROM
+(
+ SELECT RETAIL_FLG,
+   KEYWORD, 
+  TARGET_SEARCHES,
+  BASE_SEARCHES,
+  RANK() OVER(PARTITION BY RETAIL_FLG ORDER BY TARGET_SEARCHES DESC) AS RNK
+ FROM
+ (
+  SELECT TARGET.RETAIL_FLG,
+    TARGET.KEYWORD,
+   COUNT(DISTINCT (TARGET.GUID || TARGET.SESSION_SKEY || TARGET.SEQNUM ||  TARGET.SESSION_START_DT || TARGET.COBRAND || TARGET.CATEGORY_ID || TARGET.KEYWORD)) AS TARGET_SEARCHES ,
+   COUNT(DISTINCT (BASE.GUID || BASE.SESSION_SKEY || BASE.SEQNUM ||  BASE.SESSION_START_DT || BASE.COBRAND || BASE.CATEGORY_ID || BASE.KEYWORD)) AS BASE_SEARCHES
+   
+  FROM
+  (
+   SELECT RETAIL_FLG,
+     KEYWORD,
+     GUID ,
+     SESSION_SKEY ,
+     SEQNUM ,
+     SESSION_START_DT ,
+     COBRAND ,
+     CATEGORY_ID 
+   FROM p_ads_custom_insights.TRGT_0409_SRCH_KW_AN
+   
+  )TARGET
+  LEFT JOIN
+  (
+   SELECT RETAIL_FLG,
+     KEYWORD,
+     GUID ,
+     SESSION_SKEY ,
+     SEQNUM ,
+     SESSION_START_DT ,
+     COBRAND ,
+     CATEGORY_ID 
+   FROM p_ads_custom_insights.BASE_0409_SRCH_KW_AN
+  )BASE
+  ON TARGET.KEYWORD = BASE.KEYWORD
+  GROUP BY 1,2
+ )KW_25K
+WHERE  KEYWORD IS NOT NULL
+)KW_FINAL
+WHERE RNK <=1000
+AND BASE_SEARCHES > 1
+AND BASE_SEARCHES IS NOT NULL"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|119460|124248|0|2020-07-30T06:18:05.397GMT|3691993355|61882800|0|run at AccessController.java:0|3|7|7|1|0|414|0|0|[10732, 10731, 10730]|default|0|0|4484848247|58344251|3309|ACTIVE|2020-07-30T06:18:05.167GMT

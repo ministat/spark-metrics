@@ -1,0 +1,402 @@
+accumulatorUpdates|attemptId|description|details|diskBytesSpilled|executorBlockTime|executorCpuTime|executorRunTime|executorWaitTime|firstTaskLaunchedTime|inputBytes|inputRecords|killedTasksSummary.another attempt succeeded|memoryBytesSpilled|name|numActiveTasks|numCompleteTasks|numCompletedIndices|numFailedTasks|numKilledTasks|numTasks|outputBytes|outputRecords|rddIds|schedulingPool|shuffleReadBytes|shuffleReadRecords|shuffleWriteBytes|shuffleWriteRecords|stageId|status|submissionTime
+[]|0|"CREATE TEMPORARY TABLE DT_USER_BASE_PRE 
+USING PARQUET AS (
+SELECT 
+	B.CNTCT_ID,
+		A.INSTNC_ID AS Pre_INSTNC_ID,
+	B.USER_ID,
+	A.SRC_TRKING_CODE,
+	A.CMPGN_SENT_DT AS PRE_SENT_DT,
+	C.CMPGN_SENT_DT AS POST_SENT_DT,
+	A.SEGM_NAME,
+	C.SITE_ID,
+	C.VARIANT,
+	C.USER_TYPE,
+	B.OPEN_CNT,
+	B.CLICKED_COUNT,
+	UNDLVRD_YN_ID,
+	UNSBSCRD_YN_ID
+FROM DTDIG_EMAIL_INSTANCES_Pre AS A     
+INNER JOIN ACCESS_VIEWS.DW_CMC_CNTCT AS B ON A.INSTNC_ID = B.INSTNC_ID      
+INNER JOIN P_HAZELNUT_T.DT_USER_BASE_5 C ON B.USER_ID = C.USER_ID GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T05:54:58.965GMT|0|0||0|run at AccessController.java:0|200|0|0|0|0|200|0|0|[236834, 236831, 236833, 236830, 236829, 236832]|default|0|0|0|0|128707|ACTIVE|2020-07-30T05:54:58.899GMT
+[]|0|"create temporary table p_belxie_t.in_session_conversion using parquet as(
+select
+	a.session_start_dt,
+	a.session_skey,
+	a.guid,
+	a.site_id,
+	sum(coalesce(cast(item_price as decimal(18,2))*cast(quantity as decimal(18,2))*cast(curncy_plan_rate as decimal(18,2)),0)) as sess_gmb
+from
+	p_belxie_t.browser_session_summary_v2 as a
+	inner join
+		ACCESS_VIEWS.CHECKOUT_METRIC_ITEM as b
+		on a.session_start_dt=b.SESS_SESSION_START_DT
+		and a.session_skey=b.sess_session_skey
+		and a.guid=b.sess_guid
+		and a.site_id=b.sess_site_id
+		and b.created_dt='2020-06-21'
+		and b.ck_wacko_yn='N'
+        and b.leaf_categ_id <> 172036
+    inner join
+        ACCESS_VIEWS.DW_CATEGORY_GROUPINGS as cat
+        on b.leaf_categ_id=cat.leaf_categ_id
+        and b.item_site_id=cat.site_id
+        and cat.sap_category_id not in (5,7,23,41)
+      inner join        
+       	ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM as fx
+       	on b.lstg_curncy_id=fx.curncy_id
+group by
+	1,2,3,4
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T05:54:57.868GMT|0|0||0|run at AccessController.java:0|500|0|0|0|0|500|0|0|[236828, 236824, 236827]|default|0|0|0|0|128704|ACTIVE|2020-07-30T05:54:57.858GMT
+[]|0|"create temporary table p_belxie_t.norb_cre_dt using parquet as(
+select
+	a.primary_user_id,
+	cast(min(u.user_cre_date) as date) as user_cre_dt
+from
+	ACCESS_VIEWS.DW_USERS as u
+	inner join
+		p_belxie_t.norbs_acquired as a
+		on u.prmry_user_id=a.primary_user_id
+group by
+	1
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T05:54:57.857GMT|0|0||0|run at AccessController.java:0|1000|0|0|0|0|1000|0|0|[236826, 236825, 236823]|default|0|0|0|0|128703|ACTIVE|2020-07-30T05:54:57.848GMT
+[]|0|"CREATE TABLE P_QIKONG_T.MF_SIZING_BASE USING PARQUET AS(
+SELECT 
+	CAL.MONTH_BEG_DT
+	,CASE WHEN FACT.SELLER_CNTRY_ID IN (45,92,196) THEN 'GC'
+		ELSE 'OTHERS'
+	END AS SLR_CNTRY
+	,CASE WHEN C.CNTRY_ID IN (77) THEN 'DE'
+		WHEN C.CNTRY_ID IN (-999,-1,0,1,225,679,1000,206) THEN 'US'
+		WHEN C.CNTRY_ID IN (3) THEN 'UK'
+		WHEN C.CNTRY_ID IN (15) THEN 'AU'
+		ELSE 'OTHERS'
+	END AS SHIP_TO_CNTRY
+ 	,CASE WHEN COALESCE(C.CNTRY_ID,FACT.BUYER_CNTRY_ID) = COALESCE(FACT.ITEM_CNTRY_ID, B.ITEM_CNTRY_ID)
+		OR (COALESCE(C.CNTRY_ID,FACT.BUYER_CNTRY_ID) IN (-999,-1,0,1,225,679,1000,206) AND COALESCE(FACT.ITEM_CNTRY_ID, B.ITEM_CNTRY_ID) IN (-999,-1,0,1,225,679,1000,206)) THEN 'WH' 
+		ELSE 'E2E'
+	END AS WH_YN
+	,CASE WHEN COALESCE(MW.CK_TRANS_ID,MW.LSTG_ID) IS NOT NULL THEN 1 ELSE 0 END AS MANAGED_WAREHOUSE
+	,SUM(TRANS_QTY)  AS SI
+	,SUM(CAST(FACT.ITEM_PRICE_AMT * FACT.TRANS_QTY * LSTG_CURNCY_EXCHNG_RATE AS DECIMAL(18,2))) AS GMV
+	,SUM(CAST(SHPMT_FEE_LC_AVG_AMT * LSTG_CURNCY_EXCHNG_RATE AS DECIMAL(18,2))) SHPMT_FEE
+	,AVG(TRANS_QTY) AVERAGE_SI
+FROM SSA_SHPMT_TRANS_FACT FACT
+LEFT JOIN DW_CAL_DT CAL
+	ON CAL.CAL_DT=FACT.CK_DT
+LEFT JOIN (SELECT CNTRY_ID, ADDRESS_ID FROM ACCESS_VIEWS.DW_USER_ADDRESSES WHERE ADDRESS_TYPE = 1 GROUP BY 1,2) C
+    ON FACT.CK_TO_ADDR_ID = C.ADDRESS_ID
+LEFT JOIN 
+	(SELECT DISTINCT ITEM_ID LSTG_ID,TRANS_ID CK_TRANS_ID FROM P_SHPNG_T.WINIT_WEEKY_VOLUME_REPORT WHERE CK_DT>='2019-01-01'
+	UNION
+	SELECT DISTINCT LSTG_ID,CK_TRANS_ID FROM P_SHPNG_PUB_T.GX_4PX_RECORD_MAPPED GX_4PX WHERE CK_DT>='2019-01-01') MW
+	ON MW.LSTG_ID=FACT.LSTG_ID
+	AND MW.CK_TRANS_ID=FACT.CK_TRANS_ID
+LEFT JOIN EBAY_TRANS_RLTD_EVENT B 
+	ON FACT.LSTG_ID = B.ITEM_ID 
+	AND	FACT.CK_TRANS_ID = B.TRANS_ID
+LEFT JOIN SSA_CURNCY_PLAN_RATE_DIM LPR 
+	ON FACT.LSTG_CURNCY_ID = LPR.CURNCY_ID
+WHERE FACT.WACKO_YN_IND = 'N' 
+AND	FACT.LSTG_TYPE_CD NOT IN (12,15) 
+AND	FACT.SAP_CATEG_ID NOT IN (5,7,23,41)
+AND FACT.CK_DT>='2018-01-01'
+GROUP BY 1,2,3,4,5
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0|2020-07-30T05:54:54.654GMT|3293922793|422223397||0|run at AccessController.java:0|500|0|0|0|0|500|0|0|[236819, 236815, 236816, 236813, 236814, 236818, 236817]|default|37512702|0|0|0|128701|ACTIVE|2020-07-30T05:54:54.643GMT
+[]|0|"CREATE TABLE P_QIKONG_T.MF_SIZING_BASE USING PARQUET AS(
+SELECT 
+	CAL.MONTH_BEG_DT
+	,CASE WHEN FACT.SELLER_CNTRY_ID IN (45,92,196) THEN 'GC'
+		ELSE 'OTHERS'
+	END AS SLR_CNTRY
+	,CASE WHEN C.CNTRY_ID IN (77) THEN 'DE'
+		WHEN C.CNTRY_ID IN (-999,-1,0,1,225,679,1000,206) THEN 'US'
+		WHEN C.CNTRY_ID IN (3) THEN 'UK'
+		WHEN C.CNTRY_ID IN (15) THEN 'AU'
+		ELSE 'OTHERS'
+	END AS SHIP_TO_CNTRY
+ 	,CASE WHEN COALESCE(C.CNTRY_ID,FACT.BUYER_CNTRY_ID) = COALESCE(FACT.ITEM_CNTRY_ID, B.ITEM_CNTRY_ID)
+		OR (COALESCE(C.CNTRY_ID,FACT.BUYER_CNTRY_ID) IN (-999,-1,0,1,225,679,1000,206) AND COALESCE(FACT.ITEM_CNTRY_ID, B.ITEM_CNTRY_ID) IN (-999,-1,0,1,225,679,1000,206)) THEN 'WH' 
+		ELSE 'E2E'
+	END AS WH_YN
+	,CASE WHEN COALESCE(MW.CK_TRANS_ID,MW.LSTG_ID) IS NOT NULL THEN 1 ELSE 0 END AS MANAGED_WAREHOUSE
+	,SUM(TRANS_QTY)  AS SI
+	,SUM(CAST(FACT.ITEM_PRICE_AMT * FACT.TRANS_QTY * LSTG_CURNCY_EXCHNG_RATE AS DECIMAL(18,2))) AS GMV
+	,SUM(CAST(SHPMT_FEE_LC_AVG_AMT * LSTG_CURNCY_EXCHNG_RATE AS DECIMAL(18,2))) SHPMT_FEE
+	,AVG(TRANS_QTY) AVERAGE_SI
+FROM SSA_SHPMT_TRANS_FACT FACT
+LEFT JOIN DW_CAL_DT CAL
+	ON CAL.CAL_DT=FACT.CK_DT
+LEFT JOIN (SELECT CNTRY_ID, ADDRESS_ID FROM ACCESS_VIEWS.DW_USER_ADDRESSES WHERE ADDRESS_TYPE = 1 GROUP BY 1,2) C
+    ON FACT.CK_TO_ADDR_ID = C.ADDRESS_ID
+LEFT JOIN 
+	(SELECT DISTINCT ITEM_ID LSTG_ID,TRANS_ID CK_TRANS_ID FROM P_SHPNG_T.WINIT_WEEKY_VOLUME_REPORT WHERE CK_DT>='2019-01-01'
+	UNION
+	SELECT DISTINCT LSTG_ID,CK_TRANS_ID FROM P_SHPNG_PUB_T.GX_4PX_RECORD_MAPPED GX_4PX WHERE CK_DT>='2019-01-01') MW
+	ON MW.LSTG_ID=FACT.LSTG_ID
+	AND MW.CK_TRANS_ID=FACT.CK_TRANS_ID
+LEFT JOIN EBAY_TRANS_RLTD_EVENT B 
+	ON FACT.LSTG_ID = B.ITEM_ID 
+	AND	FACT.CK_TRANS_ID = B.TRANS_ID
+LEFT JOIN SSA_CURNCY_PLAN_RATE_DIM LPR 
+	ON FACT.LSTG_CURNCY_ID = LPR.CURNCY_ID
+WHERE FACT.WACKO_YN_IND = 'N' 
+AND	FACT.LSTG_TYPE_CD NOT IN (12,15) 
+AND	FACT.SAP_CATEG_ID NOT IN (5,7,23,41)
+AND FACT.CK_DT>='2018-01-01'
+GROUP BY 1,2,3,4,5
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|13982429|25735856|0|2020-07-30T05:54:42.523GMT|265180795976|22306007400|13.0|0|run at AccessController.java:0|145|4929|4929|0|13|5000|0|0|[236767, 236765, 236766]|default|0|0|317046151541|22230216166|128682|ACTIVE|2020-07-30T05:54:42.506GMT
+[]|0|"create temporary table p_belxie_t.reg_cmpgn_imprsn_cohort_purchase using parquet as(
+select
+	a.session_start_dt,
+	a.session_skey,
+	a.guid,
+	a.site_id,
+	a.experience,
+	a.parent_uid,
+	count(distinct b.created_dt) as cohort_pd,
+	sum(coalesce(cast(b.item_price as decimal(18,2))*cast(b.quantity as decimal(18,2))*cast(fx.curncy_plan_rate as decimal(18,2)),0)) as cohort_gmb
+from
+	p_belxie_t.browser_session_summary_v4 as a
+	inner join
+		PRS_RESTRICTED_V.USER_DNA_DIM as dna
+		on a.parent_uid=dna.primary_user_id
+		and a.cmpgn_reg_sess=1
+	inner join
+		ACCESS_VIEWS.CHECKOUT_METRIC_ITEM as b
+		on dna.user_id=b.buyer_id
+		and b.created_dt between a.session_start_dt and date_add(a.session_start_dt,14)
+		and b.ck_wacko_yn='N'
+        and b.leaf_categ_id <> 172036
+    inner join
+        ACCESS_VIEWS.DW_CATEGORY_GROUPINGS as cat
+        on b.leaf_categ_id=cat.leaf_categ_id
+        and b.item_site_id=cat.site_id
+        and cat.sap_category_id not in (5,7,23,41)
+      inner join        
+       	ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM as fx
+       	on b.lstg_curncy_id=fx.curncy_id
+group by
+	1,2,3,4,5,6
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|1804684|1869595|0|2020-07-30T05:54:17.208GMT|0|0||0|run at AccessController.java:0|12|206|206|0|0|218|0|0|[236656, 236650, 236654, 236655, 236651, 236653, 236652]|default|22298272051|2256263067|74154|540|128632|ACTIVE|2020-07-30T05:54:16.322GMT
+[]|0|"create temporary table p_belxie_t.reg_cmpgn_imprsn_cohort_purchase using parquet as(
+select
+	a.session_start_dt,
+	a.session_skey,
+	a.guid,
+	a.site_id,
+	a.experience,
+	a.parent_uid,
+	count(distinct b.created_dt) as cohort_pd,
+	sum(coalesce(cast(b.item_price as decimal(18,2))*cast(b.quantity as decimal(18,2))*cast(fx.curncy_plan_rate as decimal(18,2)),0)) as cohort_gmb
+from
+	p_belxie_t.browser_session_summary_v4 as a
+	inner join
+		PRS_RESTRICTED_V.USER_DNA_DIM as dna
+		on a.parent_uid=dna.primary_user_id
+		and a.cmpgn_reg_sess=1
+	inner join
+		ACCESS_VIEWS.CHECKOUT_METRIC_ITEM as b
+		on dna.user_id=b.buyer_id
+		and b.created_dt between a.session_start_dt and date_add(a.session_start_dt,14)
+		and b.ck_wacko_yn='N'
+        and b.leaf_categ_id <> 172036
+    inner join
+        ACCESS_VIEWS.DW_CATEGORY_GROUPINGS as cat
+        on b.leaf_categ_id=cat.leaf_categ_id
+        and b.item_site_id=cat.site_id
+        and cat.sap_category_id not in (5,7,23,41)
+      inner join        
+       	ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM as fx
+       	on b.lstg_curncy_id=fx.curncy_id
+group by
+	1,2,3,4,5,6
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|392754225244|0|17981465|18291878|0|2020-07-30T05:54:06.163GMT|278284684343|19364518012||1105819860992|run at AccessController.java:0|1|499|499|0|0|500|0|0|[236637, 236635, 236636]|default|0|0|506526388978|19373164509|128625|ACTIVE|2020-07-30T05:54:06.138GMT
+[]|0|"create temporary table p_belxie_t.reg_cmpgn_imprsn_cohort_purchase using parquet as(
+select
+	a.session_start_dt,
+	a.session_skey,
+	a.guid,
+	a.site_id,
+	a.experience,
+	a.parent_uid,
+	count(distinct b.created_dt) as cohort_pd,
+	sum(coalesce(cast(b.item_price as decimal(18,2))*cast(b.quantity as decimal(18,2))*cast(fx.curncy_plan_rate as decimal(18,2)),0)) as cohort_gmb
+from
+	p_belxie_t.browser_session_summary_v4 as a
+	inner join
+		PRS_RESTRICTED_V.USER_DNA_DIM as dna
+		on a.parent_uid=dna.primary_user_id
+		and a.cmpgn_reg_sess=1
+	inner join
+		ACCESS_VIEWS.CHECKOUT_METRIC_ITEM as b
+		on dna.user_id=b.buyer_id
+		and b.created_dt between a.session_start_dt and date_add(a.session_start_dt,14)
+		and b.ck_wacko_yn='N'
+        and b.leaf_categ_id <> 172036
+    inner join
+        ACCESS_VIEWS.DW_CATEGORY_GROUPINGS as cat
+        on b.leaf_categ_id=cat.leaf_categ_id
+        and b.item_site_id=cat.site_id
+        and cat.sap_category_id not in (5,7,23,41)
+      inner join        
+       	ACCESS_VIEWS.SSA_CURNCY_PLAN_RATE_DIM as fx
+       	on b.lstg_curncy_id=fx.curncy_id
+group by
+	1,2,3,4,5,6
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|2344001|2447447|0|2020-07-30T05:53:27.386GMT|0|0|6.0|0|run at AccessController.java:0|3|217|217|0|6|218|0|0|[236552, 236551, 236547, 236548, 236550, 236546, 236549]|default|23068951911|2330633071|384018|2875|128577|ACTIVE|2020-07-30T05:53:27.376GMT
+[]|0|"CREATE TABLE P_Michael_Seller_T.SELLER_BASE_raw
+USING PARQUET 
+( 
+SELECT 
+	T.SLR_ID,
+	U.PRMRY_USER_ID,
+	
+	min(T.CK_TRANS_DT) AS first_SELL_DT
+	
+FROM PRS_RESTRICTED_V.SLNG_TRANS_SUPER_FACT_EXT T 
+LEFT JOIN ACCESS_VIEWS.DW_USERS U
+ON T.SLR_ID = U.USER_ID
+WHERE T.CK_TRANS_DT BETWEEN ""2019-06-01"" AND ""2020-06-30"" 
+AND U.USER_SITE_ID IN (0,3,77)
+GROUP BY 1,2
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|1675852|2619512|0|2020-07-30T05:52:40.285GMT|18359790939|1539268872|20.0|0|run at AccessController.java:0|2|999|999|0|20|1000|213565926|16731853|[236442, 236441, 236438, 236439, 236437, 236440]|default|17658251971|2320988205|0|0|128527|ACTIVE|2020-07-30T05:52:40.235GMT
+[]|0|"select 
+*
+FROM PRS_RESTRICTED_V.SLNG_LSTG_SUPER_FACT L
+LEFT JOIN ACCESS_VIEWS.DW_USERS U
+ON L.SLR_ID = U.USER_ID
+inner join P_Michael_Seller_T.LISTER_BASE_raw b
+on l.SLR_ID = b.SLR_ID
+and U.PRMRY_USER_ID = b.PRMRY_USER_ID
+and l.AUCT_START_DT = b.first_AUCT_START_DT
+WHERE L.AUCT_START_DT BETWEEN '2019-06-01' AND '2020-06-30'
+limit 10"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|18218260657|0|221660759|246540737|0|2020-07-30T05:51:20.946GMT|3570969370730|49802054084|244.0|448824082432|run at AccessController.java:0|4|4998|4998|0|244|5000|0|0|[236340, 236333, 236336, 236337, 236339, 236338, 236335, 236334]|default|1112224828584|50574995492|1972189904969|5476346318|128484|ACTIVE|2020-07-30T05:51:20.874GMT
+[]|0|"create temporary table p_belxie_t.norbs_acquired_v2 using parquet as(
+select
+	a.*,
+	case
+		when b.SESS_EXP_LEVEL2='Browser: mWeb' then 'mWeb'
+		when b.SESS_EXP_LEVEL2 like '%Apps%' then 'Apps'
+		else 'dWeb'
+	end as device,
+	b.sess_exp_level2 as device_type,
+	b.bbowa_traffic_source_id
+from
+	p_belxie_t.norbs_acquired_v1 as a
+	inner join
+		ACCESS_VIEWS.CHECKOUT_METRIC_ITEM_EXT as b
+		on a.item_id=b.item_id
+		and a.transaction_id=b.transaction_id
+		and b.created_dt between a.wk_start_dt and a.wk_end_dt
+)"|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|284676547304|0|45804164|48311374|0|2020-07-30T05:48:09.078GMT|731378751028|18841350242||1113403162624|run at AccessController.java:0|27|473|473|0|0|500|92592325|1933544|[235879, 235872, 235873, 235874, 235876, 235877, 235878, 235875]|default|209832221|2043360|0|0|128260|ACTIVE|2020-07-30T05:48:09.027GMT
+[]|1|broadcast exchange (runId 40834b8b-6544-4fc4-8c50-d9c533108af7)|"org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1$$anon$2.run(SparkExecuteStatementOperation.scala:205)
+java.security.AccessController.doPrivileged(Native Method)
+javax.security.auth.Subject.doAs(Subject.java:422)
+org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1869)
+org.apache.spark.sql.hive.thriftserver.SparkExecuteStatementOperation$$anon$1.run(SparkExecuteStatementOperation.scala:219)
+java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+java.util.concurrent.FutureTask.run(FutureTask.java:266)
+java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+java.lang.Thread.run(Thread.java:748)"|0|0|0|0|0||0|0||0|run at AccessController.java:0|0|0|0|0|0|1|0|0|[234262, 234260, 234256, 234258, 234257, 234261, 234259]|default|0|0|0|0|127543|ACTIVE|2020-07-30T05:54:56.104GMT

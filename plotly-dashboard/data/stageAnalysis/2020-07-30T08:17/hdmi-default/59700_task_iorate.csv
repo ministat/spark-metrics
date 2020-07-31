@@ -1,0 +1,5 @@
+host,duration,status,taskMetrics.shuffleReadMetrics.remoteBytesRead.rateInKB
+hdc49-mcc10-01-0710-3302-034-tess0035.stratus.rno.ebay.com,372659,RUNNING,inf
+hdc49-mcc10-01-0710-3302-014-tess0035.stratus.rno.ebay.com,8417,SUCCESS,22661.219317096467
+hdc49-mcc10-01-0710-4102-022-tess0035.stratus.rno.ebay.com,271346,SUCCESS,12833.21291061597
+hdc49-mcc10-01-0710-1902-015-tess0035.stratus.rno.ebay.com,254650,SUCCESS,8651.553710795577
