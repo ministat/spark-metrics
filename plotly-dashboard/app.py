@@ -1,5 +1,4 @@
 # Import required libraries
-#import pickle
 import copy
 import dash
 import datetime as DT
@@ -11,6 +10,8 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
+
+from dataskews import get_data_skews_datatable, load_data_skew_stages
 
 def load_stages(dataDir):
     dic = {}
@@ -64,11 +65,11 @@ def description_card():
     return html.Div(
         id="description-card",
         children=[
-            html.H5("Clinical Analytics"),
-            html.H3("Welcome to the Clinical Analytics Dashboard"),
+            html.H5("CARMEL internal Analytics"),
+            html.H3("Welcome to the CARMEL internal Analytics Dashboard"),
             html.Div(
                 id="intro",
-                children="Explore clinic patient volume by time of day, waiting time, and care score. Click on the heatmap to visualize patient experience at different time points.",
+                children="Explore the Spark jobs internal insights to help understand the status of application requirement of resources or quick diagnostic of potential issues.",
             ),  
         ],  
     )
@@ -77,11 +78,7 @@ def generate_control_card():
     return html.Div(
         id="control-card",
         children=[
-            html.P(
-                "Filter by submission date (or select range in histogram):",
-                className="control_label",
-            ),
-            html.P("Select Check-In Time"),
+            html.P("Select Time"),
             dcc.DatePickerRange(
                 id="date-picker-selecor",
                 start_date=DT.date.today() - DT.timedelta(days=7),
@@ -92,7 +89,7 @@ def generate_control_card():
             ),
             html.Br(),
             html.Br(),
-            html.P("Filter by queue:", className="control_label"),
+            html.P("Select queue:", className="control_label"),
             dcc.Dropdown(
                 id="queue_selector",
                 options=[{"label": i, "value": i} for i in queue_list],
@@ -213,10 +210,20 @@ app.layout = html.Div(
             ],
             className="row flex-display",
         ),
+        html.H6(html.P("Data skews details:"), className="mini_container"),
+        html.Div(id="data_skews_table", className="row pretty_container table"),
     ],
     id="mainContainer",
     style={"display": "flex", "flex-direction": "column"},
 )
+
+@app.callback(
+    Output("data_skews_table", "children"),
+    [Input("queue_selector", "value")],
+)
+def update_data_skews_table(queue_selector):
+    df = load_data_skew_stages(DATA_PATH.joinpath("stageAnalysis"), queue_selector)
+    return get_data_skews_datatable(df)
 
 @app.callback(
     [
