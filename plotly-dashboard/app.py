@@ -10,7 +10,7 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
-
+import socket
 from dataskews import get_data_skews_datatable, load_data_skew_stages, gen_empty_data_skew
 
 def load_stages(dataDir):
@@ -351,4 +351,5 @@ def update_stages_info(queue_selector):
 
 # Main
 if __name__ == "__main__":
-    app.run_server(debug=False)
+    host = socket.gethostbyname(socket.gethostname())
+    app.run_server(debug=False, host=host, port=8088)
