@@ -352,4 +352,4 @@ def update_stages_info(queue_selector):
 # Main
 if __name__ == "__main__":
     host = socket.gethostbyname(socket.gethostname())
-    app.run_server(debug=False, host=host, port=8088)
+    app.run_server(debug=False, host=host, port=os.getenv('PLOTLY_DASH_SERVER_PORT', 8088))
