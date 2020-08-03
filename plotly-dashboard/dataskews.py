@@ -70,6 +70,9 @@ def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
     for m in skewMetrics:
         if m in MATRIX_MAP_TO_TASK:
             tm = MATRIX_MAP_TO_TASK[m]
+            # running stage does not contain those columns
+            if not tm in hostSkewsDf:
+                continue
             imax = hostSkewsDf[tm].idxmax()
             imin = hostSkewsDf[tm].idxmin()
             if MERGE_MIN_MAX is True:
