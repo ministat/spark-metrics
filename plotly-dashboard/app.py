@@ -22,7 +22,10 @@ def load_stages(dataDir):
             continue
         qDir = os.listdir(dtDir)
         for dq in qDir:
-            stageInfoDf = pd.read_csv(dtDir.joinpath(dq).joinpath("stages_info.csv"))
+            stagesInfoPath = dtDir.joinpath(dq).joinpath("stages_info.csv")
+            if os.path.exists(stagesInfoPath) == False:
+                continue
+            stageInfoDf = pd.read_csv(stagesInfoPath)
             if dt in dic:
                 if dq in dic[dt]:
                     print("Duplication queue '{q}'".format(q=dq))
