@@ -214,21 +214,27 @@ app.layout = html.Div(
         ),
         html.H6(html.P("Data skews details:"), className="mini_container"),
         html.Div(id="data_skews_table", className="row pretty_container table"),
+        dcc.Loading(
+            id="loading-1",
+            children=[html.Div(id="loading-output-1")],
+            type="circle",
+        )
     ],
     id="mainContainer",
     style={"display": "flex", "flex-direction": "column"},
 )
 
 @app.callback(
-    Output("data_skews_table", "children"),
+    [Output("data_skews_table", "children"),
+     Output("loading-output-1", "children")],
     [Input("queue_selector", "value")],
 )
 def update_data_skews_table(queue_selector):
     df = load_data_skew_stages(DATA_PATH.joinpath("stageAnalysis"), queue_selector)
     if df.empty == False:
-        return get_data_skews_datatable(df)
+        return get_data_skews_datatable(df), ''
     else:
-        return get_data_skews_datatable(gen_empty_data_skew(queue_selector))
+        return get_data_skews_datatable(gen_empty_data_skew(queue_selector)), ''
 
 @app.callback(
     [
