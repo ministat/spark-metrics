@@ -287,7 +287,7 @@ def update_stages_info(queue_selector):
         "IO": "#74dbef",
         "MIX": "rgb(255, 127, 14)",
         "DATASKEW": "#eff0f4",
-        "RESOURCELIMIT": "rgb(150, 72, 144)",
+        "RESOURCELIMIT": "rgb(50, 255, 144)",
     }
     print(queue_selector)
     for k,v in dfDic.items():
