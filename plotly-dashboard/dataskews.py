@@ -48,7 +48,7 @@ MERGE_MIN_MAX = True
 def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
     selectedSkewStageDf = skewDf.loc[(skewDf["stageId"]==stageId)]
     selectedStageDf = stageDf.loc[(stageDf["stageId"]==stageId)]
-    sqlDesc = selectedStageDf[["description"]].values[0][0]
+    sqlDesc = selectedStageDf[["description"]].values[0][0] if len(selectedStageDf[["description"]]) > 0 else ""
     submitTime = selectedStageDf[["submissionTime"]].values[0][0]
     skewMetrics = []
     for c in selectedSkewStageDf.columns:
@@ -147,7 +147,8 @@ def load_data_skew_stages(dataDir, selectedQueue):
                 hosts_skews = os.path.join(root, file)
                 hostSkewDf = pd.read_csv(os.path.join(root, file))
                 stageSkewDf = pd.read_csv(stage_skews)
-                detailsDf = pd.read_csv(stage_details_file[0], sep='|')
+                print(stage_details_file[0])
+                detailsDf = pd.read_csv(stage_details_file[0], sep='|', lineterminator='\n')
                 dic = extract_skew_info(stageSkewDf, hostSkewDf, detailsDf, int(fnItems[0]), queue)
                 df = df.append(pd.Series(dic), ignore_index=True)
     for k,v in LONG_NAME_TO_READABLE_NAME.items():
