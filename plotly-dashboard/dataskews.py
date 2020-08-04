@@ -73,32 +73,26 @@ def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
             # running stage does not contain those columns
             if not tm in hostSkewsDf:
                 continue
-            imax = hostSkewsDf[tm].idxmax()
-            imin = hostSkewsDf[tm].idxmin()
-            if MERGE_MIN_MAX is True:
-                #if "max" in dic:
-                #    dic["max"] += "," + tm
-                #else:
-                #    dic["max"] = tm
-                #if "min" in dic:
-                #    dic["min"] += "," + tm
-                #else:
-                #    dic["min"] = tm
-                if "max.host" in dic:
-                    dic["max.host"] += "," + hostSkewsDf.iloc[imax][['host']][0]
-                else:
-                    dic["max.host"] = hostSkewsDf.iloc[imax][['host']][0]
-                if "min.host" in dic:
-                    dic["min.host"] += "," + hostSkewsDf.iloc[imin][['host']][0]
-                else:
-                    dic["min.host"] = hostSkewsDf.iloc[imin][['host']][0]
-                dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
-                dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
-            else:
-                dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
-                dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
-                dic["{m}.max.host".format(m=tm)] = hostSkewsDf.iloc[imax][['host']][0]
-                dic["{m}.min.host".format(m=tm)] = hostSkewsDf.iloc[imin][['host']][0]
+            dic["{m}.max".format(m=tm)] = hostSkewsDf[tm].max()
+            dic["{m}.mean".format(m=tm)] = hostSkewsDf[tm].mean()
+            #imax = hostSkewsDf[tm].idxmax()
+            #imin = hostSkewsDf[tm].idxmin()
+            #if MERGE_MIN_MAX is True:
+            #    if "max.host" in dic:
+            #        dic["max.host"] += "," + hostSkewsDf.iloc[imax][['host']][0]
+            #    else:
+            #        dic["max.host"] = hostSkewsDf.iloc[imax][['host']][0]
+            #    if "min.host" in dic:
+            #        dic["min.host"] += "," + hostSkewsDf.iloc[imin][['host']][0]
+            #    else:
+            #        dic["min.host"] = hostSkewsDf.iloc[imin][['host']][0]
+            #    dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
+            #    dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
+            #else:
+            #    dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
+            #    dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
+            #    dic["{m}.max.host".format(m=tm)] = hostSkewsDf.iloc[imax][['host']][0]
+            #    dic["{m}.min.host".format(m=tm)] = hostSkewsDf.iloc[imin][['host']][0]
     return dic
 
 def gen_empty_data_skew(queue):
@@ -107,16 +101,18 @@ def gen_empty_data_skew(queue):
     dic["stageId"] = "N/A"
     dic["sql"] = "N/A"
     dic["submissionTime"] = "N/A"
-    if MERGE_MIN_MAX is True:
-        dic["max"] = "N/A"
-        dic["min"] = "N/A"
-        dic["max.host"] = "N/A"
-        dic["min.host"] = "N/A"
-    else:
-        dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
-        dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
-        dic["{m}.max.host".format(m=tm)] = hostSkewsDf.iloc[imax][['host']][0]
-        dic["{m}.min.host".format(m=tm)] = hostSkewsDf.iloc[imin][['host']][0]
+    dic["max"] = "N/A"
+    dic["mean"] = "N/A"
+    #if MERGE_MIN_MAX is True:
+    #    dic["max"] = "N/A"
+    #    dic["min"] = "N/A"
+    #    dic["max.host"] = "N/A"
+    #    dic["min.host"] = "N/A"
+    #else:
+    #    dic["{m}.max".format(m=tm)] = hostSkewsDf.iloc[imax][[tm]][0]
+    #    dic["{m}.min".format(m=tm)] = hostSkewsDf.iloc[imin][[tm]][0]
+    #    dic["{m}.max.host".format(m=tm)] = hostSkewsDf.iloc[imax][['host']][0]
+    #    dic["{m}.min.host".format(m=tm)] = hostSkewsDf.iloc[imin][['host']][0]
     df = pd.DataFrame()
     return df.append(pd.Series(dic), ignore_index=True)
 
