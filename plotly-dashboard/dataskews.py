@@ -17,20 +17,28 @@ MATRIX_MAP_TO_TASK={
 }
 LONG_NAME_TO_READABLE_NAME={
     "taskMetrics.shuffleReadMetrics.remoteBytesRead.min":"rShuf remo min",
+    "taskMetrics.shuffleReadMetrics.remoteBytesRead.mean":"rShuf remo mean",
     "taskMetrics.shuffleReadMetrics.remoteBytesRead.max":"rShuf remo max",
     "taskMetrics.shuffleReadMetrics.remoteBytesRead.min.host":"rShufH remo min",
+    "taskMetrics.shuffleReadMetrics.remoteBytesRead.meann.host":"rShufH remo meann",
     "taskMetrics.shuffleReadMetrics.remoteBytesRead.max.host":"rShufH remo max",
     "taskMetrics.shuffleWriteMetrics.bytesWritten.min":"wShuf min",
+    "taskMetrics.shuffleWriteMetrics.bytesWritten.mean":"wShuf mean",
     "taskMetrics.shuffleWriteMetrics.bytesWritten.max":"wShuf max",
     "taskMetrics.shuffleWriteMetrics.bytesWritten.min.host":"wShuf min host",
+    "taskMetrics.shuffleWriteMetrics.bytesWritten.mean.host":"wShuf mean host",
     "taskMetrics.shuffleWriteMetrics.bytesWritten.max.host":"wShuf max host",
     "taskMetrics.inputMetrics.bytesRead.min":"rInput min",
+    "taskMetrics.inputMetrics.bytesRead.mean":"rInput mean",
     "taskMetrics.inputMetrics.bytesRead.max":"rInput max",
     "taskMetrics.inputMetrics.bytesRead.min.host":"rInput min host",
+    "taskMetrics.inputMetrics.bytesRead.mean.host":"rInput mean host",
     "taskMetrics.inputMetrics.bytesRead.max.host":"rInput max host",
     "taskMetrics.outputMetrics.bytesWritten.min":"wOutput min",
+    "taskMetrics.outputMetrics.bytesWritten.mean":"wOutput mean",
     "taskMetrics.outputMetrics.bytesWritten.max":"wOutput max",
     "taskMetrics.outputMetrics.bytesWritten.min.host":"wOutput min host",
+    "taskMetrics.outputMetrics.bytesWritten.mean.host":"wOutput mean host",
     "taskMetrics.outputMetrics.bytesWritten.max.host":"wOutput max host",
 }
 
@@ -214,6 +222,9 @@ def get_data_skews_datatable(df):
             'height': 'auto',
             'maxWidth': 100,
         },
+        #style_table={
+        #    'overflowX': 'auto'
+        #},
         style_data_conditional=[
             {
                 "if": {"row_index": "odd"},
