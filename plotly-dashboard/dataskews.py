@@ -120,6 +120,47 @@ def gen_empty_data_skew(queue):
     df = pd.DataFrame()
     return df.append(pd.Series(dic), ignore_index=True)
 
+def load_all(dataDir):
+    df = pd.DataFrame()
+    for root, dirs, files in os.walk(dataDir):
+        for file in files:
+            if file.endswith("_data_skew.csv"):
+                fnItems = file.split('_')
+                pathItems = root.split(os.path.sep)
+                assert len(pathItems) > 0, "Fail to find queue from {p}".format(p=root)
+                queue = pathItems[len(pathItems) - 1]
+                if len(fnItems) < 3:
+                    print("Invalid data skew file: {f}".format(f=file))
+                    continue
+                stage_skews = os.path.join(root, STAGE_SKEWS_FILE)
+                if not os.path.exists(stage_skews):
+                    print("Cannot find {s}".format(s=stage_skews))
+                    continue
+                stage_details = os.path.join(root, "*_stages.csv")
+                stage_details_file = glob.glob(stage_details)
+                if len(stage_details_file) != 1:
+                    print("Cannot find {s}".format(s=stage_details_file))
+                    continue
+                print("{d}, {p}".format(d=root, p=fnItems[0]))
+                hosts_skews = os.path.join(root, file)
+                hostSkewDf = pd.read_csv(os.path.join(root, file))
+                stageSkewDf = pd.read_csv(stage_skews)
+                print(stage_details_file[0])
+                detailsDf = pd.read_csv(stage_details_file[0], sep='|', lineterminator='\n')
+                dic = extract_skew_info(stageSkewDf, hostSkewDf, detailsDf, int(fnItems[0]), queue)
+                df = df.append(pd.Series(dic), ignore_index=True)
+    for k,v in LONG_NAME_TO_READABLE_NAME.items():
+        df = df.rename(columns={k:v})
+    return df
+
+def load_data_for_queue(df, queue):
+    if queue == "all":
+        return df
+    elif df.empty == False:
+        return df.loc[df['queue']==queue]
+    else:
+        return gen_empty_data_skew(queue)
+
 def load_data_skew_stages(dataDir, selectedQueue):
     df = pd.DataFrame()
     for root, dirs, files in os.walk(dataDir):
@@ -153,8 +194,6 @@ def load_data_skew_stages(dataDir, selectedQueue):
                 df = df.append(pd.Series(dic), ignore_index=True)
     for k,v in LONG_NAME_TO_READABLE_NAME.items():
         df = df.rename(columns={k:v})
-    #print(df.columns)
-    #df.to_csv("result.csv")
     return df
 
 def get_data_skews_datatable(df):

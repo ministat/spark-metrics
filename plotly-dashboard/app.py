@@ -6,12 +6,13 @@ import math
 import os
 import pandas as pd
 import pathlib
+import pickle
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
 import socket
-from dataskews import get_data_skews_datatable, load_data_skew_stages, gen_empty_data_skew
+from dataskews import get_data_skews_datatable, load_data_skew_stages, gen_empty_data_skew, load_all, load_data_for_queue
 
 def load_stages(dataDir):
     dic = {}
@@ -35,6 +36,12 @@ def load_stages(dataDir):
                 dic.setdefault(dt, {})[dq] = stageInfoDf
     return dic
 
+def parse_dataskew_info_save_to_pickle():
+    df = load_all(DATA_PATH.joinpath("stageAnalysis"))
+    if df.empty == True:
+        df = gen_empty_data_skew(queue_selector)
+    df.to_pickle(DATASKEW_PICKLE_FILE)
+
 queue_list=[
         "all",
         "hdmi-default",
@@ -50,10 +57,14 @@ queue_list=[
         "hdmi-gcx",
         "hdmi-reserved-test"
 ]
+
+DATASKEW_PICKLE_FILE = "dataskews.pickle"
+
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("data").resolve()
 dfDic = load_stages(DATA_PATH.joinpath("stageAnalysis"))
+parse_dataskew_info_save_to_pickle()
 
 app = dash.Dash(
     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
@@ -230,11 +241,14 @@ app.layout = html.Div(
     [Input("queue_selector", "value")],
 )
 def update_data_skews_table(queue_selector):
-    df = load_data_skew_stages(DATA_PATH.joinpath("stageAnalysis"), queue_selector)
-    if df.empty == False:
-        return get_data_skews_datatable(df), ''
+    if os.path.exists(DATASKEW_PICKLE_FILE):
+        df = pd.read_pickle(DATASKEW_PICKLE_FILE)
+        df = load_data_for_queue(df, queue_selector)
     else:
-        return get_data_skews_datatable(gen_empty_data_skew(queue_selector)), ''
+        df = load_data_skew_stages(DATA_PATH.joinpath("stageAnalysis"), queue_selector)
+        if df.empty == True:
+            df = gen_empty_data_skew(queue_selector)
+    return get_data_skews_datatable(df), ''
 
 @app.callback(
     [
