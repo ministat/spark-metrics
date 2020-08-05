@@ -46,6 +46,22 @@ function get_base_url() {
   echo "https://${RES_MGR}/proxy/${appId}/api/v1/applications/${appId}"
 }
 
+function get_app() {
+  local appId=$1
+  curl -iLk -X GET https://${RES_MGR}/proxy/${appId}/api/v1/applications
+}
+
+function get_sqls() {
+  local appId=$1
+  local baseUrl=$(get_base_url $appId)
+  curl -iLk -X GET ${baseUrl}/sql?anonymous=true
+}
+
+function get_top_running_sqls() {
+  local appId=$1
+  local baseUrl=$(get_base_url $appId)
+  curl -iLk -X GET ${baseUrl}/sql/running/top?anonymous=true
+}
 function get_all_stages_active() {
   local appId=$1
   local baseUrl=$(get_base_url $appId)

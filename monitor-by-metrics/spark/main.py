@@ -57,6 +57,11 @@ if __name__=="__main__":
    taskParser.set_defaults(func=command)
    commonArgs(taskParser)
 
+   sqlParser = subparser.add_parser('sqls', help='List all the running SQLs')
+   sqlParser.set_defaults(func=command)
+   sqlParser.add_argument('--saveTo', type=str, help='Specify where the csv data is saved to, default is sqls.csv', default="sqls.csv")
+   commonArgs(sqlParser)
+
    stageAnalysisParser = subparser.add_parser('stageAnalysis', help='Analyze the stages')
    stageAnalysisParser.add_argument('--status', type=str, choices=['active','complete','pending','failed', 'all'], help="Specify the status, default is all", default='all')
    stageAnalysisParser.add_argument('--saveTo', type=str, help='Specify where the csv data is saved to, default is stageAnalysis', default="{s}".format(s=datetime.utcnow().strftime("%Y-%m-%dT%H:%M")))

@@ -24,6 +24,10 @@ class Hermes(ParentClass.Base):
        relativeUrl = "{appId}/api/v1/applications/{appId}/jobs/{jobId}".format(appId=args.appId,jobId=args.jobId)
        self._getJob(relativeUrl, args)
 
+   def getSqls(self, args):
+       relativeUrl = "{appId}/api/v1/applications/{appId}/sql".format(appId=args.appId)
+       self._getSqls(relativeUrl, args)
+
    def getStageAnalysis(self, args):
        relativeUrl = "{appId}/api/v1/applications/{appId}/stages".format(appId=args.appId)
        self._getStageAnalysis(relativeUrl, args)

@@ -46,7 +46,9 @@ class Base:
       self.STAGES_IO_RATE_FILE = "task_iorate.csv"
       self.STAGES_TOTAL_CPUTIME_FILE = "total_cpu_time.csv"
       self.STAGES_TOTAL_NONE_CPUTIME_FILE = "total_none_cpu_time.csv"
+      self.STAGES_MEM_FILE = "total_mem_issue.csv"
       self.STAGES_DATA_SKEW_FILE_POSTFIX = "data_skew.csv"
+      self.SQLS_FILE = "sqls.csv"
       self.TASK_SUMMARY_KEYS =  ['diskBytesSpilled', 'executorBlockTime', 'executorCpuTime',
        'executorDeserializeCpuTime', 'executorDeserializeTime',
        'executorRunTime', 'executorWaitTime', 'gettingResultTime',
@@ -121,6 +123,9 @@ class Base:
    def getApps(self, args):
       pass
 
+   def getSqls(self, args):
+      pass
+
    def getJobs(self, args):
       pass
 
@@ -129,6 +134,15 @@ class Base:
 
    def getExecutors(self, args):
       pass
+
+   def _getSqls(self, relativeUrl, args):
+      data = self._restApiCall(relativeUrl, anonymous='true')
+      if args.debug:
+         print(data)
+      if len(data) > 0:
+         df = json_normalize(data=data)
+         print(df.columns)
+         self._save_file(args, df, filename=self.SQLS_FILE)
 
    def _getJobs(self, relativeUrl, args):
       if args.status == 'all':
@@ -257,8 +271,6 @@ class Base:
       if len(data) == 0:
          return
       # logging.info(data)
-      if len(args.saveTo) > 0:
-         self._mkdirIfNotExist(args.saveTo)
       df = json_normalize(data=data)
       if args.debug:
          print(df)
@@ -268,12 +280,9 @@ class Base:
       #   print(notFinishedDf[['stageId','status','executorRunTime']])
       #filteredDf = df.loc[(df['executorRunTime'] > 0) & (df['executorCpuTime'] > 0)]
       filteredDf = df
-      ## save the stages metrics
-      #if len(args.saveTo) > 0:
       now = self._get_utcnow_datatime()
       stagesFile = "{p}_{s}".format(p=now, s=self.STAGES_INFO_FILE)
       self._save_file(args, filteredDf, filename=stagesFile, sep='|')
-         #filteredDf.to_csv(os.path.join(args.saveTo, stagesFile), sep='|')
       stageInfoDf = pd.DataFrame()
       finalDf = pd.DataFrame()
       cpuNodes = {}
@@ -315,8 +324,10 @@ class Base:
          finalDf = finalDf.append(analysisDf, ignore_index=True)
          stageInfoDf = stageInfoDf.append(pd.DataFrame([stageInfoDic]), ignore_index=True)
       print(finalDf)
-      self._save_file(args, finalDf, filename=self.STAGES_SKEW_FILE)
-      self._save_file(args, stageInfoDf, filename=self.STAGES_GENERAL_INFO_FILE)
+      if finalDf.empty == False:
+         self._save_file(args, finalDf, filename=self.STAGES_SKEW_FILE)
+      if stageInfoDf.empty == False:
+         self._save_file(args, stageInfoDf, filename=self.STAGES_GENERAL_INFO_FILE)
       self._hotHostsAggr(args, cpuNodes, ioNodes, memNodes)
 
    def _analyzeTask(self, baseRelativeUrl, parameter, stageInfoDic, taskSumDic, taskSumDf, cpuNodes, ioNodes, memNodes):
@@ -365,6 +376,7 @@ class Base:
       stageInfoDf['IOBound'] = 0
       stageInfoDf['ResourceLimit'] = 0
       stageInfoDf['MixBound'] = 0
+
 
    def _findIntensiveType(self, stageId, df, timeIssueMetrics, stageInfoDf):
       if 'executorCpuTime' in timeIssueMetrics:
@@ -471,7 +483,10 @@ class Base:
       if len(memNodes) > 0:
          print("=======================")
          print("==== MEM hot nodes ====")
-         self._sortAndPrintDict(memNodes)
+         sortedMemNodes = self._sortAndPrintDict(memNodes)
+         memPd = pd.DataFrame(sortedMemNodes, columns=['Hosts', 'JvmGcTime(ms)'])
+         self._save_file(args, memPd, filename=self.STAGES_MEM_FILE)
+
 
    def _sortIORate(self, df, parameter, ioMetric):
       taskMetrics = []

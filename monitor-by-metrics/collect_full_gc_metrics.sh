@@ -1,7 +1,9 @@
 #!/bin/bash
+#set -x
 WORKDIR=`dirname $0`
 . ${WORKDIR}/utils.sh
 . ${WORKDIR}/env.sh
+declare -A g_queue
 
 function generate_prometheus_metrics() {
    local allMetrics="$1"
@@ -19,6 +21,11 @@ function generate_prometheus_metrics() {
 for i in $(list_all_apps|awk '{print($7"|"$11)}')
 do
    queue=$(echo "$i"|awk -F \| '{print $1}')
+   if [ "${g_queue[${queue}]}" == "" ];then
+      g_queue+=([${queue}]="filled")
+   else
+      continue
+   fi
    appHttpHost=$(echo "$i"|awk -F \| '{print $2}')
    driverHost=$(echo $appHttpHost|cut -d '/' -f3|cut -d ':' -f1)
    gcCount=$(list_driver_full_gc_count $driverHost)

@@ -3,6 +3,8 @@ WORKDIR=`dirname $0`
 . ${WORKDIR}/utils.sh
 . ${WORKDIR}/env.sh
 
+declare -A g_queue
+
 function generate_prometheus_metrics() {
    local allMetrics="$1"
    local queue=$2
@@ -24,6 +26,11 @@ for i in $(list_all_apps | awk '{print($1":"$7)}')
 do
    appId=$(echo "$i"|awk -F : '{print $1}')
    queue=$(echo "$i"|awk -F : '{print $2}')
+   if [ "${g_queue[${queue}]}" == "" ];then
+      g_queue+=([${queue}]="filled")
+   else
+      continue
+   fi
    stageMetrics=$(python3.5 spark/spark.py jobStage --appId $appId --allStatus 2>/dev/null)
    taskMetrics=$(python3.5 spark/spark.py jobTask --appId $appId --allStatus 2>/dev/null)
    stageDetailsMetrics=$(python3.5 spark/spark.py stage --appId $appId --allStatus 2>/dev/null)
