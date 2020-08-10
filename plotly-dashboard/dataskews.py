@@ -56,7 +56,7 @@ MERGE_MIN_MAX = True
 def extract_skew_info(skewDf, hostSkewsDf, stageDf, stageId, queue):
     selectedSkewStageDf = skewDf.loc[(skewDf["stageId"]==stageId)]
     selectedStageDf = stageDf.loc[(stageDf["stageId"]==stageId)]
-    sqlDesc = selectedStageDf[["description"]].values[0][0] if len(selectedStageDf[["description"]]) > 0 else ""
+    sqlDesc = selectedStageDf[["description"]].values[0][0] if 'description' in selectedStageDf.columns and len(selectedStageDf[["description"]]) > 0 else ""
     submitTime = selectedStageDf[["submissionTime"]].values[0][0]
     skewMetrics = []
     for c in selectedSkewStageDf.columns:
