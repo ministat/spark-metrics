@@ -24,6 +24,12 @@ JOB_TASK_STAT_MAP={
     'spark_job_numTasks':'numTasks'
 }
 
+CLUSTER_USAGE_MAP={
+    'spark_job_numTasks':'numTasks',
+    'spark_job_numActiveTasks':'numActiveTasks',
+    'spark_job_numCompletedTasks':'numCompleteTasks'
+}
+
 STAGE_STAT_MAP={
     'active':'numActiveStages',
     'skipped':'numSkippedStages',
@@ -75,6 +81,13 @@ def getAllMetrics(jData, statMap):
             m[k]=t[v] if v in t else 0
    return m
 
+def reviseTaskMetrics(jData, statMap, resMap):
+   print(jData)
+   for k,v in statMap.items():
+       #for t in jData:
+          resMap[k] = jData[v]
+   return resMap
+
 def getEmptyAllMetrics(statMap):
    m={}
    for k,v in statMap.items():
@@ -96,6 +109,18 @@ def metricsInternal(appId, jobsOrStages, **kwargs):
    if kwargs:
       for k,v in iteritems(kwargs):
           queryParam[k] = v
+   response = requests.get(fullUrl, verify=False, params=queryParam, timeout=5)
+   if response != None and response.status_code == 200:
+      data = response.json()
+   else:
+      print("Fail to get REST response from {u}".format(u=fullUrl), file=sys.stderr)
+   return data
+
+def getClusterUsage(appId):
+   data = ""
+   url = getBaseUrl(appId)
+   fullUrl = url + "/cluster/usage"
+   queryParam = {'anonymous': 'true'}
    response = requests.get(fullUrl, verify=False, params=queryParam, timeout=5)
    if response != None and response.status_code == 200:
       data = response.json()
@@ -132,6 +157,8 @@ def jobTaskMetrics(args):
          print(data)
       if args.allStatus:
          m = getAllMetrics(data, JOB_TASK_STAT_MAP)
+         d = getClusterUsage(args.appId)
+         m = reviseTaskMetrics(d, CLUSTER_USAGE_MAP, m)
          calcuatePendingTasks(m)
          printMetricsMap(m)
       else:
